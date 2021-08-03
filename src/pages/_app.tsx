@@ -1,19 +1,46 @@
 import type { AppProps } from "next/app";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { theme } from "../utils/theme";
+import "normalize.css";
 
 const GlobalStyle = createGlobalStyle`
+  html,
   body {
-    margin: 0;
     padding: 0;
+    margin: 0;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell,
+    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  textarea {
+    font-family: Roboto,-apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell,
+    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  * {
     box-sizing: border-box;
   }
-`;
 
-const theme = {
-  colors: {
-    primary: "#ffd932",
-  },
-};
+  svg {
+    user-select: none;
+  }
+`;
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

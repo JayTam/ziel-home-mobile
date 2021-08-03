@@ -1,6 +1,7 @@
 import React from "react";
 import Document, { Html, Head, Main, NextScript, DocumentContext } from "next/document";
 import { ServerStyleSheet } from "styled-components";
+import { theme } from "../utils/theme";
 
 class MyDocument extends Document {
   render() {
@@ -8,7 +9,7 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           {/* PWA primary color */}
-          {/*<meta name="theme-color" content={theme.palette.primary.main} />*/}
+          <meta name="theme-color" content={theme.palette.primary} />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
