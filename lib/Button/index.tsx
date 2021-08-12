@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { ColorMixin, SizeMixin } from "./utils";
+import { ClickableMixin } from "../mixins";
 
 interface Props {
   color?: "primary" | "secondary";
@@ -35,24 +36,7 @@ const StyledButton = styled.button<ButtonProps>`
   text-transform: capitalize;
   ${(props) => ColorMixin(props.color)}
   ${(props) => SizeMixin(props.size)}
-
-
-  &::before {
-    position: absolute;
-    top: 50%;
-    content: "";
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    border-radius: inherit;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-  }
-
-  &:active::before {
-    opacity: 0.1;
-  }
+  ${ClickableMixin}
 `;
 
 const Button = React.forwardRef<HTMLButtonElement, React.PropsWithChildren<ButtonProps>>(
