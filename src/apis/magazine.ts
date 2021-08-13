@@ -1,5 +1,4 @@
 import snsRequest from "./requests/snsRequest";
-import { AxiosRequestConfig } from "axios";
 
 export type MagazineType = {
   id: string;
@@ -58,21 +57,18 @@ export type MagazineParams = {
 };
 
 /**
- * 杂志列表
- * @param params
- * @param options
+ * 获取下一条杂志详情
+ * @param magazineId 杂志ID，如果不传，获取第一条杂志
  */
-export const getMagazineList = (params: MagazineParams, options?: AxiosRequestConfig) => {
+export const getNextMagazine = (magazineId?: string) => {
   return snsRequest({
-    url: "/magazines",
+    url: "/magazine/last",
     method: "GET",
     params: {
-      limit: 8,
-      ...params,
+      magazine_id: magazineId,
     },
-    ...options,
   }).then((response) => {
-    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    response.data.result = mapMagazineItem(response.data.result);
     return response;
   });
 };

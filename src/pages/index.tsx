@@ -13,8 +13,9 @@ import produce from "immer";
 import VideoPlayer from "../components/Paper/VideoPlayer";
 import { VideoReadyState } from "../constants";
 import { GetServerSideProps, NextPage } from "next";
-import { getMagazineList, MagazineType } from "../apis";
-import { getPaperList, PaperType } from "../apis/paper";
+import { getNextMagazine, MagazineType } from "../apis";
+import { getPaperList, PaperParams, PaperType } from "../apis/paper";
+import { useUpdateEffect } from "ahooks";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -39,11 +40,11 @@ const StyledSwiper = styled(Swiper)`
 `;
 
 interface HomePageProps {
-  magazineList: MagazineType[];
+  magazine: MagazineType;
   paperList: PaperType[];
 }
 
-const Home: NextPage<HomePageProps> = ({ paperList }) => {
+const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
@@ -51,6 +52,12 @@ const Home: NextPage<HomePageProps> = ({ paperList }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
   const [papers, setPapers] = useState<PaperType[]>(paperList);
+  const [currentMagazine, setCurrentMagazine] = useState(magazine);
+  const [paperParams, setPaperParams] = useState<PaperParams>({
+    page: 2,
+    limit: 2,
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const player = videoPlayerRef.current;
@@ -133,6 +140,38 @@ const Home: NextPage<HomePageProps> = ({ paperList }) => {
   };
 
   /**
+   * 滑到最后一个paper，有两种情况
+   * 1. 当前 magazine 还有更多 paper, 获取更多的 paper 进行追加
+   * 2. 当前 magazine 没有更多 paper, 获取下一条 magazine，获取更多的 paper 进行追加，
+   * 当切换为下一条 paper 时候，更新当前 magazine为下一条的
+   */
+  const handleReachEnd: SwiperEvents["reachEnd"] = () => {
+    if (loading) return;
+    setPaperParams((prev) => ({ ...prev, page: prev.page + 1 }));
+  };
+
+  useUpdateEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const response = await getPaperList(currentMagazine.id, paperParams);
+        const list = response.data.result.data;
+        // const hasMore = Boolean(response.data.result.hasmore);
+        if (list.length > 0) {
+          setPapers((prev) => [...prev, ...list]);
+        } else {
+          const magazineResponse = await getNextMagazine(currentMagazine.id);
+          const nextMagazine: MagazineType = magazineResponse.data.result;
+          setCurrentMagazine(nextMagazine);
+          setPaperParams((prev) => ({ ...prev, page: 1 }));
+        }
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [paperParams]);
+
+  /**
    * 浏览器限制，video 要得到播放授权，需要在用户事件处理函数中执行video.play，不能在其他地方执行，会因丢失 user gesture token，导致无法播放
    * @param paper
    */
@@ -177,6 +216,7 @@ const Home: NextPage<HomePageProps> = ({ paperList }) => {
             onSliderFirstMove={handleTouchStart}
             onSlideResetTransitionEnd={handleSwitchPaper}
             onSlideChangeTransitionEnd={handleSwitchPaper}
+            onReachEnd={handleReachEnd}
           >
             {papers.map((paper, index) => (
               <SwiperSlide key={paper.id} virtualIndex={index}>
@@ -216,18 +256,18 @@ const Home: NextPage<HomePageProps> = ({ paperList }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const magazineResponse = await getMagazineList({ page: 1 });
-  const magazineList = magazineResponse.data.result.data;
-  let paperList = [];
+  const magazineResponse = await getNextMagazine();
+  const magazine: MagazineType = magazineResponse.data.result;
 
-  if (magazineList.length > 0) {
-    const paperResponse = await getPaperList(magazineList[0].id, { page: 1 });
+  let paperList = [];
+  if (magazine?.id) {
+    const paperResponse = await getPaperList(magazine.id, { page: 1, limit: 2 });
     paperList = paperResponse.data.result.data;
   }
 
   return {
     props: {
-      magazineList,
+      magazine,
       paperList,
     },
   };
