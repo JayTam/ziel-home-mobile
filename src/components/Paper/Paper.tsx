@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import VideoPlayer from "./VideoPlayer";
-import { PaperType } from "../../pages";
+import { PaperType } from "../../apis/paper";
 
 const Container = styled.div`
   position: relative;

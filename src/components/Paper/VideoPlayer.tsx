@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Play from "../../assets/play.svg";
 import { useCombinedRefs } from "../../utils";
 import Loading from "../../../lib/Loading";
+import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
+import Image from "next/image";
 
 export type VideoPlayerProps = {
   className?: string;
@@ -15,7 +17,7 @@ export type VideoPlayerProps = {
   // 视频资源加载状态
   loading?: boolean;
   // 视频地址
-  src?: string;
+  video?: string;
   // 视频封面
   poster?: string;
   // 控制器
@@ -59,6 +61,16 @@ const Poster = styled.img`
   top: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
+`;
+
+const VideoPlaceHolder = styled(Image)`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const VideoLoading = styled(Loading)`
@@ -99,6 +111,10 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
         timer.current = null;
       }
     }
+
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
   }, [props.loading]);
 
   useEffect(() => {
@@ -117,11 +133,13 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
     return () => {
       player.removeEventListener("timeupdate", handleTimeUpdate);
     };
-  }, [props.src]);
+  }, [props.video]);
 
   useEffect(() => {
     // slider 模式下，没有 video 元素，没有相应的ref
-    if (props.isPlay && !isFirstPlayed) setIsFirstPlayed(true);
+    if (props.isPlay && !isFirstPlayed) {
+      setIsFirstPlayed(true);
+    }
     const player = videoPlayerRef.current;
     if (!player) return;
     if (props.isPlay) {
@@ -155,7 +173,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
   useEffect(() => {
     const player = videoPlayerRef.current;
     if (player) player.load();
-  }, [props.src]);
+  }, [props.video]);
 
   /**
    * 显示视频封面
@@ -194,7 +212,13 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       {/* 加载条 */}
       {props.type === "poster" ? <VideoLoading hidden={hiddenLoading} size={50} /> : null}
       {/* 视频封面 */}
-      {props.type === "poster" ? <Poster src={props.poster} hidden={!showPoster} /> : null}
+      {props.type === "poster" && showPoster ? (
+        props.poster ? (
+          <Poster src={props.poster} alt="poster" />
+        ) : (
+          <VideoPlaceHolder src={VideoPlaceholderImage} alt="poster" layout="fill" />
+        )
+      ) : null}
       {/* 视频 */}
       {props.type === "video" ? (
         <Video
@@ -206,7 +230,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
           loop={props.loop}
           playsInline={true}
         >
-          <source src={props.src} />
+          <source src={props.video} />
         </Video>
       ) : null}
       {/* 播放按钮 */}

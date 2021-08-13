@@ -12,18 +12,12 @@ import { SwiperEvents } from "swiper/types";
 import produce from "immer";
 import VideoPlayer from "../components/Paper/VideoPlayer";
 import { VideoReadyState } from "../constants";
+import { GetServerSideProps, NextPage } from "next";
+import { getMagazineList, MagazineType } from "../apis";
+import { getPaperList, PaperType } from "../apis/paper";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
-
-export interface PaperType {
-  id: string;
-  isPlay: boolean;
-  poster: string;
-  currentTime: number;
-  touching: boolean;
-  src: string;
-}
 
 const Container = styled.div`
   position: fixed;
@@ -44,47 +38,19 @@ const StyledSwiper = styled(Swiper)`
   z-index: 1000;
 `;
 
-export default function Home() {
+interface HomePageProps {
+  magazineList: MagazineType[];
+  paperList: PaperType[];
+}
+
+const Home: NextPage<HomePageProps> = ({ paperList }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
-  const [papers, setPapers] = useState<PaperType[]>([
-    {
-      id: "001",
-      isPlay: false,
-      currentTime: 0,
-      touching: false,
-      poster: "https://t7.baidu.com/it/u=1956604245,3662848045&fm=193&f=GIF",
-      src: "https://ziel-pp-public.oss-cn-hongkong.aliyuncs.com/community/1407540476060295168/d262278d-9d7d-4667-91b8-a87e7661315c.mp4?X_PP_Audience%3D1407540476060295168%26X_PP_ExpiredAt%3D1626662843%26X_PP_GrantedAt%3D1626662843%26X_PP_Method%3D%2A%26X_PP_ObjectName%3Dcommunity%2F1407540476060295168%2Fd262278d-9d7d-4667-91b8-a87e7661315c.mp4%26X_PP_Owner%3D1407540476060295168%26X_PP_ResourceType%3Dcommunity%26X_PP_Signature%3Db4628d4021a36d245f0cafdb8a3eaffc",
-    },
-    {
-      id: "002",
-      isPlay: false,
-      currentTime: 0,
-      touching: false,
-      poster: "https://t7.baidu.com/it/u=2529476510,3041785782&fm=193&f=GIF",
-      src: "https://s1.zielhome.com/community/1416312412643098624/64f5033b-cf7e-494e-bf77-89c8a409157c.mp4?X_PP_Audience%3D1415057901396000768%26X_PP_ExpiredAt%3D1627022676%26X_PP_GrantedAt%3D1627022676%26X_PP_Method%3D%2A%26X_PP_ObjectName%3Dcommunity%2F1415057901396000768%2F4bcd534b-cc57-4b75-ba28-82e3953f827f.mp4%26X_PP_Owner%3D1415057901396000768%26X_PP_ResourceType%3Dcommunity%26X_PP_Signature%3D9012a9c99ac2649c289c0f752c037edb",
-    },
-    {
-      id: "003",
-      isPlay: false,
-      currentTime: 0,
-      touching: false,
-      poster: "https://t7.baidu.com/it/u=727460147,2222092211&fm=193&f=GIF",
-      src: "https://s1.zielhome.com/community/1419494241059569664/59afd683-915c-452f-889d-bff810afeffe.mp4?X_PP_Audience%3D1419494241059569664%26X_PP_ExpiredAt%3D1627269130%26X_PP_GrantedAt%3D1627269130%26X_PP_Method%3D%2A%26X_PP_ObjectName%3Dcommunity%2F1419494241059569664%2F59afd683-915c-452f-889d-bff810afeffe.mp4%26X_PP_Owner%3D1419494241059569664%26X_PP_ResourceType%3Dcommunity%26X_PP_Signature%3Dcc03eb95a65ea06a1f69fc5d4b4cc05b",
-    },
-    {
-      id: "004",
-      isPlay: false,
-      currentTime: 0,
-      touching: false,
-      poster: "https://t7.baidu.com/it/u=2529476510,3041785782&fm=193&f=GIF",
-      src: "https://s1.zielhome.com/community/1416312412643098624/64f5033b-cf7e-494e-bf77-89c8a409157c.mp4?X_PP_Audience%3D1416312412643098624%26X_PP_ExpiredAt%3D1627626337%26X_PP_GrantedAt%3D1627626337%26X_PP_Method%3D%2A%26X_PP_ObjectName%3Dcommunity%2F1416312412643098624%2F64f5033b-cf7e-494e-bf77-89c8a409157c.mp4%26X_PP_Owner%3D1416312412643098624%26X_PP_ResourceType%3Dcommunity%26X_PP_Signature%3D8c3d64210ce433538ff13c00305d6ab5",
-    },
-  ]);
+  const [papers, setPapers] = useState<PaperType[]>(paperList);
 
   useEffect(() => {
     const player = videoPlayerRef.current;
@@ -247,4 +213,24 @@ export default function Home() {
       </Container>
     </>
   );
-}
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const magazineResponse = await getMagazineList({ page: 1 });
+  const magazineList = magazineResponse.data.result.data;
+  let paperList = [];
+
+  if (magazineList.length > 0) {
+    const paperResponse = await getPaperList(magazineList[0].id, { page: 1 });
+    paperList = paperResponse.data.result.data;
+  }
+
+  return {
+    props: {
+      magazineList,
+      paperList,
+    },
+  };
+};
+
+export default Home;

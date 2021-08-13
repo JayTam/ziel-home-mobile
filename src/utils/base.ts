@@ -7,3 +7,11 @@ export function isIOS() {
     (navigator.userAgent.includes("Mac") && "ontouchend" in document)
   );
 }
+
+export function isClient() {
+  return typeof window !== "undefined";
+}
+
+export function isServer() {
+  return typeof window === "undefined";
+}
