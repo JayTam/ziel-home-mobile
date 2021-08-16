@@ -51,6 +51,10 @@ const GlobalStyle = createGlobalStyle`
   svg {
     user-select: none;
   }
+
+  .react-more-text .anchor {
+    text-decoration: underline;
+  }
 `;
 
 function MyApp({ Component, pageProps }: AppProps) {

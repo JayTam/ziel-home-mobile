@@ -222,6 +222,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       {/* 视频 */}
       {props.type === "video" ? (
         <Video
+          className={props.className}
           hidden={hiddenVideo}
           ref={targetRef}
           autoPlay={props.autoplay}

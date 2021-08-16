@@ -5,6 +5,7 @@ export const theme: DefaultTheme = {
     primary: "#ffd932",
     text: {
       primary: "#333333",
+      hint: "rgba(255, 255, 255, 0.5)",
     },
     common: {
       white: "#fff",

@@ -16,6 +16,8 @@ import { GetServerSideProps, NextPage } from "next";
 import { getNextMagazine, MagazineType } from "../apis";
 import { getPaperList, PaperType } from "../apis/paper";
 import { useUpdateEffect } from "ahooks";
+import Button from "../../lib/Button";
+import { TextEllipsisMixin } from "../../lib/mixins";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -28,8 +30,9 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-const VideoArea = styled.div`
-  height: 100%;
+const SwiperContainer = styled.div`
+  position: relative;
+  height: calc(100% - 50px);
 `;
 
 const StyledSwiper = styled(Swiper)`
@@ -39,14 +42,51 @@ const StyledSwiper = styled(Swiper)`
   z-index: 1000;
 `;
 
+const MagazineContainer = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 70px;
+  width: 100%;
+  background: linear-gradient(180deg, #222 -7.14%, rgba(34, 34, 34, 0) 100%);
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 14px;
+`;
+
+const MagazineInfo = styled.div`
+  flex: 1;
+  overflow: hidden;
+`;
+
+const MagazineTitle = styled.h1`
+  color: ${(props) => props.theme.palette.common?.white};
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 23px;
+  margin-bottom: 6px;
+  ${TextEllipsisMixin}
+`;
+
+const MagazineNumber = styled.p`
+  color: ${(props) => props.theme.palette.text?.hint};
+  font-size: 12px;
+  line-height: 14px;
+  ${TextEllipsisMixin}
+`;
+
+const MagazineSubscribeButton = styled(Button)`
+  margin-left: 14px;
+`;
+
 interface HomePageProps {
   magazine: MagazineType;
   paperList: PaperType[];
 }
 
 const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -55,6 +95,8 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   const [currentMagazine, setCurrentMagazine] = useState(magazine);
   const [page, setPage] = useState(2);
   const [loading, setLoading] = useState(false);
+
+  const [swiperHeight, setSwiperHeight] = useState(0);
 
   useEffect(() => {
     const player = videoPlayerRef.current;
@@ -203,13 +245,18 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
       });
   };
 
+  useEffect(() => {
+    setSwiperHeight(window.innerHeight - 50);
+  }, []);
+
   return (
     <>
       <Container>
-        <VideoArea ref={containerRef}>
+        <SwiperContainer>
           <StyledSwiper
             direction="vertical"
             virtual
+            height={swiperHeight}
             onSliderFirstMove={handleTouchStart}
             onSlideResetTransitionEnd={handleSwitchPaper}
             onSlideChangeTransitionEnd={handleSwitchPaper}
@@ -217,6 +264,13 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
           >
             {papers.map((paper, index) => (
               <SwiperSlide key={paper.id} virtualIndex={index}>
+                <MagazineContainer>
+                  <MagazineInfo>
+                    <MagazineTitle>{currentMagazine.title}</MagazineTitle>
+                    <MagazineNumber>{currentMagazine.subscribeNum} subscribers</MagazineNumber>
+                  </MagazineInfo>
+                  <MagazineSubscribeButton>Subscribe</MagazineSubscribeButton>
+                </MagazineContainer>
                 <Paper
                   {...paper}
                   loading={videoLoading}
@@ -234,7 +288,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
             loading={videoLoading}
             onChangeCurrentTime={(time) => handleChangeCurrentTime(papers[activeIndex], time)}
           />
-        </VideoArea>
+        </SwiperContainer>
 
         <TabBar>
           <TabBarItem>

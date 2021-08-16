@@ -20,3 +20,9 @@ export const ClickableMixin = css`
     opacity: 0.1;
   }
 `;
+
+export const TextEllipsisMixin = css`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
