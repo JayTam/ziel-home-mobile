@@ -84,28 +84,24 @@ const mapPaperItem = (item: Record<string, any>) => {
 };
 
 export type PaperParams = {
+  magazineId: string;
   page: number;
   limit?: number;
 };
 
 /**
  * 获取内容列表
- * @param magazineId 杂志ID
  * @param params
  * @param options
  */
-export const getPaperList = (
-  magazineId: string,
-  params: PaperParams,
-  options?: AxiosRequestConfig
-) => {
+export const getPaperList = (params: PaperParams, options?: AxiosRequestConfig) => {
   return snsRequest({
     url: "/articles",
     method: "GET",
     params: {
-      magazine_id: magazineId,
-      limit: 8,
-      ...params,
+      magazine_id: params.magazineId,
+      limit: 2,
+      page: params.page,
     },
     ...options,
   }).then((response) => {

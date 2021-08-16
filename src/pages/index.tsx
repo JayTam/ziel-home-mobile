@@ -14,7 +14,7 @@ import VideoPlayer from "../components/Paper/VideoPlayer";
 import { VideoReadyState } from "../constants";
 import { GetServerSideProps, NextPage } from "next";
 import { getNextMagazine, MagazineType } from "../apis";
-import { getPaperList, PaperParams, PaperType } from "../apis/paper";
+import { getPaperList, PaperType } from "../apis/paper";
 import { useUpdateEffect } from "ahooks";
 
 // install Virtual module
@@ -53,10 +53,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
   const [papers, setPapers] = useState<PaperType[]>(paperList);
   const [currentMagazine, setCurrentMagazine] = useState(magazine);
-  const [paperParams, setPaperParams] = useState<PaperParams>({
-    page: 2,
-    limit: 2,
-  });
+  const [page, setPage] = useState(2);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -147,29 +144,29 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
    */
   const handleReachEnd: SwiperEvents["reachEnd"] = () => {
     if (loading) return;
-    setPaperParams((prev) => ({ ...prev, page: prev.page + 1 }));
+    setPage((prev) => prev + 1);
   };
 
   useUpdateEffect(() => {
     (async () => {
       setLoading(true);
       try {
-        const response = await getPaperList(currentMagazine.id, paperParams);
+        const response = await getPaperList({ magazineId: currentMagazine.id, page });
         const list = response.data.result.data;
-        // const hasMore = Boolean(response.data.result.hasmore);
+        // const  = Boolean(response.data.result.hasmore);
         if (list.length > 0) {
           setPapers((prev) => [...prev, ...list]);
         } else {
           const magazineResponse = await getNextMagazine(currentMagazine.id);
           const nextMagazine: MagazineType = magazineResponse.data.result;
           setCurrentMagazine(nextMagazine);
-          setPaperParams((prev) => ({ ...prev, page: 1 }));
+          setPage(1);
         }
       } finally {
         setLoading(false);
       }
     })();
-  }, [paperParams]);
+  }, [page]);
 
   /**
    * 浏览器限制，video 要得到播放授权，需要在用户事件处理函数中执行video.play，不能在其他地方执行，会因丢失 user gesture token，导致无法播放
@@ -261,7 +258,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   let paperList = [];
   if (magazine?.id) {
-    const paperResponse = await getPaperList(magazine.id, { page: 1, limit: 2 });
+    const paperResponse = await getPaperList({ magazineId: magazine.id, page: 1, limit: 2 });
     paperList = paperResponse.data.result.data;
   }
 
