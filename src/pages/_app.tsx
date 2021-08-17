@@ -82,6 +82,7 @@ const needLoginRoutes = [
   "/paper/edit/[paper_id]",
   "/magazine/create",
   "/setting/user",
+  "/personal",
 ];
 
 function MyApp(app: AppProps) {
