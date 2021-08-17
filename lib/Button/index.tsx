@@ -4,13 +4,13 @@ import { ColorMixin, SizeMixin } from "./utils";
 import { ClickableMixin } from "../mixins";
 
 interface Props {
-  color?: "primary" | "secondary";
+  color?: "primary" | "secondary" | "default";
   size?: "mini" | "small" | "medium" | "large";
   round?: boolean;
 }
 
 const defaultProps: Props = {
-  color: "primary",
+  color: "default",
   size: "small",
   round: true,
 };

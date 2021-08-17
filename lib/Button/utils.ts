@@ -8,11 +8,22 @@ export const ColorMixin = (color?: ButtonProps["color"]) => css`
         return props.theme.palette.primary;
       case "secondary":
         return props.theme.palette.secondary;
+      case "default":
       default:
-        return props.theme.palette.primary;
+        return props.theme.palette.default;
     }
   }};
-  color: ${(props) => props.theme.palette.text?.primary};
+  color: ${(props) => {
+    switch (color) {
+      case "primary":
+        return props.theme.palette.text?.primary;
+      case "secondary":
+        return props.theme.palette.text?.primary;
+      case "default":
+      default:
+        return props.theme.palette.text?.secondary;
+    }
+  }};
 `;
 
 export const SizeMixin = (size?: ButtonProps["size"]) => css`

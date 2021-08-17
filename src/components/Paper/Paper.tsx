@@ -81,7 +81,7 @@ const PaperTitle = styled.div`
   color: ${(props) => props.theme.palette.common?.white};
 `;
 
-const PaperDescription = styled.p`
+const PaperDescription = styled.div`
   color: ${(props) => props.theme.palette.text?.hint};
 `;
 

@@ -18,6 +18,8 @@ import { getPaperList, PaperType } from "../apis/paper";
 import { useUpdateEffect } from "ahooks";
 import Button from "../../lib/Button";
 import { TextEllipsisMixin } from "../../lib/mixins";
+import { composeAuthHeaders, useLogin } from "../utils";
+import { useAppSelector } from "../app/hook";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -97,6 +99,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   const [loading, setLoading] = useState(false);
 
   const [swiperHeight, setSwiperHeight] = useState(0);
+  const { withLogin } = useLogin();
 
   useEffect(() => {
     const player = videoPlayerRef.current;
@@ -249,6 +252,12 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
     setSwiperHeight(window.innerHeight - 50);
   }, []);
 
+  const user = useAppSelector((state) => state.user);
+  const handleSubscribe = withLogin<MagazineType>((magazine) => {
+    if (!magazine) return;
+    console.log(user);
+  });
+
   return (
     <>
       <Container>
@@ -269,7 +278,12 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
                     <MagazineTitle>{currentMagazine.title}</MagazineTitle>
                     <MagazineNumber>{currentMagazine.subscribeNum} subscribers</MagazineNumber>
                   </MagazineInfo>
-                  <MagazineSubscribeButton>Subscribe</MagazineSubscribeButton>
+                  <MagazineSubscribeButton
+                    onClick={() => handleSubscribe(currentMagazine)}
+                    color={currentMagazine?.isSubscribe ? "default" : "primary"}
+                  >
+                    {currentMagazine?.isSubscribe ? "subscribed" : "subscribe"}
+                  </MagazineSubscribeButton>
                 </MagazineContainer>
                 <Paper
                   {...paper}
@@ -306,8 +320,9 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const magazineResponse = await getNextMagazine();
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const headers = composeAuthHeaders(req.headers.cookie);
+  const magazineResponse = await getNextMagazine(undefined, { headers });
   const magazine: MagazineType = magazineResponse.data.result;
 
   let paperList = [];

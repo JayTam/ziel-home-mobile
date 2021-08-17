@@ -1,4 +1,5 @@
 import snsRequest from "./requests/snsRequest";
+import { AxiosRequestConfig } from "axios";
 
 export type MagazineType = {
   id: string;
@@ -59,14 +60,16 @@ export type MagazineParams = {
 /**
  * 获取下一条杂志详情
  * @param magazineId 杂志ID，如果不传，获取第一条杂志
+ * @param options
  */
-export const getNextMagazine = (magazineId?: string) => {
+export const getNextMagazine = (magazineId?: string, options?: AxiosRequestConfig) => {
   return snsRequest({
     url: "/magazine/last",
     method: "GET",
     params: {
       magazine_id: magazineId,
     },
+    ...options,
   }).then((response) => {
     response.data.result = mapMagazineItem(response.data.result);
     return response;

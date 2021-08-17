@@ -34,6 +34,7 @@ interface TypeBackground {
 declare module "styled-components" {
   export interface DefaultTheme {
     palette: {
+      default?: string;
       primary?: string;
       secondary?: string;
       error?: string;
