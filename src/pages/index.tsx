@@ -141,7 +141,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
     setHiddenVideoPlayer(false);
     setPapers((prev) =>
       produce(prev, (draft) => {
-        draft[swiper.activeIndex].touching = false;
+        if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = false;
         return draft;
       })
     );
@@ -175,7 +175,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   const handleTouchStart: SwiperEvents["touchStart"] = (swiper) => {
     setPapers((prev) =>
       produce(prev, (draft) => {
-        draft[swiper.activeIndex].touching = true;
+        if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = true;
         return draft;
       })
     );
