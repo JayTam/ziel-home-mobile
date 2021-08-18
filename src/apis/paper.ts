@@ -109,3 +109,35 @@ export const getPaperList = (params: PaperParams, options?: AxiosRequestConfig) 
     return response;
   });
 };
+
+/**
+ * 点赞内容
+ * @param paperId
+ * @param isLike
+ */
+export const likePaper = (paperId: string, isLike: boolean) => {
+  return snsRequest({
+    url: "/like/state",
+    method: "POST",
+    params: {
+      article_id: paperId,
+      is_state: isLike ? 1 : 0,
+    },
+  });
+};
+
+/**
+ * 收藏内容
+ * @param paperId
+ * @param isStar
+ */
+export const starPaper = (paperId: string, isStar: boolean) => {
+  return snsRequest({
+    url: "/favorite/state",
+    method: "POST",
+    params: {
+      article_id: paperId,
+      is_state: isStar ? 1 : 0,
+    },
+  });
+};
