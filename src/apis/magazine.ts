@@ -75,3 +75,19 @@ export const getNextMagazine = (magazineId?: string, options?: AxiosRequestConfi
     return response;
   });
 };
+
+/**
+ * 订阅杂志
+ * @param magazineId 杂志ID
+ * @param isSubscribe 是否订阅
+ */
+export const subscribeMagazine = (magazineId: string, isSubscribe: boolean) => {
+  return snsRequest({
+    url: "/subscribe/state",
+    method: "POST",
+    params: {
+      magazine_id: magazineId,
+      is_state: isSubscribe ? 1 : 0,
+    },
+  });
+};

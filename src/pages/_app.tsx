@@ -18,7 +18,12 @@ import QueryString from "querystring";
 import { fetchUserInfo } from "../apis";
 import { setUserInfo } from "../app/features/user/userSlice";
 import App from "next/app";
-import { PASSPORT_DEVICE_ID_KEY, PASSPORT_TENANT_NAME_KEY, PASSPORT_TOKEN_KEY } from "../constants";
+import {
+  PASSPORT_DEVICE_ID_KEY,
+  PASSPORT_SUB_APP_ID_KEY,
+  PASSPORT_TENANT_NAME_KEY,
+  PASSPORT_TOKEN_KEY,
+} from "../constants";
 import { Provider } from "react-redux";
 
 const GlobalStyle = createGlobalStyle`
@@ -158,7 +163,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   // 是否已经获取用户信息
   const isNoUserInfo = !reduxStore.getState().user.uid;
   // 重定向URL
-  const redirectUri = `${process.env.NEXT_PUBLIC_PAASPORT_URL}?sub_app_id=${
+  const redirectUri = `${process.env.NEXT_PUBLIC_PAASPORT_URL}?${PASSPORT_SUB_APP_ID_KEY}=${
     process.env.NEXT_PUBLIC_PAASPORT_APP_ID
   }&redirect_uri=${encodeURIComponent(
     `${process.env.NODE_ENV === "development" ? "http" : "https"}://${req?.headers.host}${

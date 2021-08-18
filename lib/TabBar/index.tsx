@@ -10,7 +10,7 @@ const StyledTabBar = styled.div<TabBarProps>`
   justify-content: space-evenly;
   width: 100%;
   height: 50px;
-  background-color: rgba(0, 0, 0);
+  background-color: #222;
 `;
 
 interface Props {

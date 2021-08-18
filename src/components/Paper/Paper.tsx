@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import VideoPlayer from "./VideoPlayer";
 import ShowMoreText from "react-show-more-text";
@@ -12,6 +12,7 @@ import TopIcon from "../../assets/icons/top.svg";
 import FollowedIcon from "../../assets/icons/followed.svg";
 import CommentIcon from "../../assets/icons/comment.svg";
 import MoreIcon from "../../assets/icons/more.svg";
+import { useAppSelector } from "../../app/hook";
 
 const Container = styled.div`
   position: relative;
@@ -96,6 +97,7 @@ const PaperActions = styled.div`
   align-items: center;
 `;
 const PaperActionItem = styled.div`
+  min-width: 40px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -116,9 +118,20 @@ interface PaperInterface extends PaperType {
   onChangeCurrentTime?: (time: number) => void;
   // 第一次播放，兼容iOS video play 必需在 eventHandler 中
   onFirstPlay?: () => void;
+  // 关注用户
+  onFollow?: () => void;
+  // 喜欢
+  onLike?: () => void;
+  onStar?: () => void;
 }
 
 const Paper: React.FC<PaperInterface> = (props) => {
+  const user = useAppSelector((state) => state.user);
+  const showFollowIcon = useMemo(
+    () => user.uid === "" || props.authorId !== user.uid,
+    [props.authorId, user.uid]
+  );
+
   return (
     <Container>
       <VideoPlayer {...props} type="poster" />
@@ -126,7 +139,13 @@ const Paper: React.FC<PaperInterface> = (props) => {
         <AuthorInfo>
           <Avatar src={props.avatar} alt="avatar" />
           <AuthorName>{props.author}</AuthorName>
-          {props.isFollow ? <FollowedIcon /> : <UnFollowIcon />}
+          {showFollowIcon ? (
+            props.isFollow ? (
+              <FollowedIcon onClick={props.onFollow} />
+            ) : (
+              <UnFollowIcon onClick={props.onFollow} />
+            )
+          ) : null}
         </AuthorInfo>
 
         <PaperInfo>
@@ -157,7 +176,7 @@ const Paper: React.FC<PaperInterface> = (props) => {
 
         <PaperActionContainer>
           <PaperActions>
-            <PaperActionItem>
+            <PaperActionItem onClick={props.onLike}>
               {props.isLike ? <LikedIcon /> : <UnLikeIcon />}
               <PaperActionNum>{props.likeNum}</PaperActionNum>
             </PaperActionItem>
@@ -167,7 +186,7 @@ const Paper: React.FC<PaperInterface> = (props) => {
               <PaperActionNum>{props.commentNum}</PaperActionNum>
             </PaperActionItem>
 
-            <PaperActionItem>
+            <PaperActionItem onClick={props.onStar}>
               {props.isStar ? <StaredIcon /> : <UnStarIcon />}
               <PaperActionNum>{props.starNum}</PaperActionNum>
             </PaperActionItem>

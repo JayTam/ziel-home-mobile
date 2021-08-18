@@ -1,9 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import TabBar from "../../lib/TabBar";
-import TabBarItem from "../../lib/TabBarItem";
-import CreateIcon from "../assets/icons/create.svg";
-import HomeActiveIcon from "../assets/icons/home-active.svg";
-import HomeIcon from "../assets/icons/home.svg";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import SwiperCore, { Virtual } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -13,13 +8,16 @@ import produce from "immer";
 import VideoPlayer from "../components/Paper/VideoPlayer";
 import { VideoReadyState } from "../constants";
 import { GetServerSideProps, NextPage } from "next";
-import { getNextMagazine, MagazineType } from "../apis";
-import { getPaperList, PaperType } from "../apis/paper";
+import { getNextMagazine, MagazineType, subscribeMagazine } from "../apis";
+import { getPaperList, likePaper, PaperType, starPaper } from "../apis/paper";
 import { useUpdateEffect } from "ahooks";
 import Button from "../../lib/Button";
 import { TextEllipsisMixin } from "../../lib/mixins";
 import { composeAuthHeaders, useLogin } from "../utils";
 import { useAppSelector } from "../app/hook";
+import SubscribedIcon from "../assets/icons/subscribed.svg";
+import { followUser } from "../apis/profile";
+import BottomTabBar from "../components/BottomTabBar";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -70,6 +68,10 @@ const MagazineTitle = styled.h1`
   line-height: 23px;
   margin-bottom: 6px;
   ${TextEllipsisMixin}
+`;
+
+const StyledSubscribedIcon = styled(SubscribedIcon)`
+  margin-left: 7px;
 `;
 
 const MagazineNumber = styled.p`
@@ -141,7 +143,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
     setHiddenVideoPlayer(false);
     setPapers((prev) =>
       produce(prev, (draft) => {
-        draft[swiper.activeIndex].touching = false;
+        if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = false;
         return draft;
       })
     );
@@ -175,7 +177,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   const handleTouchStart: SwiperEvents["touchStart"] = (swiper) => {
     setPapers((prev) =>
       produce(prev, (draft) => {
-        draft[swiper.activeIndex].touching = true;
+        if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = true;
         return draft;
       })
     );
@@ -253,9 +255,84 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   }, []);
 
   const user = useAppSelector((state) => state.user);
-  const handleSubscribe = withLogin<MagazineType>((magazine) => {
+  const isMyMagazine = useMemo(
+    () => user.uid === currentMagazine.authorId,
+    [currentMagazine.authorId, user.uid]
+  );
+
+  /**
+   * 订阅杂志
+   */
+  const handleSubscribe = withLogin<MagazineType>(async (magazine) => {
     if (!magazine) return;
-    console.log(user);
+    const isSubscribe = !magazine.isSubscribe;
+    await subscribeMagazine(magazine.id, isSubscribe);
+    setCurrentMagazine((prev) =>
+      produce(prev, (draft) => {
+        draft.isSubscribe = isSubscribe;
+        if (isSubscribe) {
+          draft.subscribeNum += 1;
+        } else {
+          draft.subscribeNum -= 1;
+        }
+        return draft;
+      })
+    );
+  });
+
+  /**
+   * 关注用户
+   */
+  const handleFollow = withLogin<PaperType>(async (paper) => {
+    if (!paper) return;
+    const isFollow = !paper.isFollow;
+    await followUser(paper.authorId, isFollow);
+    setPapers((prev) =>
+      produce(prev, (draft) => {
+        draft.forEach((item) => {
+          if (item.authorId === paper.authorId) item.isFollow = isFollow;
+        });
+        return draft;
+      })
+    );
+  });
+
+  /**
+   * 点赞内容
+   */
+  const handleLikePaper = withLogin<PaperType>(async (paper) => {
+    if (!paper) return;
+    const isLike = !paper.isLike;
+    await likePaper(paper.id, isLike);
+    setPapers((prev) =>
+      produce(prev, (draft) => {
+        draft.forEach((item) => {
+          if (item.authorId === paper.authorId) item.isLike = isLike;
+          if (isLike) item.likeNum += 1;
+          else item.likeNum -= 1;
+        });
+        return draft;
+      })
+    );
+  });
+
+  /**
+   * 收藏内容
+   */
+  const handleStarPaper = withLogin<PaperType>(async (paper) => {
+    if (!paper) return;
+    const isStar = !paper.isStar;
+    await starPaper(paper.id, isStar);
+    setPapers((prev) =>
+      produce(prev, (draft) => {
+        draft.forEach((item) => {
+          if (item.authorId === paper.authorId) item.isStar = isStar;
+          if (isStar) item.starNum += 1;
+          else item.starNum -= 1;
+        });
+        return draft;
+      })
+    );
   });
 
   return (
@@ -275,15 +352,22 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
               <SwiperSlide key={paper.id} virtualIndex={index}>
                 <MagazineContainer>
                   <MagazineInfo>
-                    <MagazineTitle>{currentMagazine.title}</MagazineTitle>
+                    <MagazineTitle>
+                      {currentMagazine.title}
+                      {!isMyMagazine && currentMagazine.isSubscribe ? (
+                        <StyledSubscribedIcon onClick={() => handleSubscribe(currentMagazine)} />
+                      ) : null}
+                    </MagazineTitle>
                     <MagazineNumber>{currentMagazine.subscribeNum} subscribers</MagazineNumber>
                   </MagazineInfo>
-                  <MagazineSubscribeButton
-                    onClick={() => handleSubscribe(currentMagazine)}
-                    color={currentMagazine?.isSubscribe ? "default" : "primary"}
-                  >
-                    {currentMagazine?.isSubscribe ? "subscribed" : "subscribe"}
-                  </MagazineSubscribeButton>
+                  {!isMyMagazine && !currentMagazine.isSubscribe ? (
+                    <MagazineSubscribeButton
+                      color="primary"
+                      onClick={() => handleSubscribe(currentMagazine)}
+                    >
+                      subscribe
+                    </MagazineSubscribeButton>
+                  ) : null}
                 </MagazineContainer>
                 <Paper
                   {...paper}
@@ -291,6 +375,9 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
                   active={activeIndex === index}
                   onTogglePlay={() => handleTogglePlay(paper)}
                   onFirstPlay={() => handleFirstPlay(paper)}
+                  onFollow={() => handleFollow(paper)}
+                  onLike={() => handleLikePaper(paper)}
+                  onStar={() => handleStarPaper(paper)}
                 />
               </SwiperSlide>
             ))}
@@ -304,17 +391,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
           />
         </SwiperContainer>
 
-        <TabBar>
-          <TabBarItem>
-            <HomeActiveIcon />
-          </TabBarItem>
-          <TabBarItem>
-            <CreateIcon style={{ position: "relative", bottom: -5 }} />
-          </TabBarItem>
-          <TabBarItem>
-            <HomeIcon />
-          </TabBarItem>
-        </TabBar>
+        <BottomTabBar dark />
       </Container>
     </>
   );
@@ -327,7 +404,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   let paperList = [];
   if (magazine?.id) {
-    const paperResponse = await getPaperList({ magazineId: magazine.id, page: 1, limit: 2 });
+    const paperResponse = await getPaperList(
+      { magazineId: magazine.id, page: 1, limit: 2 },
+      { headers }
+    );
     paperList = paperResponse.data.result.data;
   }
 
