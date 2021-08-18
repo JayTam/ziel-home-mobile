@@ -34,11 +34,11 @@ interface HeaderProps {
   rightComponent?: React.ReactNode;
 }
 
-const Header: React.FC<HeaderProps> = (props) => {
+const Header: React.FC<React.PropsWithChildren<HeaderProps>> = (props) => {
   return (
     <Container>
       <Left>{props.leftComponent ?? <BackIcon />}</Left>
-      <Center>center</Center>
+      <Center>{props.children}</Center>
       {props.rightComponent ? <Right>{props.rightComponent}</Right> : null}
     </Container>
   );
