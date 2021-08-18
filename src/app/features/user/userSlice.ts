@@ -23,6 +23,7 @@ export interface UserState {
   gender: number;
   protocols: string | null;
   signature: string;
+  created_at: string;
   vip_info: {
     account_vip: string;
     type: 0 | 1;
@@ -66,6 +67,7 @@ const initialState: UserState = {
   gender: 0,
   protocols: "",
   signature: "",
+  created_at: "",
   vip_info: {
     account_vip: "",
     type: 0,
@@ -114,7 +116,7 @@ export const logoutAsync = (): AppThunk => async (dispatch) => {
   } finally {
     removeAuth();
     dispatch(cleanUser());
-    window.location.reload();
+    window.location.href = "/";
   }
 };
 

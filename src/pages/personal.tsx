@@ -3,12 +3,14 @@ import Image from "next/image";
 import styled from "styled-components";
 import BgImg from "../assets/imgs/Mask Group.png";
 import AleftIcon from "../assets/icons/aleft.svg";
-import FreeTrialIcon from "../assets/icons/free trial.svg";
+import FreeTrialIcon from "../assets/imgs/free trial.png";
 import AddressIcon from "../assets/icons/your address.svg";
 import HelpIcon from "../assets/icons/help & support.svg";
 import SettingIcon from "../assets/icons/setting.svg";
-import { useAppSelector } from "../app/hook";
+import { useAppSelector, useAppDispatch } from "../app/hook";
 import Button from "../../lib/Button";
+import { ClickableMixin } from "../../lib/mixins";
+import { logoutAsync } from "../app/features/user/userSlice";
 
 interface UserProps {
   name: string;
@@ -21,7 +23,7 @@ const Container = styled.div`
   align-items: center;
 `;
 const HeaderBg = styled(Image)`
-  width: 100%;
+  width: 100vw;
 `;
 const HeaderContent = styled.div`
   position: absolute;
@@ -69,6 +71,7 @@ const ProfileEntry = styled.div`
   display: flex;
   align-items: center;
   margin-left: 41px;
+  visibility: hidden;
 `;
 const ProfileText = styled.div`
   color: ${(props) => props.theme.palette.text?.secondary};
@@ -86,6 +89,7 @@ const ListItem = styled.div`
   padding-left: 14px;
   display: flex;
   align-items: center;
+  ${ClickableMixin}
 `;
 const ItemText = styled.div`
   color: ${(props) => props.theme.palette.text?.primary};
@@ -94,20 +98,36 @@ const ItemText = styled.div`
   line-height: 16px;
   margin-left: 16px;
 `;
-const UserIcon = styled(Image)``;
+const UserAvatar = styled.img`
+  width: 80px;
+  height: 80px;
+`;
 const LogOutButton = styled(Button)`
   width: 347px;
   height: 49px;
   margin-top: 18vh;
 `;
+const FreeTrial = styled.div`
+  width: 24px;
+  height: 24px;
+`;
+const FreeTrialImg = styled(Image)``;
 const Personal: NextPage<UserProps> = () => {
   const user = useAppSelector((state) => state.user);
-
+  const dispatch = useAppDispatch();
   const getRegistTime = (time: string) => {
     const currentTime = Number(new Date().valueOf());
     const registerTime = Number(new Date(time).valueOf());
     const days = (currentTime - registerTime) / 1000 / 60 / 60 / 24;
-    return days;
+    return days.toFixed(0);
+  };
+  const handleFreeTrial = () => {
+    console.log("click free trial");
+  };
+
+  const handleLogOut = async () => {
+    //登出
+    dispatch(logoutAsync());
   };
 
   return (
@@ -115,15 +135,13 @@ const Personal: NextPage<UserProps> = () => {
       <Container>
         <HeaderBg src={BgImg} />
         <HeaderContent>
-          <Title>Fire</Title>
+          <Title>{user.name.slice(0, 4)}</Title>
           <PersonalContent>
             <UserContent>
-              <UserIcon width={80} height={80} src={user.avatar} unoptimized></UserIcon>
+              <UserAvatar src={user.avatar} />
               <UserInfo>
                 <UserName>{user.name}</UserName>
-                <RegisterTime>
-                  {getRegistTime(user.vip_info.created_at)} day in ziel home
-                </RegisterTime>
+                <RegisterTime>{getRegistTime(user.created_at)} day in ziel home</RegisterTime>
               </UserInfo>
             </UserContent>
             <ProfileEntry>
@@ -133,8 +151,10 @@ const Personal: NextPage<UserProps> = () => {
           </PersonalContent>
         </HeaderContent>
         <MenuList>
-          <ListItem>
-            <FreeTrialIcon />
+          <ListItem onClick={handleFreeTrial}>
+            <FreeTrial>
+              <FreeTrialImg src={FreeTrialIcon} unoptimized />
+            </FreeTrial>
             <ItemText>Free trial</ItemText>
           </ListItem>
           <ListItem>
@@ -150,7 +170,9 @@ const Personal: NextPage<UserProps> = () => {
             <ItemText>Setting</ItemText>
           </ListItem>
         </MenuList>
-        <LogOutButton color={"default"}>Log Out</LogOutButton>
+        <LogOutButton onClick={handleLogOut} color={"default"}>
+          Log Out
+        </LogOutButton>
       </Container>
     </>
   );
