@@ -1,9 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import TabBar from "../../lib/TabBar";
-import TabBarItem from "../../lib/TabBarItem";
-import CreateIcon from "../assets/icons/create.svg";
-import HomeActiveIcon from "../assets/icons/home-active.svg";
-import HomeIcon from "../assets/icons/home.svg";
 import styled from "styled-components";
 import SwiperCore, { Virtual } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -22,6 +17,7 @@ import { composeAuthHeaders, useLogin } from "../utils";
 import { useAppSelector } from "../app/hook";
 import SubscribedIcon from "../assets/icons/subscribed.svg";
 import { followUser } from "../apis/profile";
+import BottomTabBar from "../components/BottomTabBar";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -395,17 +391,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
           />
         </SwiperContainer>
 
-        <TabBar>
-          <TabBarItem>
-            <HomeActiveIcon />
-          </TabBarItem>
-          <TabBarItem>
-            <CreateIcon style={{ position: "relative", bottom: -5 }} />
-          </TabBarItem>
-          <TabBarItem>
-            <HomeIcon />
-          </TabBarItem>
-        </TabBar>
+        <BottomTabBar dark />
       </Container>
     </>
   );
