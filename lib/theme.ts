@@ -9,6 +9,9 @@ export const theme: DefaultTheme = {
       secondary: "#999999",
       hint: "rgba(255, 255, 255, 0.5)",
     },
+    background: {
+      default: "#F5F5F5",
+    },
     common: {
       white: "#fff",
       black: "#222",

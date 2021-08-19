@@ -91,3 +91,18 @@ export const subscribeMagazine = (magazineId: string, isSubscribe: boolean) => {
     },
   });
 };
+
+/** 根据杂志id获取杂志详情*/
+export const getMagazineById = (magazine_id: string | number, options?: AxiosRequestConfig) => {
+  return snsRequest({
+    url: "/magazine/detail",
+    method: "GET",
+    params: {
+      magazine_id,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = mapMagazineItem(response.data.result.data);
+    return response;
+  });
+};
