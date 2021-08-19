@@ -15,6 +15,7 @@ const StyledTabBar = styled.div<TabBarProps>`
 
 interface Props {
   size?: string;
+  dark?: boolean;
 }
 
 type NativeAttrs = Omit<React.ButtonHTMLAttributes<any>, keyof Props>;
@@ -22,7 +23,9 @@ type NativeAttrs = Omit<React.ButtonHTMLAttributes<any>, keyof Props>;
 type TabBarProps = Props & NativeAttrs;
 
 const TabBar = React.forwardRef<HTMLDivElement, React.PropsWithChildren<TabBarProps>>(
-  (props, ref) => <StyledTabBar {...props} ref={ref} />
+  (props, ref) => (
+    <StyledTabBar style={{ backgroundColor: props.dark ? "#222" : "#fff" }} {...props} ref={ref} />
+  )
 );
 
 TabBar.displayName = "TabBar";

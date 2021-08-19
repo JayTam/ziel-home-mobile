@@ -11,6 +11,7 @@ import { useAppSelector, useAppDispatch } from "../app/hook";
 import Button from "../../lib/Button";
 import { ClickableMixin } from "../../lib/mixins";
 import { logoutAsync } from "../app/features/user/userSlice";
+import BottomTabBar from "../components/BottomTabBar";
 
 interface UserProps {
   name: string;
@@ -18,9 +19,14 @@ interface UserProps {
 const Container = styled.div`
   position: relative;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+const HeaderLayout = styled.div`
+  position: relative;
+  width: 100%;
 `;
 const HeaderBg = styled(Image)`
   width: 100vw;
@@ -28,18 +34,13 @@ const HeaderBg = styled(Image)`
 const HeaderContent = styled.div`
   position: absolute;
   left: 0;
-  top: 56px;
+  bottom: 0px;
   width: 100%;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 `;
 
-const Title = styled.div`
-  width: 100%;
-  text-align: center;
-  font-weight: 500;
-  font-size: 17px;
-  line-height: 20px;
-`;
 const PersonalContent = styled.div`
   display: flex;
   align-items: center;
@@ -101,11 +102,19 @@ const ItemText = styled.div`
 const UserAvatar = styled.img`
   width: 80px;
   height: 80px;
+  border-radius: 50%;
+`;
+const LogOut = styled.div`
+  height: 100%;
+  width: 100%;
+  padding: 0px 14px 70px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 `;
 const LogOutButton = styled(Button)`
-  width: 347px;
+  width: 100%;
   height: 49px;
-  margin-top: 18vh;
 `;
 const FreeTrial = styled.div`
   width: 24px;
@@ -133,23 +142,24 @@ const Personal: NextPage<UserProps> = () => {
   return (
     <>
       <Container>
-        <HeaderBg src={BgImg} />
-        <HeaderContent>
-          <Title>{user.name.slice(0, 4)}</Title>
-          <PersonalContent>
-            <UserContent>
-              <UserAvatar src={user.avatar} />
-              <UserInfo>
-                <UserName>{user.name}</UserName>
-                <RegisterTime>{getRegistTime(user.created_at)} day in ziel home</RegisterTime>
-              </UserInfo>
-            </UserContent>
-            <ProfileEntry>
-              <ProfileText>Your profile</ProfileText>
-              <AleftIcon />
-            </ProfileEntry>
-          </PersonalContent>
-        </HeaderContent>
+        <HeaderLayout>
+          <HeaderBg src={BgImg} />
+          <HeaderContent>
+            <PersonalContent>
+              <UserContent>
+                <UserAvatar src={user.avatar} />
+                <UserInfo>
+                  <UserName>{user.name}</UserName>
+                  <RegisterTime>{getRegistTime(user.created_at)} day in ziel home</RegisterTime>
+                </UserInfo>
+              </UserContent>
+              <ProfileEntry>
+                <ProfileText>Your profile</ProfileText>
+                <AleftIcon />
+              </ProfileEntry>
+            </PersonalContent>
+          </HeaderContent>
+        </HeaderLayout>
         <MenuList>
           <ListItem onClick={handleFreeTrial}>
             <FreeTrial>
@@ -170,9 +180,12 @@ const Personal: NextPage<UserProps> = () => {
             <ItemText>Setting</ItemText>
           </ListItem>
         </MenuList>
-        <LogOutButton onClick={handleLogOut} color={"default"}>
-          Log Out
-        </LogOutButton>
+        <LogOut>
+          <LogOutButton onClick={handleLogOut} color={"default"}>
+            Log Out
+          </LogOutButton>
+        </LogOut>
+        <BottomTabBar />
       </Container>
     </>
   );

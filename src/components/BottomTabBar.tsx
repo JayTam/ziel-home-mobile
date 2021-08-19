@@ -5,6 +5,10 @@ import HomeDarkIcon from "../assets/icons/home-dark.svg";
 import CreateIcon from "../assets/icons/create.svg";
 import PersonalDark from "../assets/icons/personal-dark.svg";
 import PersonalDarkActive from "../assets/icons/personal-dark-active.svg";
+import HomeIcon from "../assets/icons/home.svg";
+import HomeActiveIcon from "../assets/icons/home-active.svg";
+import PersonalActive from "../assets/icons/personal-active.svg";
+import Personal from "../assets/icons/personal.svg";
 import TabBar from "../../lib/TabBar";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -23,10 +27,20 @@ const BottomTabBar: React.FC<BottomTabBarProps> = (props) => {
   const isPersonalRoute = useMemo(() => router.asPath === PERSONAL_ROUTE, [router.asPath]);
 
   return (
-    <TabBar>
+    <TabBar dark={props.dark}>
       <Link href={HOME_ROUTE}>
         <TabBarItem>
-          {props.dark ? isHomeRoute ? <HomeDarkActiveIcon /> : <HomeDarkIcon /> : null}
+          {props.dark ? (
+            isHomeRoute ? (
+              <HomeDarkActiveIcon />
+            ) : (
+              <HomeDarkIcon />
+            )
+          ) : isHomeRoute ? (
+            <HomeActiveIcon />
+          ) : (
+            <HomeIcon />
+          )}
         </TabBarItem>
       </Link>
       <Link href={PAPER_CREATE_ROUTE}>
@@ -36,7 +50,17 @@ const BottomTabBar: React.FC<BottomTabBarProps> = (props) => {
       </Link>
       <Link href={PERSONAL_ROUTE}>
         <TabBarItem>
-          {props.dark ? isPersonalRoute ? <PersonalDarkActive /> : <PersonalDark /> : null}
+          {props.dark ? (
+            isPersonalRoute ? (
+              <PersonalDarkActive />
+            ) : (
+              <PersonalDark />
+            )
+          ) : isPersonalRoute ? (
+            <PersonalActive />
+          ) : (
+            <Personal />
+          )}
         </TabBarItem>
       </Link>
     </TabBar>
