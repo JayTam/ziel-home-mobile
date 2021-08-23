@@ -24,13 +24,13 @@ declare module "json-bigint" {
 
     /**
      *
-     * @param options Specifies the parsing should be "strict" towards reporting duplicate-keys in the parsed string. The default follows what is allowed in standard json and resembles the behavior of JSON.parse, but overwrites any previous values with the last one assigned to the duplicate-key.
+     * @param options Specifies the parsing should be "strict" towards reporting duplicate-keys in the parsed string. The default follows what is allowed in standard json and resembles the behavior of JSON.parse, but overwrites any previous values with the last one assigned to the duplicate-indexKey.
      * @constructor
      */
   }
 
   /**
-   * Setting options.strict = true will fail-fast on duplicate-key occurrence and thus warn you upfront of possible lost information.
+   * Setting options.strict = true will fail-fast on duplicate-indexKey occurrence and thus warn you upfront of possible lost information.
    * @param options.strict default false
    */
   function JSONBigint(options?: { strict: boolean }): {

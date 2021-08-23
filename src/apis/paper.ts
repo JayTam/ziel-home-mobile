@@ -167,3 +167,56 @@ export function getUserPapers(params: UserPaperParams, options?: AxiosRequestCon
     return response;
   });
 }
+export interface CreatePaperParams {
+  title: string;
+  content: string;
+  is_hot?: 1 | 0;
+  is_top?: 1 | 0;
+  img_url?: string[];
+  img_url_cover?: string;
+  video_url: string;
+  magazine_id: string;
+  status?: 1 | 0;
+  spec:
+    | {
+        space: string;
+        acreage: string;
+        style: string;
+      }
+    | string;
+}
+
+/**
+ * 创建内容
+ * @param params
+ */
+export const createPaper = (params: CreatePaperParams) => {
+  params.spec = JSON.stringify(params.spec);
+  return snsRequest({
+    url: "/article/add",
+    method: "POST",
+    data: {
+      ...params,
+      status: 1,
+    },
+  });
+};
+
+export interface UpdatePaperParams extends CreatePaperParams {
+  id: string;
+}
+/**
+ * 更新内容
+ * @param params
+ */
+export const updatePaper = (params: UpdatePaperParams) => {
+  params.spec = JSON.stringify(params.spec);
+  return snsRequest({
+    url: "/article/update",
+    method: "POST",
+    data: {
+      ...params,
+      status: 1,
+    },
+  });
+};
