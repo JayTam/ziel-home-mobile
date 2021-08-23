@@ -5,12 +5,12 @@ const fixedFloat = (num: string) => {
 
   return `${numInt}.${numDec ? numDec.substr(0, 1) : "0"}`;
 };
-export const digitalScale = (num: number) => {
+export const digitalScale = (num: number | string) => {
   let newNum = "";
   if (num > 1e3 && num < 1e6) {
-    newNum = `${fixedFloat((num / 1e3).toString())}K`;
+    newNum = `${fixedFloat((Number(num) / 1e3).toString())}K`;
   } else if (num >= 1e6) {
-    newNum = `${fixedFloat((num / 1e6).toString())}M`;
+    newNum = `${fixedFloat((Number(num) / 1e6).toString())}M`;
   } else {
     newNum = num.toString();
   }

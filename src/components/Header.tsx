@@ -7,6 +7,7 @@ const Container = styled.div`
   position: relative;
   width: 100%;
   height: 44px;
+  z-index: 999;
 `;
 
 const Left = styled.div`

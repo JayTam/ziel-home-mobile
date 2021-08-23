@@ -88,6 +88,11 @@ export type PaperParams = {
   page: number;
   limit?: number;
 };
+export type UserPaperParams = {
+  userId: string;
+  page: number;
+  limit?: number;
+};
 
 /**
  * 获取内容列表
@@ -141,3 +146,24 @@ export const starPaper = (paperId: string, isStar: boolean) => {
     },
   });
 };
+
+/**
+ * 获取用户的文章列表
+ * @param params
+ * @param options
+ */
+export function getUserPapers(params: UserPaperParams, options?: AxiosRequestConfig) {
+  return snsRequest({
+    method: "GET",
+    url: "/user/article",
+    params: {
+      limit: params.limit ?? 8,
+      page: params.page,
+      user_id: params.userId,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapPaperItem);
+    return response;
+  });
+}

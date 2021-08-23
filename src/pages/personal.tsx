@@ -12,6 +12,7 @@ import Button from "../../lib/Button";
 import { ClickableMixin } from "../../lib/mixins";
 import { logoutAsync } from "../app/features/user/userSlice";
 import BottomTabBar from "../components/BottomTabBar";
+import Link from "next/link";
 
 interface UserProps {
   name: string;
@@ -71,8 +72,6 @@ const RegisterTime = styled.div`
 const ProfileEntry = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 41px;
-  visibility: hidden;
 `;
 const ProfileText = styled.div`
   color: ${(props) => props.theme.palette.text?.secondary};
@@ -123,6 +122,7 @@ const FreeTrial = styled.div`
 const FreeTrialImg = styled(Image)``;
 const Personal: NextPage<UserProps> = () => {
   const user = useAppSelector((state) => state.user);
+  const PAPER_PROFILE_ROUTE = `/profile/${user.uid}`;
   const dispatch = useAppDispatch();
   const getRegistTime = (time: string) => {
     const currentTime = Number(new Date().valueOf());
@@ -154,7 +154,9 @@ const Personal: NextPage<UserProps> = () => {
                 </UserInfo>
               </UserContent>
               <ProfileEntry>
-                <ProfileText>Your profile</ProfileText>
+                <Link href={PAPER_PROFILE_ROUTE}>
+                  <ProfileText>Your profile</ProfileText>
+                </Link>
                 <AleftIcon />
               </ProfileEntry>
             </PersonalContent>
