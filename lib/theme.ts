@@ -13,5 +13,12 @@ export const theme: DefaultTheme = {
       white: "#fff",
       black: "#222",
     },
+    background: {
+      default: "#fff",
+    },
+    action: {
+      disabledBackground: "rgba(255, 217, 50, 0.3)",
+      disabledOpacity: 0.3,
+    },
   },
 };

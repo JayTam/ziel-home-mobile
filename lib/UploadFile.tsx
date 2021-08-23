@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { useCombinedRefs } from "../src/utils";
 import axios, { CancelTokenSource } from "axios";
 import UploadIcon from "../src/assets/icons/upload.svg";
 import DeleteIcon from "../src/assets/icons/delete.svg";
-import { VerticalHorizontalCenterMixin } from "./mixins";
 import Button from "./Button";
 import Progress from "./Progress";
 
@@ -12,7 +10,7 @@ interface UploadFileProps {
   className?: string;
   name?: string;
   uploadName?: string;
-  value: string;
+  value?: string;
   type?: "image" | "video";
   headers?: Record<string, string>;
   action?: string;
@@ -53,6 +51,12 @@ const ImagePreview = styled.img`
   object-fit: cover;
 `;
 
+const VideoPreview = styled.video`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
 const UploadDeleteIcon = styled(DeleteIcon)`
   position: absolute;
   top: -10px;
@@ -70,6 +74,7 @@ const LoadingMask = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 `;
 
 const LoadingContainer = styled.div`
@@ -92,27 +97,13 @@ const LoadingProgress = styled(Progress)`
   margin: 14px 0;
 `;
 
-const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, revf) => {
-  const {
-    className,
-    name,
-    type,
-    uploadName,
-    value,
-    action,
-    headers,
-    placeholder,
-    placeholderList,
-    onChange,
-    onError,
-  } = props;
+const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, ref) => {
+  const { className, name, type, uploadName, value, action, headers, onChange, onError } = props;
   const innerRef = useRef<HTMLInputElement>(null);
   const cancelTokenSource = useRef<CancelTokenSource>(axios.CancelToken.source());
   const [preview, setPreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [uploadingProgress, setUploadingProgress] = useState(0);
-
-  const targetRef = useCombinedRefs(innerRef);
 
   /**
    * 打开文件选择
@@ -187,7 +178,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
   };
 
   return (
-    <Container className={props.className}>
+    <Container className={className} ref={ref}>
       {loading ? (
         <LoadingMask>
           <LoadingContainer>
@@ -197,26 +188,28 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
           </LoadingContainer>
         </LoadingMask>
       ) : null}
-
       {!preview ? (
         <UploadPlaceholder onClick={handleOpen}>
           <UploadIcon />
         </UploadPlaceholder>
       ) : null}
-
-      {preview && type === "image" ? (
+      {preview ? (
         <ImagePreviewWrapper>
-          <ImagePreview src={preview} />
+          {type === "image" ? (
+            <ImagePreview src={preview} />
+          ) : (
+            <VideoPreview src={preview} controls={false} autoPlay muted loop />
+          )}
         </ImagePreviewWrapper>
       ) : null}
-
       {preview ? <UploadDeleteIcon onClick={handleClose} /> : null}
       <input
         name={name}
         accept={`${type}/*`}
-        ref={targetRef}
+        ref={innerRef}
         type="file"
         style={{ display: "none" }}
+        value={value}
         onChange={handleChange}
         onClick={handleInputClick}
       />
