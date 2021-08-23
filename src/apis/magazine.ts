@@ -92,6 +92,26 @@ export const subscribeMagazine = (magazineId: string, isSubscribe: boolean) => {
   });
 };
 
+export interface MagazinesForChooseParams extends MagazineParams {
+  // 1- published（我的杂志） 2- join (参与的) 3-discover（推荐投稿） 默认1
+  type: "1" | "2" | "3";
+}
+
+/**
+ * 选择杂志时，获取杂志列表
+ * @param params
+ */
+export const getMagazinesForChoose = (params: MagazinesForChooseParams) => {
+  return snsRequest({
+    url: "/user/publish_magazine",
+    method: "GET",
+    params,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    return response;
+  });
+};
+
 /** 根据杂志id获取杂志详情*/
 export const getMagazineById = (magazine_id: string | number, options?: AxiosRequestConfig) => {
   return snsRequest({

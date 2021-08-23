@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { VerticalCenterMixin, VerticalHorizontalCenterMixin } from "../../lib/mixins";
 import BackIcon from "../assets/icons/back.svg";
+import { useRouter } from "next/router";
 
 const Container = styled.div`
   position: relative;
@@ -32,12 +33,23 @@ const Right = styled.div`
 interface HeaderProps {
   leftComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
+  onBack?: () => void;
 }
 
 const Header: React.FC<React.PropsWithChildren<HeaderProps>> = (props) => {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (props.onBack) {
+      props.onBack?.();
+    } else {
+      router.back();
+    }
+  };
+
   return (
     <Container>
-      <Left>{props.leftComponent ?? <BackIcon />}</Left>
+      <Left>{props.leftComponent ?? <BackIcon onClick={handleBack} />}</Left>
       <Center>{props.children}</Center>
       {props.rightComponent ? <Right>{props.rightComponent}</Right> : null}
     </Container>

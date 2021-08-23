@@ -1,12 +1,11 @@
 import { NextPage } from "next";
-import Header from "../../components/Header";
+import React from "react";
+import EditPaper, { EditPaperProps } from "./[paper_id]";
 
-const PaperCreate: NextPage = () => {
-  return (
-    <div>
-      <Header />
-    </div>
-  );
+type CreatePaperProps = EditPaperProps;
+
+const PaperCreate: NextPage<CreatePaperProps> = (props) => {
+  return <EditPaper {...props} type="create" />;
 };
 
 export default PaperCreate;

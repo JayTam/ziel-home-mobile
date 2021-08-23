@@ -10,11 +10,15 @@ export const theme: DefaultTheme = {
       hint: "rgba(255, 255, 255, 0.5)",
     },
     background: {
-      default: "#F5F5F5",
+      default: "#fff",
     },
     common: {
       white: "#fff",
       black: "#222",
+    },
+    action: {
+      disabledBackground: "rgba(255, 217, 50, 0.3)",
+      disabledOpacity: 0.3,
     },
   },
 };
