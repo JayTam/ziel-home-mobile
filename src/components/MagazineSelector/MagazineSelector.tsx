@@ -187,7 +187,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
               ))}
               {hasMore ? <div ref={loaderRef}>loading...</div> : null}
             </StyledTabPanel>
-            <TabPanel indexKey="2" tab="Published" forceRender>
+            <StyledTabPanel indexKey="2" tab="Published" forceRender>
               {magazines.map((magazine) => (
                 <StyledMagazinePreview
                   key={magazine.id}
@@ -197,7 +197,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                 />
               ))}
               {hasMore ? <div ref={loaderRef}>loading...</div> : null}
-            </TabPanel>
+            </StyledTabPanel>
           </StyledTabs>
         </PageContainer>
       </StyledPopup>
