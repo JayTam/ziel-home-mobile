@@ -2,15 +2,15 @@ import { GetServerSideProps, NextPage } from "next";
 import styled from "styled-components";
 import { useState } from "react";
 import { MagazineType, getMagazineById } from "../../apis";
-import { getPaperList } from "../../apis/paper";
-import { PaperType } from "../../apis/paper";
 import Header from "../../components/Header";
-import { composeAuthHeaders } from "../../utils";
+import { composeAuthHeaders, digitalScale } from "../../utils";
 import BtnShare from "../../assets/icons/btn_share.svg";
 import ShowMoreText from "react-show-more-text";
 import Chief from "../../assets/icons/CHIEF.svg";
 import Button from "../../../lib/Button";
 import produce from "immer";
+import PaperPreview from "../../components/Profiles/PaperPreview";
+import { getPaperList, likePaper, PaperType } from "../../apis/paper";
 
 interface MagazineProps {
   magazine: MagazineType;
@@ -29,6 +29,11 @@ const Content = styled.div`
 `;
 const MagazineContent = styled.div`
   display: flex;
+`;
+const MagazineImg = styled.img`
+  border-radius: 14px;
+  width: 90px;
+  height: 120px;
 `;
 const MagazineInfo = styled.div`
   display: flex;
@@ -63,6 +68,11 @@ const BottomContent = styled.div`
 const AuthorContent = styled.div`
   align-items: center;
   display: flex;
+`;
+const Avatar = styled.img`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
 `;
 const AuthorName = styled.div`
   font-size: 14px;
@@ -116,28 +126,37 @@ const TypeText = styled.div`
   line-height: 14px;
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
-const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
+const MagazinePaperLayout = styled.div`
+  margin-top: 30px;
+  padding: 0px 14px 0px 7px;
+  height: 100%;
+  width: 100%;
+`;
+const PapaerCount = styled.div`
+  width: 100%;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: left;
+`;
+const PaperContent = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 7px;
+`;
+const PaperItem = styled.div`
+  width: calc((100vw - 35px) / 2);
+  height: calc((100vw - 35px) / 2 / 0.56);
+  margin-left: 7px;
+  margin-top: 7px;
+`;
+const Magazine: NextPage<MagazineProps> = ({ magazine, paperList }) => {
   const [currentMagazine, setCurrentMagazin] = useState(magazine);
+  const [papers, setPapers] = useState<PaperType[]>(paperList);
+
   const handleShare = () => {
     console.log("share!");
-  };
-  const fixedFloat = (num: string) => {
-    const numArr = parseFloat(num).toString().split(".");
-    const numInt = numArr[0];
-    const numDec = numArr[1];
-
-    return `${numInt}.${numDec ? numDec.substr(0, 1) : "0"}`;
-  };
-  const parseNum = (num: number) => {
-    let newNum = "";
-    if (num > 1e3 && num < 1e6) {
-      newNum = `${fixedFloat((num / 1e3).toString())}K`;
-    } else if (num >= 1e6) {
-      newNum = `${fixedFloat((num / 1e6).toString())}M`;
-    } else {
-      newNum = num.toString();
-    }
-    return newNum;
   };
   const handleSubscribe = (data: MagazineType) => {
     const isSubscribe = !data.isSubscribe;
@@ -152,18 +171,28 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
       })
     );
   };
+  const handleStarPaper = async (paper: PaperType) => {
+    if (!paper) return;
+    const isLike = !paper.isLike;
+    await likePaper(paper.id, isLike);
+    setPapers((prev) =>
+      produce(prev, (draft) => {
+        draft.forEach((item) => {
+          if (item.id === paper.id) item.isLike = isLike;
+          if (isLike) item.likeNum += 1;
+          else item.likeNum -= 1;
+        });
+        return draft;
+      })
+    );
+  };
   return (
     <>
       <Container>
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
-            <img
-              style={{ borderRadius: "14px" }}
-              width={90}
-              height={120}
-              src={currentMagazine.cover}
-            ></img>
+            <MagazineImg src={currentMagazine.cover}></MagazineImg>
             <MagazineInfo>
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
@@ -181,12 +210,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
               </TopContent>
               <BottomContent>
                 <AuthorContent>
-                  <img
-                    width={30}
-                    height={30}
-                    style={{ borderRadius: "50%" }}
-                    src={currentMagazine.avatar}
-                  ></img>
+                  <Avatar src={currentMagazine.avatar}></Avatar>
                   <AuthorName>{currentMagazine.author}</AuthorName>
                   <ChiefDiv>
                     <Chief></Chief>
@@ -208,19 +232,29 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
           </MagazineContent>
           <MagazineStatistics>
             <StatisticsItem>
-              <Statistics>{parseNum(currentMagazine.viewNum)}</Statistics>
+              <Statistics>{digitalScale(currentMagazine.viewNum)}</Statistics>
               <TypeText>views</TypeText>
             </StatisticsItem>
             <StatisticsItem>
-              <Statistics>{parseNum(currentMagazine.subscribeNum)}</Statistics>
+              <Statistics>{digitalScale(currentMagazine.subscribeNum)}</Statistics>
               <TypeText>subscribers</TypeText>
             </StatisticsItem>
             <StatisticsItem>
-              <Statistics>{parseNum(currentMagazine.editorNum)}</Statistics>
+              <Statistics>{digitalScale(currentMagazine.editorNum)}</Statistics>
               <TypeText>editors</TypeText>
             </StatisticsItem>
           </MagazineStatistics>
         </Content>
+        <MagazinePaperLayout>
+          <PapaerCount>Paper 1344</PapaerCount>
+          <PaperContent>
+            {papers.map((paper) => (
+              <PaperItem key={paper.id}>
+                <PaperPreview {...paper} onLike={() => handleStarPaper(paper)}></PaperPreview>
+              </PaperItem>
+            ))}
+          </PaperContent>
+        </MagazinePaperLayout>
       </Container>
     </>
   );
@@ -233,7 +267,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   const papersResponse = await getPaperList(paperParams, { headers });
   return {
     props: {
-      papers: papersResponse.data.result.data,
+      paperList: papersResponse.data.result.data,
       magazine: magazineResponse.data.result.data,
     },
   };
