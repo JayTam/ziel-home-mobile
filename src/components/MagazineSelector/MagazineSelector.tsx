@@ -10,6 +10,7 @@ import Tabs from "../../../lib/Tabs";
 import { getMagazinesForChoose, MagazineType } from "../../apis";
 import MagazinePreview from "./MagazinePreview";
 import { useUpdateEffect } from "ahooks";
+import { useInfiniteScroll } from "../../utils";
 
 const Container = styled.div`
   display: flex;
@@ -62,7 +63,7 @@ const DoneButton = styled.div`
 `;
 
 const PageContainer = styled.div`
-  padding: 14px;
+  padding: 14px 0;
 `;
 
 const StyledMagazinePreview = styled(MagazinePreview)`
@@ -75,11 +76,15 @@ const StyledMagazinePreview = styled(MagazinePreview)`
   }
 `;
 
+const StyledTabs = styled(Tabs)`
+  padding: 0 14px;
+`;
+
 const StyledTabPanel = styled(TabPanel)`
   max-height: calc(100vh - 112px);
   overflow-y: scroll;
   overflow-x: hidden;
-  padding-bottom: 100px;
+  padding: 0 14px 100px;
 `;
 
 interface MagazineSelectorProps {
@@ -91,26 +96,38 @@ interface MagazineSelectorProps {
 
 const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>((props, ref) => {
   const [open, setOpen] = useState(false);
-  const [page, setPage] = useState(0);
   const [title, setTitle] = useState("");
   const [type, setType] = useState<"1" | "2" | "3">("1");
   const [magazines, setMagazines] = useState<MagazineType[]>([]);
   const [selectedMagazine, setSelectedMagazine] = useState<MagazineType | null>(null);
+  const { loaderRef, page, setPage, setLoading, setHasMore, hasMore } =
+    useInfiniteScroll<HTMLDivElement>({
+      hasMore: false,
+      initialPage: 0,
+    });
 
   useUpdateEffect(() => {
     if (open) {
       setPage(1);
       setTitle("");
       setType("1");
+      setMagazines([]);
     }
   }, [open]);
 
   useUpdateEffect(() => {
-    getMagazinesForChoose({ page, title, type }).then((response) => {
-      const list = response.data.result.data;
-      setMagazines(list);
-    });
-  }, [page, title, type]);
+    setLoading(true);
+    getMagazinesForChoose({ page, title, type, limit: 4 })
+      .then((response) => {
+        const list = response.data.result.data;
+        const hasMore = Boolean(response.data.result.hasmore);
+        setHasMore(hasMore);
+        setMagazines((prev) => [...prev, ...list]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [page, setHasMore, setLoading, title, type]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -123,6 +140,13 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
   const handleDone = () => {
     if (selectedMagazine) props.onChange?.(selectedMagazine.id);
     setOpen(false);
+  };
+
+  const handleChange = (key: string) => {
+    setType(key as "1" | "2" | "3");
+    setPage(1);
+    setTitle("");
+    setMagazines([]);
   };
 
   return (
@@ -151,8 +175,8 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
         </Header>
 
         <PageContainer>
-          <Tabs activeKey={type} onChange={(key) => setType(key as "1" | "2" | "3")}>
-            <StyledTabPanel indexKey="1" tab="My Magazines">
+          <StyledTabs activeKey={type} onChange={handleChange}>
+            <StyledTabPanel indexKey="1" tab="My Magazines" forceRender>
               {magazines.map((magazine) => (
                 <StyledMagazinePreview
                   key={magazine.id}
@@ -161,8 +185,9 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                   onClick={() => setSelectedMagazine(magazine)}
                 />
               ))}
+              {hasMore ? <div ref={loaderRef}>loading...</div> : null}
             </StyledTabPanel>
-            <TabPanel indexKey="2" tab="Published">
+            <TabPanel indexKey="2" tab="Published" forceRender>
               {magazines.map((magazine) => (
                 <StyledMagazinePreview
                   key={magazine.id}
@@ -171,8 +196,9 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                   onClick={() => setSelectedMagazine(magazine)}
                 />
               ))}
+              {hasMore ? <div ref={loaderRef}>loading...</div> : null}
             </TabPanel>
-          </Tabs>
+          </StyledTabs>
         </PageContainer>
       </StyledPopup>
     </>

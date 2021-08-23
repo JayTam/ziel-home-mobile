@@ -45,6 +45,7 @@ export function useInfiniteScroll<T extends HTMLElement>(props: useInfiniteScrol
   const [page, setPage] = useState<number>(props.initialPage ?? 1);
   const [loading, setLoading] = useState(false);
   const [firstLoading, setFirstLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     const io = new IntersectionObserver((entries) => {
@@ -61,7 +62,17 @@ export function useInfiniteScroll<T extends HTMLElement>(props: useInfiniteScrol
     return () => {
       io.disconnect();
     };
-  }, [page, loading, props.hasMore, firstLoading]);
+  }, [page, loading, hasMore, firstLoading]);
 
-  return { page, setPage, loaderRef, loading, setLoading, firstLoading, setFirstLoading };
+  return {
+    loaderRef,
+    page,
+    setPage,
+    loading,
+    setLoading,
+    firstLoading,
+    setFirstLoading,
+    hasMore,
+    setHasMore,
+  };
 }

@@ -104,7 +104,7 @@ const Tabs: React.FC<TabsProps> = (props) => {
   return (
     <TabsContext.Provider value={{ activeKey: props.activeKey }}>
       <Container>
-        <TabsList>
+        <TabsList className={props.className}>
           {tabs.map((tab, i) => (
             <TabItem
               title={tab.tab}
