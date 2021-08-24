@@ -4,7 +4,9 @@ import { VerticalCenterMixin, VerticalHorizontalCenterMixin } from "../../lib/mi
 import BackIcon from "../assets/icons/back.svg";
 import { useRouter } from "next/router";
 
-const Container = styled.div`
+const Container = styled.div<HeaderProps>`
+  position: ${(props) => (props.fixed ? "fixed" : "relative")};
+  background-color: ${(props) => props.color};
   width: 100%;
   height: 44px;
   z-index: 999;
@@ -31,10 +33,11 @@ const Right = styled.div`
 `;
 
 interface HeaderProps {
+  fixed?: boolean;
+  color?: string;
   leftComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
   onBack?: () => void;
-  fixed?: boolean;
 }
 
 const Header: React.FC<React.PropsWithChildren<HeaderProps>> = (props) => {
@@ -49,12 +52,17 @@ const Header: React.FC<React.PropsWithChildren<HeaderProps>> = (props) => {
   };
 
   return (
-    <Container style={{ position: props.fixed ? "fixed" : "relative" }}>
+    <Container fixed={props.fixed} color={props.color}>
       <Left>{props.leftComponent ?? <BackIcon onClick={handleBack} />}</Left>
       <Center>{props.children}</Center>
       {props.rightComponent ? <Right>{props.rightComponent}</Right> : null}
     </Container>
   );
+};
+
+Header.defaultProps = {
+  color: "transparent",
+  fixed: false,
 };
 
 export default Header;
