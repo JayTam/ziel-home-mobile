@@ -105,7 +105,7 @@ export const getPaperList = (params: PaperParams, options?: AxiosRequestConfig) 
     method: "GET",
     params: {
       magazine_id: params.magazineId,
-      limit: 2,
+      limit: 8,
       page: params.page,
     },
     ...options,
@@ -220,3 +220,25 @@ export const updatePaper = (params: UpdatePaperParams) => {
     },
   });
 };
+
+/**
+ * 获取用户收藏的文章列表
+ * @param params
+ * @param options
+ * @returns
+ */
+export function getStarPapers(params: UserPaperParams, options?: AxiosRequestConfig) {
+  return snsRequest({
+    method: "GET",
+    url: "/favorite/article",
+    params: {
+      user_id: params.userId,
+      limit: params.limit ?? 8,
+      page: params.page ?? 1,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapPaperItem);
+    return response;
+  });
+}

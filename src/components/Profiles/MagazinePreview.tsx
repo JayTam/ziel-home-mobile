@@ -1,31 +1,36 @@
 import { MagazineType } from "../../apis";
 import styled from "styled-components";
 import SubscribeIcon from "../../assets/icons/icon_subscribe.svg";
+import { digitalScale } from "../../utils";
+import Image from "next/image";
+import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
 
 const Container = styled.div`
-  position: relative;
   height: 100%;
   width: 100%;
   border-radius: 14px;
+  padding-bottom: 14px;
 `;
 const MagazineContent = styled.div`
-  position: relative;
   height: 100%;
   width: 100%;
-  padding: 0px 6px 8px 0px;
 `;
 const MagazinePoster = styled.img`
-  height: 100%;
+  height: 227px;
+  width: 100%;
+  border-radius: 14px;
+`;
+const PlacehoderImage = styled(Image)`
+  height: 227px;
   width: 100%;
   border-radius: 14px;
 `;
 const SubscribeLayout = styled.div`
   width: 100%;
-  position: absolute;
-  bottom: 0;
-  right: 0;
   display: flex;
   justify-content: flex-end;
+  margin-top: -24px;
+  padding-right: 6px;
 `;
 const SubscribeCount = styled.div`
   font-size: 12px;
@@ -50,20 +55,24 @@ const PickCount = styled.div`
   margin-top: 4px;
   font-size: 12px;
   line-height: 14px;
-  color: ${(props) => props.theme.palette.text?.primary};
+  color: ${(props) => props.theme.palette.text?.secondary};
 `;
-const MagazinePreview: React.FC<MagazineType> = () => {
+const MagazinePreview: React.FC<MagazineType> = (props) => {
   return (
     <Container>
       <MagazineContent>
-        <MagazinePoster />
+        {props.cover ? (
+          <MagazinePoster src={props.cover} />
+        ) : (
+          <PlacehoderImage src={VideoPlaceholderImage} />
+        )}
         <SubscribeLayout>
           <SubscribeIcon />
-          <SubscribeCount></SubscribeCount>
+          <SubscribeCount>{digitalScale(props.subscribeNum)}</SubscribeCount>
         </SubscribeLayout>
       </MagazineContent>
-      <MagazineName></MagazineName>
-      <PickCount></PickCount>
+      <MagazineName>{props.title}</MagazineName>
+      <PickCount>{props.subscribeNum} picks</PickCount>
     </Container>
   );
 };

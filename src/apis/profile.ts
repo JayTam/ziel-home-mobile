@@ -6,9 +6,9 @@ export type ProfileType = {
   avatar: string;
   nickname: string;
   signature: string;
-  paperNum: string;
-  followerNum: string;
-  followingNum: string;
+  paperNum: number;
+  followerNum: number;
+  followingNum: number;
   isFollow: boolean;
 };
 
@@ -17,7 +17,7 @@ const mapProfileItem = (item: Record<string, any>) => ({
   avatar: item.avatar ?? "",
   nickname: item.nickname ?? "",
   signature: item.signature ?? "",
-  paperNum: item.article ?? "",
+  paperNum: item.article ?? 0,
   followerNum: item.follower ?? 0,
   followingNum: item.following ?? 0,
   isFollow: Boolean(item.is_follow),

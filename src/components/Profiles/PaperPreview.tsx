@@ -6,6 +6,7 @@ import { digitalScale } from "../../utils";
 import { PaperType } from "../../apis/paper";
 import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
 import Image from "next/image";
+import { TextEllipsisMixin } from "../../../lib/mixins";
 
 interface ManazinePagePropType extends PaperType {
   onLike?: () => void;
@@ -54,7 +55,8 @@ const BottomContent = styled.div`
 const Description = styled.div`
   font-size: 12px;
   line-height: 14px;
-  color: ${(props) => props.theme.palette.common?.white}; ;
+  color: ${(props) => props.theme.palette.common?.white};
+  ${TextEllipsisMixin}
 `;
 const AutherLayout = styled.div`
   width: 100%;

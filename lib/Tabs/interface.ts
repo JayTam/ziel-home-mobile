@@ -4,6 +4,7 @@ export interface TabsProps {
   activeKey?: string;
   className?: string;
   barWidth?: number;
+  isSecondary?: boolean;
   onChange?: (activeKey: string) => void;
 }
 

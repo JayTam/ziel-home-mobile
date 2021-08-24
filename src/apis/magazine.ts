@@ -57,6 +57,12 @@ export type MagazineParams = {
   title?: string;
 };
 
+export type UserMagazineParams = {
+  userId: string;
+  page: number;
+  limit?: number;
+};
+
 /**
  * 获取下一条杂志详情
  * @param magazineId 杂志ID，如果不传，获取第一条杂志
@@ -126,3 +132,46 @@ export const getMagazineById = (magazine_id: string | number, options?: AxiosReq
     return response;
   });
 };
+
+/**
+ * 获取用户的杂志列表
+ * @param params
+ * @param options
+ */
+export function getUserMagazines(params: UserMagazineParams, options?: AxiosRequestConfig) {
+  return snsRequest({
+    method: "GET",
+    url: "/user/magazine",
+    params: {
+      user_id: params.userId,
+      limit: params.limit ?? 8,
+      page: params.page ?? 1,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    return response;
+  });
+}
+
+/**
+ * 获取用户订阅的杂志列表
+ * @param params
+ * @param options
+ * @returns
+ */
+export function getStarMagazines(params: UserMagazineParams, options?: AxiosRequestConfig) {
+  return snsRequest({
+    method: "GET",
+    url: "/favorite/magazine",
+    params: {
+      user_id: params.userId,
+      limit: params.limit ?? 8,
+      page: params.page ?? 1,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    return response;
+  });
+}

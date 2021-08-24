@@ -5,7 +5,6 @@ import BackIcon from "../assets/icons/back.svg";
 import { useRouter } from "next/router";
 
 const Container = styled.div`
-  position: relative;
   width: 100%;
   height: 44px;
   z-index: 999;
@@ -35,6 +34,7 @@ interface HeaderProps {
   leftComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
   onBack?: () => void;
+  fixed?: boolean;
 }
 
 const Header: React.FC<React.PropsWithChildren<HeaderProps>> = (props) => {
@@ -49,7 +49,7 @@ const Header: React.FC<React.PropsWithChildren<HeaderProps>> = (props) => {
   };
 
   return (
-    <Container>
+    <Container style={{ position: props.fixed ? "fixed" : "relative" }}>
       <Left>{props.leftComponent ?? <BackIcon onClick={handleBack} />}</Left>
       <Center>{props.children}</Center>
       {props.rightComponent ? <Right>{props.rightComponent}</Right> : null}

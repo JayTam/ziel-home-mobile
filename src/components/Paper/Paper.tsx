@@ -13,6 +13,7 @@ import FollowedIcon from "../../assets/icons/followed.svg";
 import CommentIcon from "../../assets/icons/comment.svg";
 import MoreIcon from "../../assets/icons/more.svg";
 import { useAppSelector } from "../../app/hook";
+import Link from "next/link";
 
 const Container = styled.div`
   position: relative;
@@ -137,7 +138,9 @@ const Paper: React.FC<PaperInterface> = (props) => {
       <VideoPlayer {...props} type="poster" />
       <BottomContainer>
         <AuthorInfo>
-          <Avatar src={props.avatar} alt="avatar" />
+          <Link href={`/profile/${props.authorId}`}>
+            <Avatar src={props.avatar} alt="avatar" />
+          </Link>
           <AuthorName>{props.author}</AuthorName>
           {showFollowIcon ? (
             props.isFollow ? (

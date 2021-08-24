@@ -1,9 +1,9 @@
 import { GetServerSideProps, NextPage } from "next";
 import styled from "styled-components";
-import { useState } from "react";
-import { MagazineType, getMagazineById } from "../../apis";
+import { useEffect, useState } from "react";
+import { MagazineType, getMagazineById, subscribeMagazine } from "../../apis";
 import Header from "../../components/Header";
-import { composeAuthHeaders, digitalScale } from "../../utils";
+import { composeAuthHeaders, digitalScale, useInfiniteScroll } from "../../utils";
 import BtnShare from "../../assets/icons/btn_share.svg";
 import ShowMoreText from "react-show-more-text";
 import Chief from "../../assets/icons/CHIEF.svg";
@@ -54,7 +54,6 @@ const Title = styled.div`
   color: ${(props) => props.theme.palette.text?.primary};
 `;
 const Description = styled.div`
-  max-height: 32px;
   width: 100%;
   font-size: 12px;
   line-height: 16px;
@@ -83,7 +82,6 @@ const ChiefDiv = styled.div`
   margin-left: 2px;
 `;
 const SubscribeButton = styled(Button)`
-  width: 83px;
   height: 30px;
   border-radius: 26px;
   font-weight: 500;
@@ -91,19 +89,10 @@ const SubscribeButton = styled(Button)`
   line-height: 16px;
   color: ${(props) => props.theme.palette.text?.primary};
 `;
-const UnSubscribeButton = styled(Button)`
-  width: 99px;
-  height: 30px;
-  border-radius: 26px;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 16px;
-  color: ${(props) => props.theme.palette.text?.secondary};
-`;
 const MagazineStatistics = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: ${(props) => props.theme.palette.background?.default};
+  background-color: ${(props) => props.theme.palette.background?.paper};
   border-radius: 14px;
   height: 60px;
   width: 100%;
@@ -151,15 +140,35 @@ const PaperItem = styled.div`
   margin-left: 7px;
   margin-top: 7px;
 `;
-const Magazine: NextPage<MagazineProps> = ({ magazine, paperList }) => {
+const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const [currentMagazine, setCurrentMagazin] = useState(magazine);
-  const [papers, setPapers] = useState<PaperType[]>(paperList);
+  const [papers, setPapers] = useState<PaperType[]>([]);
+  const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
+    hasMore: false,
+    initialPage: 0,
+  });
+
+  useEffect(() => {
+    setLoading(true);
+    getPaperList({ magazineId: magazine.id, page })
+      .then((response) => {
+        const list = response.data.result.data;
+        const hasMore = Boolean(response.data.result.hasmore);
+        setHasMore(hasMore);
+        setPapers((prev) => [...prev, ...list]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [magazine.id, page, setHasMore, setLoading]);
 
   const handleShare = () => {
     console.log("share!");
   };
-  const handleSubscribe = (data: MagazineType) => {
-    const isSubscribe = !data.isSubscribe;
+  const handleSubscribe = async (magazine: MagazineType) => {
+    if (!magazine) return;
+    const isSubscribe = !magazine.isSubscribe;
+    await subscribeMagazine(magazine.id, isSubscribe);
     setCurrentMagazin((prev) =>
       produce(prev, (draft) => {
         if (isSubscribe) {
@@ -221,11 +230,9 @@ const Magazine: NextPage<MagazineProps> = ({ magazine, paperList }) => {
                     handleSubscribe(currentMagazine);
                   }}
                 >
-                  {currentMagazine.isSubscribe ? (
-                    <SubscribeButton color="primary">Subscribe</SubscribeButton>
-                  ) : (
-                    <UnSubscribeButton color="secondary">UnSubscribe</UnSubscribeButton>
-                  )}
+                  <SubscribeButton color={currentMagazine.isSubscribe ? "primary" : "secondary"}>
+                    {currentMagazine.isSubscribe ? "Subscribe" : "UnSubscribe"}
+                  </SubscribeButton>
                 </div>
               </BottomContent>
             </MagazineInfo>
@@ -253,6 +260,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine, paperList }) => {
                 <PaperPreview {...paper} onLike={() => handleStarPaper(paper)}></PaperPreview>
               </PaperItem>
             ))}
+            {hasMore ? <div ref={loaderRef}>loading...</div> : null}
           </PaperContent>
         </MagazinePaperLayout>
       </Container>
@@ -263,11 +271,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   const headers = composeAuthHeaders(req.headers.cookie);
   const magazineId = params?.id as string;
   const magazineResponse = await getMagazineById(magazineId, { headers });
-  const paperParams = { magazineId: magazineId, page: 1 };
-  const papersResponse = await getPaperList(paperParams, { headers });
   return {
     props: {
-      paperList: papersResponse.data.result.data,
       magazine: magazineResponse.data.result.data,
     },
   };
