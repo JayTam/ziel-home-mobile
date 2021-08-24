@@ -1,6 +1,8 @@
 import axios from "axios";
 import JSONBigint from "json-bigint";
 import { composeAuthHeaders } from "../../utils";
+import { store } from "../../app/store";
+import { logoutAsync } from "../../app/features/user/userSlice";
 
 const request = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SNS_BASE_URL,
@@ -30,6 +32,9 @@ request.interceptors.response.use(async (response) => {
   switch (response.data.status) {
     case 0:
       return response;
+    case 40002:
+      await store?.dispatch(logoutAsync());
+      return Promise.reject(new Error("Authentication error"));
     default:
       return Promise.reject(new Error(`Unknown error: ${JSON.stringify(response.data)}`));
   }
