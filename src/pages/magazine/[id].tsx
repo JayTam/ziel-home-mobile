@@ -165,21 +165,32 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const handleShare = () => {
     console.log("share!");
   };
+
+  /**
+   *  订阅杂志
+   * @
+   */
   const handleSubscribe = async (magazine: MagazineType) => {
     if (!magazine) return;
     const isSubscribe = !magazine.isSubscribe;
     await subscribeMagazine(magazine.id, isSubscribe);
     setCurrentMagazin((prev) =>
       produce(prev, (draft) => {
-        if (isSubscribe) {
-          magazine.subscribeNum += 1;
-        } else {
-          magazine.subscribeNum -= 1;
-        }
         draft.isSubscribe = isSubscribe;
+        if (isSubscribe) {
+          draft.subscribeNum = magazine.subscribeNum + 1;
+        } else {
+          draft.subscribeNum = magazine.subscribeNum - 1;
+        }
+        return draft;
       })
     );
   };
+
+  /**
+   *  点赞内容
+   * @
+   */
   const handleStarPaper = async (paper: PaperType) => {
     if (!paper) return;
     const isLike = !paper.isLike;
@@ -188,8 +199,8 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
       produce(prev, (draft) => {
         draft.forEach((item) => {
           if (item.id === paper.id) item.isLike = isLike;
-          if (isLike) item.likeNum += 1;
-          else item.likeNum -= 1;
+          if (isLike) item.likeNum = paper.likeNum + 1;
+          else item.likeNum = paper.likeNum - 1;
         });
         return draft;
       })

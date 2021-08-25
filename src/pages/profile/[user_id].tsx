@@ -154,12 +154,13 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
     await followUser(props.userId, isFollow);
     setProfile((prev) =>
       produce(prev, (draft) => {
-        if (isFollow) {
-          draft.followerNum += 1;
-        } else {
-          draft.followerNum -= 1;
-        }
         draft.isFollow = isFollow;
+        if (isFollow) {
+          draft.followerNum = profile.followerNum + 1;
+        } else {
+          draft.followerNum = profile.followerNum - 1;
+        }
+        return draft;
       })
     );
   };

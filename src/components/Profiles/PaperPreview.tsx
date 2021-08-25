@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import StarActiveIcon from "../../assets/icons/star-magazine-active.svg";
-import StarIcon from "../../assets/icons/star-magazine.svg";
 import PlayIcon from "../../assets/icons/play.svg";
 import { digitalScale } from "../../utils";
 import { PaperType } from "../../apis/paper";
@@ -37,14 +35,7 @@ const PaperContent = styled.div`
   border-radius: 14px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-`;
-const TopConent = styled.div`
-  width: 100%;
-  display: flex;
   justify-content: flex-end;
-  padding-top: 4px;
-  padding-right: 4px;
 `;
 const BottomContent = styled.div`
   width: 100%;
@@ -98,9 +89,6 @@ const PaperPreview: React.FC<ManazinePagePropType> = (props) => {
         <PlacehoderImage src={VideoPlaceholderImage} />
       )}
       <PaperContent>
-        <TopConent onClick={props.onLike}>
-          {props.isLike ? <StarActiveIcon /> : <StarIcon />}
-        </TopConent>
         <BottomContent>
           <Description>{props.description}</Description>
           <AutherLayout>
