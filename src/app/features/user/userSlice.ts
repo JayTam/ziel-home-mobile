@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchLogout } from "../../../apis";
 import { AppThunk } from "../../store";
 import { removeAuth } from "../../../utils";
+import Router from "next/router";
 
 // http://passport-doc.zieldev.com/api/%E8%B4%A6%E6%88%B7%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/#%E6%A0%B9%E6%8D%AEtoken%E8%8E%B7%E5%8F%96%E8%B4%A6%E6%88%B7%E4%BF%A1%E6%81%AFgetaccountinfo
 export interface UserState {
@@ -115,8 +116,8 @@ export const logoutAsync = (): AppThunk => async (dispatch) => {
     await fetchLogout();
   } finally {
     removeAuth();
+    await Router.push("/");
     dispatch(cleanUser());
-    window.location.href = "/";
   }
 };
 

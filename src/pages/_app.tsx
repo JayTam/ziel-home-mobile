@@ -10,21 +10,19 @@ import {
   composeAuthHeaders,
   getAuth,
   getAuthByRoute,
+  isServer,
   LoginContext,
   LoginContextState,
+  parsePassportRedirectURL,
 } from "../utils";
 import { initialiseStore, useStore } from "../app/store";
 import QueryString from "querystring";
 import { fetchUserInfo } from "../apis";
 import { setUserInfo } from "../app/features/user/userSlice";
 import App from "next/app";
-import {
-  PASSPORT_DEVICE_ID_KEY,
-  PASSPORT_SUB_APP_ID_KEY,
-  PASSPORT_TENANT_NAME_KEY,
-  PASSPORT_TOKEN_KEY,
-} from "../constants";
+import { PASSPORT_DEVICE_ID_KEY, PASSPORT_TENANT_NAME_KEY, PASSPORT_TOKEN_KEY } from "../constants";
 import { Provider } from "react-redux";
+import Router from "next/router";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -76,11 +74,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const getPassportLoginUrl = () =>
-  `${process.env.NEXT_PUBLIC_PAASPORT_URL}?passport_sub_app_id=${
-    process.env.NEXT_PUBLIC_PAASPORT_APP_ID
-  }&redirect_uri=${encodeURIComponent(window.location.href)}`;
-
 // 需要登陆的路由，未登陆态访问这些路由，重定向到首页
 const needLoginRoutes = [
   "/paper/create",
@@ -99,14 +92,14 @@ function MyApp(app: AppProps) {
   const loginState: LoginContextState = {
     isLogin,
     openLogin() {
-      window.location.href = getPassportLoginUrl();
+      window.location.href = parsePassportRedirectURL();
     },
     withLogin(callback) {
       return (...args) => {
         if (isLogin) {
           callback(...args);
         } else {
-          window.location.href = getPassportLoginUrl();
+          window.location.href = parsePassportRedirectURL();
         }
       };
     },
@@ -134,26 +127,26 @@ function MyApp(app: AppProps) {
 // be server-side rendered.
 //
 MyApp.getInitialProps = async (appContext: AppContext) => {
-  const { req, res } = appContext.ctx;
-  const router = appContext.router;
+  const { req, res, query, pathname, asPath } = appContext.ctx;
   const appProps = await App.getInitialProps(appContext);
   const reduxStore = initialiseStore();
   /**
    * 通过 url 传递认证信息，将认证信息设置到 cookie 中，然后重定向到当前页面，并去掉认证参数
    */
-  const routeAuth = getAuthByRoute(router.query);
+  const routeAuth = getAuthByRoute(query);
   if (routeAuth.token && routeAuth.deviceId) {
-    const queryString = QueryString.encode(router.query);
-    const path = router.asPath.split("?")[0] + (queryString ? `?${queryString}` : "");
-    res?.writeHead(302, {
-      Location: path,
-      "Set-Cookie": [
-        `${PASSPORT_TOKEN_KEY}=${routeAuth.token}; path=/;`,
-        `${PASSPORT_TENANT_NAME_KEY}=${routeAuth.tenantName}; path=/;`,
-        `${PASSPORT_DEVICE_ID_KEY}=${routeAuth.deviceId}; path=/;`,
-      ],
-    });
-    res?.end();
+    const queryString = QueryString.encode(query);
+    const path = asPath?.split("?")[0] + (queryString ? `?${queryString}` : "");
+    res
+      ?.writeHead(302, {
+        Location: path,
+        "Set-Cookie": [
+          `${PASSPORT_TOKEN_KEY}=${routeAuth.token}; path=/;`,
+          `${PASSPORT_TENANT_NAME_KEY}=${routeAuth.tenantName}; path=/;`,
+          `${PASSPORT_DEVICE_ID_KEY}=${routeAuth.deviceId}; path=/;`,
+        ],
+      })
+      .end();
     return;
   }
   /**
@@ -163,13 +156,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   // 是否已经获取用户信息
   const isNoUserInfo = !reduxStore.getState().user.uid;
   // 重定向URL
-  const redirectUri = `${process.env.NEXT_PUBLIC_PAASPORT_URL}?${PASSPORT_SUB_APP_ID_KEY}=${
-    process.env.NEXT_PUBLIC_PAASPORT_APP_ID
-  }&redirect_uri=${encodeURIComponent(
-    `${process.env.NODE_ENV === "development" ? "http" : "https"}://${req?.headers.host}${
-      router.asPath
-    }`
-  )}`;
+  const redirectUri = parsePassportRedirectURL(appContext);
 
   /**
    * 登陆态，未获取用户信息，获取用户信息
@@ -183,15 +170,16 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       // 获取用户信息失败，代表登陆失效，移除auth相关cookie
       console.error(`[login error]: ${e}`);
       console.error(e);
-      res?.writeHead(302, {
-        Location: redirectUri,
-        "Set-Cookie": [
-          `${PASSPORT_TOKEN_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-          `${PASSPORT_TENANT_NAME_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-          `${PASSPORT_DEVICE_ID_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-        ],
-      });
-      res?.end();
+      res
+        ?.writeHead(302, {
+          Location: redirectUri,
+          "Set-Cookie": [
+            `${PASSPORT_TOKEN_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+            `${PASSPORT_TENANT_NAME_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+            `${PASSPORT_DEVICE_ID_KEY}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+          ],
+        })
+        .end();
       return appProps;
     }
   }
@@ -199,10 +187,14 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
    * 未登陆态，访问需要登陆页面，重定向到首页
    */
   const isNotLogin = !reduxStore.getState().user.uid;
-  if (isNotLogin && needLoginRoutes.includes(router.route)) {
-    res?.writeHead(302, { Location: redirectUri });
-    res?.end();
-    return appProps;
+  if (isNotLogin && needLoginRoutes.includes(pathname)) {
+    if (isServer()) {
+      res?.writeHead(302, { Location: redirectUri }).end();
+      return appProps;
+    } else {
+      await Router.replace(redirectUri);
+      return;
+    }
   }
 
   appProps.pageProps = {
