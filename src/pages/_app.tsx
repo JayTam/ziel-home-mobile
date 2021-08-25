@@ -147,7 +147,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
         ],
       })
       .end();
-    return {};
+    return appProps;
   }
   /**
    * 通过cookie传递认证信息
@@ -192,7 +192,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       return appProps;
     } else {
       await Router.replace(redirectUri);
-      return {};
+      return appProps;
     }
   }
 
