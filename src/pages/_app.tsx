@@ -147,7 +147,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
         ],
       })
       .end();
-    return;
+    return {};
   }
   /**
    * 通过cookie传递认证信息
@@ -168,8 +168,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       reduxStore.dispatch(setUserInfo(response.data));
     } catch (e) {
       // 获取用户信息失败，代表登陆失效，移除auth相关cookie
-      console.error(`[login error]: ${e}`);
-      console.error(e);
+      console.error(`[login error]:`, e.response);
       res
         ?.writeHead(302, {
           Location: redirectUri,
@@ -193,7 +192,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       return appProps;
     } else {
       await Router.replace(redirectUri);
-      return;
+      return {};
     }
   }
 
