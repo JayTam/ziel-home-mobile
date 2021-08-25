@@ -17,6 +17,7 @@ import PaperScrollList from "../../components/Profiles/PaperScrollList";
 import MagazineScrollList from "../../components/Profiles/MagazineScrollList";
 import { useAppSelector } from "../../app/hook";
 import Edit from "../../assets/icons/edit.svg";
+import Link from "next/link";
 
 interface ProfilePageProps {
   profile: ProfileType;
@@ -154,9 +155,9 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
     setProfile((prev) =>
       produce(prev, (draft) => {
         if (isFollow) {
-          draft.followerNum -= 1;
-        } else {
           draft.followerNum += 1;
+        } else {
+          draft.followerNum -= 1;
         }
         draft.isFollow = isFollow;
       })
@@ -192,14 +193,18 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
               <Statistics>{digitalScale(profile.paperNum)}</Statistics>
               <TypeText>Papers</TypeText>
             </StatisticsItem>
-            <StatisticsItem>
-              <Statistics>{digitalScale(profile.followerNum)}</Statistics>
-              <TypeText>Followers</TypeText>
-            </StatisticsItem>
-            <StatisticsItem>
-              <Statistics>{digitalScale(profile.followingNum)}</Statistics>
-              <TypeText>Follewing</TypeText>
-            </StatisticsItem>
+            <Link href={`/followers/${props.userId}`}>
+              <StatisticsItem>
+                <Statistics>{digitalScale(profile.followerNum)}</Statistics>
+                <TypeText>Followers</TypeText>
+              </StatisticsItem>
+            </Link>
+            <Link href={`/followers/${props.userId}`}>
+              <StatisticsItem>
+                <Statistics>{digitalScale(profile.followingNum)}</Statistics>
+                <TypeText>Follewing</TypeText>
+              </StatisticsItem>
+            </Link>
           </StatisticsLayout>
         </TopContent>
       </TopLayout>

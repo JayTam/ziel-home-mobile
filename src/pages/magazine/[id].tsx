@@ -172,9 +172,9 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
     setCurrentMagazin((prev) =>
       produce(prev, (draft) => {
         if (isSubscribe) {
-          draft.subscribeNum -= 1;
+          magazine.subscribeNum += 1;
         } else {
-          draft.subscribeNum += 1;
+          magazine.subscribeNum -= 1;
         }
         draft.isSubscribe = isSubscribe;
       })
@@ -230,7 +230,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
                     handleSubscribe(currentMagazine);
                   }}
                 >
-                  <SubscribeButton color={currentMagazine.isSubscribe ? "primary" : "secondary"}>
+                  <SubscribeButton color={currentMagazine.isSubscribe ? "secondary" : "primary"}>
                     {currentMagazine.isSubscribe ? "Subscribe" : "UnSubscribe"}
                   </SubscribeButton>
                 </div>

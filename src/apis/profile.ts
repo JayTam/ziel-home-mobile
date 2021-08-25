@@ -79,7 +79,7 @@ export function getFollowers(params: FollowersParams, options?: AxiosRequestConf
     params: {
       user_id: params.userId,
       follow_type: params.type,
-      limit: 10,
+      limit: 20,
       ...params,
     },
     ...options,
