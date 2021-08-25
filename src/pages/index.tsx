@@ -271,9 +271,9 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
       produce(prev, (draft) => {
         draft.isSubscribe = isSubscribe;
         if (isSubscribe) {
-          draft.subscribeNum += 1;
+          draft.subscribeNum = magazine.subscribeNum + 1;
         } else {
-          draft.subscribeNum -= 1;
+          draft.subscribeNum = magazine.subscribeNum - 1;
         }
         return draft;
       })
@@ -308,8 +308,8 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
       produce(prev, (draft) => {
         draft.forEach((item) => {
           if (item.authorId === paper.authorId) item.isLike = isLike;
-          if (isLike) item.likeNum += 1;
-          else item.likeNum -= 1;
+          if (isLike) item.likeNum = paper.likeNum + 1;
+          else item.likeNum = paper.likeNum - 1;
         });
         return draft;
       })
@@ -327,8 +327,8 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
       produce(prev, (draft) => {
         draft.forEach((item) => {
           if (item.authorId === paper.authorId) item.isStar = isStar;
-          if (isStar) item.starNum += 1;
-          else item.starNum -= 1;
+          if (isStar) item.starNum = paper.starNum + 1;
+          else item.starNum = paper.starNum - 1;
         });
         return draft;
       })
