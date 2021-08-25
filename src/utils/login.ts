@@ -36,9 +36,13 @@ export const parsePassportRedirectURL = (appContext?: AppContext) => {
     const { req, asPath } = appContext.ctx;
     if (isServer()) {
       const chunks = req?.headers.host?.split(":");
-      const port = parseInt(chunks?.[0] ?? "443");
-      const host = chunks?.[1];
-      const protocol = port === 443 ? "https" : "http";
+      let host = chunks?.[0];
+      const port = chunks?.[1];
+      if (host) {
+        // localhost 开发环境下，加上端口，比如 localhost:3000
+        host = host + (host === "localhost" ? ":" + port : "");
+      }
+      const protocol = port === "443" ? "https" : "http";
       redirectURI = `${protocol}://${host}${asPath}`;
     } else {
       redirectURI = window.location.href;
