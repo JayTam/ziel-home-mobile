@@ -177,10 +177,12 @@ const Personal: NextPage<UserProps> = () => {
             <HelpIcon />
             <ItemText>Help & Support</ItemText>
           </ListItem>
-          <ListItem>
-            <SettingIcon />
-            <ItemText>Setting</ItemText>
-          </ListItem>
+          <Link href={"/setting/user/"}>
+            <ListItem>
+              <SettingIcon />
+              <ItemText>Setting</ItemText>
+            </ListItem>
+          </Link>
         </MenuList>
         <LogOut>
           <LogOutButton onClick={handleLogOut} color={"default"}>

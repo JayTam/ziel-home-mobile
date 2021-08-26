@@ -7,7 +7,7 @@ import { getStarPapers, getUserPapers, PaperType } from "../../apis/paper";
 interface PaperListProps {
   userId: string; // 用户Id
   isStar?: boolean; // 是否为收藏内容
-  isShowLike?: boolean;
+  isShowTop?: boolean;
 }
 const PaperItem = styled.div`
   display: inline-block;
@@ -43,7 +43,7 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
     <>
       {papers.map((paper) => (
         <PaperItem key={paper.id}>
-          <PaperPrevew isShowLike={props.isShowLike} key={paper.id} {...paper} />
+          <PaperPrevew isShowTop={props.isShowTop} key={paper.id} {...paper} />
         </PaperItem>
       ))}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}

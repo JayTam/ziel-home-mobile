@@ -148,6 +148,24 @@ export const starPaper = (paperId: string, isStar: boolean) => {
 };
 
 /**
+ * 置顶内容
+ * @param id 内容ID
+ * @param magazineId 杂志ID
+ * @param isTop
+ */
+export const topPaper = (id: string, magazineId: string, isTop: boolean) => {
+  return snsRequest({
+    url: "/article/top",
+    method: "POST",
+    params: {
+      id,
+      is_top: isTop ? 1 : 0,
+      magazine_id: magazineId,
+    },
+  });
+};
+
+/**
  * 获取用户的文章列表
  * @param params
  * @param options

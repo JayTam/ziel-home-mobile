@@ -1,16 +1,17 @@
 import styled from "styled-components";
-import StarActiveIcon from "../../assets/icons/star-magazine-active.svg";
-import StarIcon from "../../assets/icons/star-magazine.svg";
+import TopFlagIcon from "../../assets/icons/star-magazine-active.svg";
+import TopActiveIcon from "../../assets/icons/star-magazine.svg";
 import PlayIcon from "../../assets/icons/play.svg";
 import { digitalScale } from "../../utils";
 import { PaperType } from "../../apis/paper";
 import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
 import Image from "next/image";
 import { TextEllipsisMixin } from "../../../lib/mixins";
+import TopIcon from "../../assets/icons/top.svg";
 
 interface ManazinePagePropType extends PaperType {
-  onLike?: () => void;
-  isShowLike?: boolean;
+  onTop?: () => void;
+  isShowTop?: boolean;
 }
 
 const Container = styled.div`
@@ -52,6 +53,10 @@ const BottomContent = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0px 7px 7px;
+`;
+const DescriptionStyle = styled.div`
+  display: flex;
+  align-items: flex-end;
 `;
 const Description = styled.div`
   font-size: 12px;
@@ -100,13 +105,16 @@ const PaperPreview: React.FC<ManazinePagePropType> = (props) => {
       )}
       <PaperContent>
         <TopConent
-          style={{ visibility: props.isShowLike ? "visible" : "hidden" }}
-          onClick={props.onLike}
+          style={{ visibility: props.isShowTop ? "visible" : "hidden" }}
+          onClick={props.onTop}
         >
-          {props.isLike ? <StarActiveIcon /> : <StarIcon />}
+          {props.isTop ? <TopActiveIcon /> : <TopFlagIcon />}
         </TopConent>
         <BottomContent>
-          <Description>{props.description}</Description>
+          <DescriptionStyle>
+            <TopIcon />
+            <Description>{props.description}</Description>
+          </DescriptionStyle>
           <AutherLayout>
             <AvatarLayout>
               <Avatar src={props.avatar} />
