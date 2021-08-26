@@ -57,7 +57,7 @@ const TitleBg = styled(Image)`
   width: 100vw;
 `;
 const TopContent = styled.div`
-  padding: 0px 14px;
+  padding: 0 14px;
   z-index: 2;
   margin-top: -32px;
 `;

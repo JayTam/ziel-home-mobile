@@ -22,7 +22,9 @@ const Container = styled.div`
 const TabsList = styled.div`
   position: relative;
   display: flex;
+  flex-flow: row nowrap;
   margin-bottom: 14px;
+  overflow: hidden;
 `;
 const StarTabsList = styled.div`
   position: relative;
