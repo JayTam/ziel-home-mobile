@@ -182,9 +182,15 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
     await topPaper(paper.id, magazine.id, isTop);
     setPapers((prev) =>
       produce(prev, (draft) => {
-        draft.forEach((item) => {
-          if (item.id === paper.id) item.isTop = isTop;
+        draft.forEach((item, index) => {
+          if (item.id === paper.id) {
+            item.isTop = isTop;
+            if (isTop) {
+              draft.unshift(draft.splice(index, 1)[0]);
+            }
+          }
         });
+        draft.sort((a, b) => (a.isTop > b.isTop ? -1 : 1));
         return draft;
       })
     );
