@@ -55,6 +55,7 @@ const Title = styled.div`
   line-height: 21px;
   ${TextEllipsisMixin}
   color: ${(props) => props.theme.palette.text?.primary};
+  font-family: "DidotBold";
 `;
 const Statistics = styled.div`
   display: flex;

@@ -1,5 +1,5 @@
 import type { AppContext, AppProps } from "next/app";
-import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import { theme } from "../../lib";
 import "normalize.css";
 import "swiper/swiper.min.css";
@@ -23,55 +23,7 @@ import App from "next/app";
 import { PASSPORT_DEVICE_ID_KEY, PASSPORT_TENANT_NAME_KEY, PASSPORT_TOKEN_KEY } from "../constants";
 import { Provider } from "react-redux";
 import Router from "next/router";
-
-const GlobalStyle = createGlobalStyle`
-  html,
-  body {
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-    font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell,
-    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  #__next {
-    height: 100%;
-  }
-
-  textarea {
-    font-family: Roboto,-apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell,
-    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p {
-    margin: 0;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  svg {
-    user-select: none;
-  }
-
-  .react-more-text .anchor {
-    text-decoration: underline;
-  }
-`;
+import "../styles/globals.css";
 
 // 需要登陆的路由，未登陆态访问这些路由，重定向到首页
 const needLoginRoutes = [
@@ -108,7 +60,6 @@ function MyApp(app: AppProps) {
 
   return (
     <>
-      <GlobalStyle />
       <ThemeProvider theme={theme}>
         <Provider store={reduxStore}>
           <LoginContext.Provider value={loginState}>

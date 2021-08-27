@@ -9,6 +9,7 @@ import SongmicsLogo from "../../assets/imgs/logo3.png";
 import VasagleLogo from "../../assets/imgs/logo4.png";
 import FeanareaLogo from "../../assets/imgs/logo5.png";
 import { Parallax } from "react-parallax";
+import BgGif from "../../../public/Bggif.gif";
 
 interface AboutType {
   id: string;
@@ -112,7 +113,7 @@ const VideoStyle = styled.div`
   height: 100vh;
   position: relative;
 `;
-const VideoContent = styled.video`
+const VideoContent = styled(Image)`
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -218,14 +219,7 @@ const About: NextPage<AboutType> = () => {
         </span>
       </SplitDiv>
       <VideoStyle>
-        <VideoContent
-          autoPlay
-          loop
-          muted
-          src={
-            "https://tcloud-public.oss-cn-hongkong.aliyuncs.com/community/1407593398399664128/4a33361c-1bda-4e53-878c-014922629dfd.mp4?X_PP_Audience%3D1407593398399664128%26X_PP_ExpiredAt%3D1624445974%26X_PP_GrantedAt%3D1624445974%26X_PP_Method%3D%2A%26X_PP_ObjectName%3Dcommunity%2F1407593398399664128%2F4a33361c-1bda-4e53-878c-014922629dfd.mp4%26X_PP_Owner%3D1407593398399664128%26X_PP_ResourceType%3Dcommunity%26X_PP_Signature%3D04da165c16edd26c29a46626c02f7f3b"
-          }
-        ></VideoContent>
+        <VideoContent src={BgGif}></VideoContent>
         <Description>
           What can you do
           <br></br>

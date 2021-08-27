@@ -1,0 +1,59 @@
+@font-face {
+  font-family: "DidotBold";
+  src: url("../../public/fonts/Didot/Didot-Bold.eot");
+  src: url("../../public/fonts/Didot/Didot-Bold.eot?#iefix") format("embedded-opentype"),
+    url("../../public/fonts/Didot/Didot-Bold.woff2") format("woff2"),
+    url("../../public/fonts/Didot/Didot-Bold.woff") format("woff"),
+    url("../../public/fonts/Didot/Didot-Bold.ttf") format("truetype"),
+    url("../../public/fonts/Didot/Didot-Bold.svg#Didot-Bold") format("svg");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell,
+    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#__next {
+  height: 100%;
+}
+
+textarea {
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell,
+    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+svg {
+  user-select: none;
+}
+
+.react-more-text .anchor {
+  text-decoration: underline;
+}
