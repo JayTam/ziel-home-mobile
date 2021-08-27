@@ -110,7 +110,6 @@ const BackGoundImg = styled.div`
 `;
 const VideoStyle = styled.div`
   width: 100%;
-  height: 100vh;
   position: relative;
 `;
 const VideoContent = styled(Image)`
