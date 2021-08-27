@@ -28,7 +28,6 @@ const GlobalStyle = createGlobalStyle`
   html,
   body {
     width: 100%;
-    overflow-x: hidden;
     height: 100%;
     padding: 0;
     margin: 0;

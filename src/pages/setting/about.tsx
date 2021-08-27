@@ -8,6 +8,8 @@ import ContentBg from "../../../public/Mask Group.png";
 import SongmicsLogo from "../../assets/imgs/logo3.png";
 import VasagleLogo from "../../assets/imgs/logo4.png";
 import FeanareaLogo from "../../assets/imgs/logo5.png";
+import { Parallax } from "react-parallax";
+
 interface AboutType {
   id: string;
 }
@@ -104,9 +106,6 @@ const TopBgTitle = styled.div`
 `;
 const BackGoundImg = styled.div`
   height: 300px;
-  background-image: url("${ContentBg.src}");
-  background-attachment: fixed;
-  background-size: contain;
 `;
 const VideoStyle = styled.div`
   width: 100%;
@@ -191,7 +190,14 @@ const About: NextPage<AboutType> = () => {
           <span>Community</span>
         </TopBgTitle>
       </TopBgStyle>
-      <BackGoundImg />
+      <Parallax
+        bgImage={ContentBg.src}
+        strength={300}
+        bgImageStyle={{ objectFit: "contain", width: "100%" }}
+      >
+        <BackGoundImg />
+      </Parallax>
+
       <MiddleContent>
         <MiddleContentText>
           <span>What do</span>
