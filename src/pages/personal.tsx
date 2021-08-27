@@ -177,7 +177,7 @@ const Personal: NextPage<UserProps> = () => {
             <HelpIcon />
             <ItemText>Help & Support</ItemText>
           </ListItem>
-          <Link href={"/setting/user/"}>
+          <Link href={"/setting/userSetting/"}>
             <ListItem>
               <SettingIcon />
               <ItemText>Setting</ItemText>

@@ -1,5 +1,7 @@
 import { NextPage } from "next";
+import Link from "next/link";
 import styled from "styled-components";
+import { ClickableMixin } from "../../../lib/mixins";
 import Right from "../../assets/icons/right.svg";
 import Hearder from "../../components/Header";
 
@@ -19,6 +21,7 @@ const SettingItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  ${ClickableMixin}
 `;
 const ItemTitle = styled.div`
   font-weight: 500;
@@ -48,10 +51,12 @@ const UserSetting: NextPage<SettingType> = () => {
         <ItemTitle>Help & Feedback</ItemTitle>
         <Right />
       </SettingItem>
-      <SettingItem>
-        <ItemTitle>About</ItemTitle>
-        <Right />
-      </SettingItem>
+      <Link href={"/setting/about/"}>
+        <SettingItem>
+          <ItemTitle>About</ItemTitle>
+          <Right />
+        </SettingItem>
+      </Link>
     </Container>
   );
 };

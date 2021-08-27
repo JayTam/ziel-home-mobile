@@ -10,6 +10,8 @@ const Container = styled.div<HeaderProps>`
   width: 100%;
   height: 44px;
   z-index: 999;
+  box-shadow: ${(props) =>
+    props.shadow ? "0px 2px 8px rgba(102, 102, 102, 0.0508769)" : "none"}; ;
 `;
 
 const Left = styled.div`
@@ -35,6 +37,7 @@ const Right = styled.div`
 interface HeaderProps {
   fixed?: boolean;
   color?: string;
+  shadow?: boolean;
   leftComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
   onBack?: () => void;
@@ -52,7 +55,7 @@ const Header: React.FC<React.PropsWithChildren<HeaderProps>> = (props) => {
   };
 
   return (
-    <Container fixed={props.fixed} color={props.color}>
+    <Container fixed={props.fixed} color={props.color} shadow={props.shadow}>
       <Left>{props.leftComponent ?? <BackIcon onClick={handleBack} />}</Left>
       <Center>{props.children}</Center>
       {props.rightComponent ? <Right>{props.rightComponent}</Right> : null}
