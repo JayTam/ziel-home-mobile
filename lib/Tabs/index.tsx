@@ -1,16 +1,10 @@
 import React, { createRef, useEffect, useState } from "react";
 import styled from "styled-components";
 import { parseTabList } from "./utils";
-import { TabsProps } from "./interface";
-
-interface TabsContextProps {
-  activeKey?: string;
-  isSecondary?: boolean;
-}
+import { TabsContextProps, TabsProps } from "./interface";
 
 export const TabsContext = React.createContext<TabsContextProps>({
   activeKey: "1",
-  isSecondary: false,
 });
 
 const Container = styled.div`
@@ -26,46 +20,12 @@ const TabsList = styled.div`
   margin-bottom: 14px;
   overflow: hidden;
 `;
-const StarTabsList = styled.div`
-  position: relative;
-  display: flex;
-`;
-const StarTabItem = styled.div<{ active: boolean; title?: string }>`
-  font-weight: ${(props) => (props.active ? 500 : 400)};
-  background-color: ${(props) =>
-    props.active ? props.theme.palette.primary : props.theme.palette.default};
-  font-size: 14px;
-  line-height: 16px;
-  text-align: center;
-  margin-right: 14px;
-  white-space: nowrap;
-  padding: 7px 10px;
-  border-radius: 26px;
 
-  &:last-of-type {
-    margin: 0;
-  }
+interface TabItemProps extends TabsProps {
+  active: boolean;
+}
 
-  &::before {
-    content: attr(title);
-    font-weight: 500;
-    display: block;
-    height: 0;
-    overflow: hidden;
-    visibility: hidden;
-  }
-  &:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    top: 21px;
-    right: -20px;
-    width: 1px;
-    height: 10px;
-    background: #999 !important;
-    z-index: 2;
-  }
-`;
-const TabItem = styled.div<{ active: boolean; title?: string }>`
+const TabItem = styled.div<TabItemProps>`
   font-weight: ${(props) => (props.active ? 500 : 400)};
   font-size: 14px;
   line-height: 16px;
@@ -73,6 +33,16 @@ const TabItem = styled.div<{ active: boolean; title?: string }>`
   margin-right: 30px;
   white-space: nowrap;
   padding: 12px 0;
+  ${(props) => {
+    switch (props.tabStyle) {
+      case "contain":
+        return ` background-color: ${
+          props.active ? props.theme.palette.primary : props.theme.palette.default
+        };
+        padding: 7px 10px;
+        border-radius: 26px;`;
+    }
+  }}
 
   &:last-of-type {
     margin: 0;
@@ -102,17 +72,26 @@ const TabPanelContainer = styled.div`
   display: block;
 `;
 
-const TabLinkBar = styled.span<{ left: number; width: number }>`
+const TabLinkBar = styled.span<{
+  left: number;
+  width: number;
+  color?: string;
+  tabStyle: TabsProps["tabStyle"];
+}>`
   position: absolute;
   display: inline-block;
   bottom: 0;
   left: ${(props) => props.left + "px"};
   width: ${(props) => props.width + "px"};
   height: 4px;
-  background-color: ${(props) => props.theme.palette.primary};
+  background-color: ${(props) => props.color ?? props.theme.palette.primary};
   border-radius: 12px;
   transition: ${(props) =>
     props.left === 0 ? "none" : "left 0.3s cubic-bezier(0.645, 0.045, 0.355, 1)"};
+  ${(props) =>
+    props.tabStyle === "dot"
+      ? `width: ${props.width}px;height: ${props.width}px;border-radius: 999px;`
+      : null};
 `;
 
 const Tabs: React.FC<TabsProps> = (props) => {
@@ -120,6 +99,12 @@ const Tabs: React.FC<TabsProps> = (props) => {
   const arrLength = tabs.length;
   const tabRefs = React.useRef<React.RefObject<HTMLDivElement>[]>([]);
   const [linkBarLeft, setLinkBarLeft] = useState(0);
+  const tabLinkBarWidth =
+    props.tabStyle === "line"
+      ? props.barWidth ?? 14
+      : props.tabStyle === "dot"
+      ? props.barWidth ?? 8
+      : 0;
 
   if (tabRefs.current.length !== arrLength) {
     // add or remove refs
@@ -138,53 +123,41 @@ const Tabs: React.FC<TabsProps> = (props) => {
     if (currentIndex !== null) {
       const endRef = tabRefs.current[currentIndex];
       const clientRect = endRef?.current?.getBoundingClientRect();
-      if (clientRect && props.barWidth) {
-        setLinkBarLeft(clientRect.x - startX + clientRect.width / 2 - props.barWidth / 2);
+      if (clientRect && tabLinkBarWidth) {
+        setLinkBarLeft(clientRect.x - startX + clientRect.width / 2 - tabLinkBarWidth / 2);
       }
     }
-  }, [props.activeKey, props.barWidth, tabs]);
+  }, [props.activeKey, tabLinkBarWidth, tabs]);
 
   return (
-    <TabsContext.Provider value={{ activeKey: props.activeKey, isSecondary: props.isSecondary }}>
+    <TabsContext.Provider value={{ activeKey: props.activeKey }}>
       <Container>
-        {props.isSecondary ? (
-          <StarTabsList className={props.className}>
-            {tabs.map((tab, i) => (
-              <StarTabItem
-                title={tab.tab}
-                active={tab.indexKey === props.activeKey}
-                ref={tabRefs.current[i]}
-                key={tab.indexKey}
-                onClick={() => props.onChange?.(tab.indexKey)}
-              >
-                {tab.tab}
-              </StarTabItem>
-            ))}
-          </StarTabsList>
-        ) : (
-          <TabsList className={props.className}>
-            {tabs.map((tab, i) => (
-              <TabItem
-                title={tab.tab}
-                active={tab.indexKey === props.activeKey}
-                ref={tabRefs.current[i]}
-                key={tab.indexKey}
-                onClick={() => props.onChange?.(tab.indexKey)}
-              >
-                {tab.tab}
-              </TabItem>
-            ))}
-            <TabLinkBar left={linkBarLeft} width={props.barWidth ?? 14} />
-          </TabsList>
-        )}
+        <TabsList className={props.className}>
+          {tabs.map((tab, i) => (
+            <TabItem
+              title={tab.tab}
+              active={tab.indexKey === props.activeKey}
+              ref={tabRefs.current[i]}
+              key={tab.indexKey}
+              tabStyle={props.tabStyle}
+              onClick={() => props.onChange?.(tab.indexKey)}
+            >
+              {tab.tab}
+            </TabItem>
+          ))}
+          {["line", "dot"].includes(props.tabStyle ?? "default") ? (
+            <TabLinkBar
+              left={linkBarLeft}
+              width={tabLinkBarWidth}
+              tabStyle={props.tabStyle}
+              color={props.barColor}
+            />
+          ) : null}
+        </TabsList>
         <TabPanelContainer>{props.children}</TabPanelContainer>
       </Container>
     </TabsContext.Provider>
   );
-};
-
-Tabs.defaultProps = {
-  barWidth: 14,
 };
 
 export default Tabs;

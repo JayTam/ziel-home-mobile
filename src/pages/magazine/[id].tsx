@@ -25,7 +25,8 @@ const Container = styled.div`
   align-items: center;
 `;
 const Content = styled.div`
-  padding: 20px 14px 0px 14px;
+  padding: 20px 14px 0 14px;
+  width: 100%;
 `;
 const MagazineContent = styled.div`
   display: flex;
@@ -60,6 +61,7 @@ const Description = styled.div`
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
 const BottomContent = styled.div`
+  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;

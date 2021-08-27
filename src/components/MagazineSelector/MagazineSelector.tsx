@@ -77,7 +77,8 @@ const StyledMagazinePreview = styled(MagazinePreview)`
 `;
 
 const StyledTabs = styled(Tabs)`
-  padding: 0 14px;
+  margin-left: 14px;
+  margin-right: 14px;
 `;
 
 const StyledTabPanel = styled(TabPanel)`
@@ -175,7 +176,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
         </Header>
 
         <PageContainer>
-          <StyledTabs activeKey={type} onChange={handleChange}>
+          <StyledTabs activeKey={type} onChange={handleChange} tabBar tabStyle="line">
             <StyledTabPanel indexKey="1" tab="My Magazines" forceRender>
               {magazines.map((magazine) => (
                 <StyledMagazinePreview

@@ -198,13 +198,13 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
             </StatisticsItem>
             <StatisticsItem>
               <Statistics>{digitalScale(profile.followingNum)}</Statistics>
-              <TypeText>Follewing</TypeText>
+              <TypeText>Following</TypeText>
             </StatisticsItem>
           </StatisticsLayout>
         </TopContent>
       </TopLayout>
       <BottomLayout>
-        <TabsStyle activeKey={type} onChange={handleChange}>
+        <TabsStyle activeKey={type} onChange={handleChange} tabBar tabStyle="line">
           <TabPanelStyle
             indexKey="1"
             tab={`Paper ${digitalScale(props.usersPapers.count, "Int")}`}
@@ -227,7 +227,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
             )}`}
             forceRender
           >
-            <TabsStarStyle isSecondary activeKey={starType} onChange={handleStarChange}>
+            <TabsStarStyle activeKey={starType} onChange={handleStarChange} tabStyle="contain">
               <TabPanelStyle indexKey="1" tab="Paper" forceRender>
                 <PaperScrollList isStar userId={props.userId} />
               </TabPanelStyle>
