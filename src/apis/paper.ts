@@ -50,6 +50,8 @@ export type PaperType = {
   space: string;
   size: string;
   style: string;
+  //文章状态 0-草稿 1-待审核 2-已发布 3-审核未通过
+  status: 0 | 1 | 2 | 3;
 };
 
 const mapPaperItem = (item: Record<string, any>) => {
@@ -80,6 +82,7 @@ const mapPaperItem = (item: Record<string, any>) => {
     space: spec?.space ?? "",
     style: spec?.style ?? "",
     size: spec?.acreage ?? "",
+    status: item.status ?? 0,
   };
 };
 

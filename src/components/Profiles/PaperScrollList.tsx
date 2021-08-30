@@ -6,9 +6,10 @@ import { getStarPapers, getUserPapers, PaperType } from "../../apis/paper";
 
 interface PaperListProps {
   userId: string; // 用户Id
-  isStar?: boolean; // 是否为收藏内容
-  isShowTop?: boolean;
+  isStarContent?: boolean; // 是否为收藏内容
+  isShowTop?: boolean; // 是否显示置顶
 }
+
 const PaperItem = styled.div`
   display: inline-block;
   width: 50%;
@@ -27,7 +28,7 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
     (async () => {
       setLoading(true);
       try {
-        const response = props.isStar
+        const response = props.isStarContent
           ? await getStarPapers({ userId: props.userId, page })
           : await getUserPapers({ userId: props.userId, page });
         const list = response.data.result.data;
@@ -38,12 +39,17 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
         setLoading(false);
       }
     })();
-  }, [page, props.isStar, props.userId, setHasMore, setLoading]);
+  }, [page, props.isStarContent, props.userId, setHasMore, setLoading]);
   return (
     <>
       {papers.map((paper) => (
         <PaperItem key={paper.id}>
-          <PaperPrevew isShowTop={props.isShowTop} key={paper.id} {...paper} />
+          <PaperPrevew
+            isStarContent={props.isStarContent}
+            isShowTop={props.isShowTop}
+            key={paper.id}
+            {...paper}
+          />
         </PaperItem>
       ))}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}

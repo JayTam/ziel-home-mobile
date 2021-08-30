@@ -130,11 +130,13 @@ const TabsStyle = styled(Tabs)`
   justify-content: space-between;
 `;
 const TabsStarStyle = styled(Tabs)`
+  padding-left: 14px;
   display: flex;
 `;
 const TabPanelStyle = styled(TabPanel)`
   padding: 14px 14px 20px 7px;
 `;
+const StarTabPanelStyle = styled(TabPanel)``;
 const Profile: NextPage<ProfilePageProps> = (props) => {
   const [type, setType] = useState<"1" | "2" | "3">("1");
   const [starType, setStarType] = useState<"1" | "2">("1");
@@ -225,7 +227,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
           >
             <MagazineScrollList userId={props.userId} />
           </TabPanelStyle>
-          <TabPanelStyle
+          <StarTabPanelStyle
             indexKey="3"
             tab={`Saved ${digitalScale(
               props.favoriteMagezine.count + props.favoritePaper.count,
@@ -235,13 +237,13 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
           >
             <TabsStarStyle isSecondary activeKey={starType} onChange={handleStarChange}>
               <TabPanelStyle indexKey="1" tab="Paper" forceRender>
-                <PaperScrollList isStar userId={props.userId} />
+                <PaperScrollList isStarContent userId={props.userId} />
               </TabPanelStyle>
               <TabPanelStyle indexKey="2" tab="Magazine" forceRender>
-                <MagazineScrollList isStar userId={props.userId} />
+                <MagazineScrollList isStarContent userId={props.userId} />
               </TabPanelStyle>
             </TabsStarStyle>
-          </TabPanelStyle>
+          </StarTabPanelStyle>
         </TabsStyle>
       </BottomLayout>
     </Container>

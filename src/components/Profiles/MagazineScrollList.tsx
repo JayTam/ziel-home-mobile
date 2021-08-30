@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 interface MagazineListType {
   userId: string;
-  isStar?: boolean;
+  isStarContent?: boolean;
 }
 const PaperItem = styled.div`
   display: inline-block;
@@ -25,7 +25,7 @@ const MagazineScrollList: React.FC<MagazineListType> = (props) => {
     (async () => {
       setLoading(true);
       try {
-        const response = props.isStar
+        const response = props.isStarContent
           ? await getStarMagazines({ userId: props.userId, page })
           : await getUserMagazines({ userId: props.userId, page });
         const list = response.data.result.data;
@@ -36,7 +36,7 @@ const MagazineScrollList: React.FC<MagazineListType> = (props) => {
         setLoading(false);
       }
     })();
-  }, [page, props.isStar, props.userId, setHasMore, setLoading]);
+  }, [page, props.userId, setHasMore, setLoading, props.isStarContent]);
   return (
     <>
       {magazines.map((magazine) => (

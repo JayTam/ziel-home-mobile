@@ -12,6 +12,7 @@ import TopIcon from "../../assets/icons/top.svg";
 interface ManazinePagePropType extends PaperType {
   onTop?: () => void;
   isShowTop?: boolean;
+  isStarContent?: boolean;
 }
 
 const Container = styled.div`
@@ -95,6 +96,19 @@ const PlayCount = styled.div`
   line-height: 16px;
   color: ${(props) => props.theme.palette.text?.secondary}; ;
 `;
+const IsReviewing = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 76px;
+  height: 24px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 24px;
+  color: #ff603e;
+  border-radius: 0 14px 0 14px;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
 const PaperPreview: React.FC<ManazinePagePropType> = (props) => {
   return (
     <Container>
@@ -110,6 +124,7 @@ const PaperPreview: React.FC<ManazinePagePropType> = (props) => {
         >
           {props.isTop ? <TopActiveIcon /> : <TopFlagIcon />}
         </TopConent>
+        {!props.isStarContent && props.status === 1 ? <IsReviewing>Is reviewing</IsReviewing> : ""}
         <BottomContent>
           <DescriptionStyle>
             <TopIcon />
