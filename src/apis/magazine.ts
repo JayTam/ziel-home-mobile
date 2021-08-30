@@ -175,3 +175,23 @@ export function getStarMagazines(params: UserMagazineParams, options?: AxiosRequ
     return response;
   });
 }
+
+/**
+ * 杂志列表
+ * @param params
+ * @param options
+ */
+export const getMagazineList = (params: MagazineParams, options?: AxiosRequestConfig) => {
+  return snsRequest({
+    url: "/magazines",
+    method: "GET",
+    params: {
+      limit: 8,
+      ...params,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    return response;
+  });
+};

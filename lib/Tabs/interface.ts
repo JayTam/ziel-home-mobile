@@ -6,6 +6,9 @@ export interface TabsProps {
   tabBar?: boolean;
   barWidth?: number;
   barColor?: string;
+  center?: boolean;
+  sticky?: boolean;
+  fixed?: boolean;
   // tab list 样式风格
   tabStyle?: "contain" | "default" | "dot" | "line";
   onChange?: (activeKey: string) => void;

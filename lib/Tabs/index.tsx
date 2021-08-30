@@ -13,12 +13,23 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
+const TabsListWrapper = styled.div<Pick<TabsProps, "center" | "fixed">>`
+  position: ${(props) => (props.fixed ? "fixed" : "relative")};
+  overflow: hidden;
+  width: 100%;
+  background-color: #fff;
+  font-size: 14px;
+  line-height: 16px;
+  z-index: 999;
+  display: flex;
+  justify-content: ${(props) => (props.fixed ? "center" : "flex-start")};
+`;
+
 const TabsList = styled.div`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
   margin-bottom: 14px;
-  overflow: hidden;
 `;
 
 interface TabItemProps extends TabsProps {
@@ -26,9 +37,10 @@ interface TabItemProps extends TabsProps {
 }
 
 const TabItem = styled.div<TabItemProps>`
-  font-weight: ${(props) => (props.active ? 500 : 400)};
-  font-size: 14px;
-  line-height: 16px;
+  position: relative;
+  font-weight: ${(props) => (props.active ? 500 : 300)};
+  color: ${(props) =>
+    props.active ? props.theme.palette.text?.primary : props.theme.palette.text?.secondary};
   text-align: center;
   margin-right: 30px;
   white-space: nowrap;
@@ -55,16 +67,6 @@ const TabItem = styled.div<TabItemProps>`
     height: 0;
     overflow: hidden;
     visibility: hidden;
-  }
-  &:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    top: 21px;
-    right: -20px;
-    width: 1px;
-    height: 10px;
-    background: #999 !important;
-    z-index: 2;
   }
 `;
 
@@ -132,28 +134,31 @@ const Tabs: React.FC<TabsProps> = (props) => {
   return (
     <TabsContext.Provider value={{ activeKey: props.activeKey }}>
       <Container>
-        <TabsList className={props.className}>
-          {tabs.map((tab, i) => (
-            <TabItem
-              title={tab.tab}
-              active={tab.indexKey === props.activeKey}
-              ref={tabRefs.current[i]}
-              key={tab.indexKey}
-              tabStyle={props.tabStyle}
-              onClick={() => props.onChange?.(tab.indexKey)}
-            >
-              {tab.tab}
-            </TabItem>
-          ))}
-          {["line", "dot"].includes(props.tabStyle ?? "default") ? (
-            <TabLinkBar
-              left={linkBarLeft}
-              width={tabLinkBarWidth}
-              tabStyle={props.tabStyle}
-              color={props.barColor}
-            />
-          ) : null}
-        </TabsList>
+        <TabsListWrapper center={props.center} fixed={props.fixed}>
+          <TabsList className={props.className}>
+            {tabs.map((tab, i) => (
+              <TabItem
+                title={tab.tab}
+                active={tab.indexKey === props.activeKey}
+                ref={tabRefs.current[i]}
+                key={tab.indexKey}
+                tabStyle={props.tabStyle}
+                onClick={() => props.onChange?.(tab.indexKey)}
+              >
+                {tab.tab}
+              </TabItem>
+            ))}
+            {["line", "dot"].includes(props.tabStyle ?? "default") ? (
+              <TabLinkBar
+                left={linkBarLeft}
+                width={tabLinkBarWidth}
+                tabStyle={props.tabStyle}
+                color={props.barColor}
+              />
+            ) : null}
+          </TabsList>
+        </TabsListWrapper>
+
         <TabPanelContainer>{props.children}</TabPanelContainer>
       </Container>
     </TabsContext.Provider>
