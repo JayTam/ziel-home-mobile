@@ -12,6 +12,7 @@ export const theme: DefaultTheme = {
     background: {
       default: "#fff",
       paper: "#f5f5f5",
+      comment: "#111111",
     },
     common: {
       white: "#fff",

@@ -29,6 +29,7 @@ interface TypeText {
 interface TypeBackground {
   default: string;
   paper: string;
+  comment: string;
 }
 
 declare module "styled-components" {
