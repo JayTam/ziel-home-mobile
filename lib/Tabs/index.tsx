@@ -131,6 +131,11 @@ const Tabs: React.FC<TabsProps> = (props) => {
     }
   }, [props.activeKey, tabLinkBarWidth, tabs]);
 
+  const handleChange = (indexKey: string) => {
+    window.document.documentElement.scrollTo(0, 0);
+    props.onChange?.(indexKey);
+  };
+
   return (
     <TabsContext.Provider value={{ activeKey: props.activeKey }}>
       <Container>
@@ -143,7 +148,7 @@ const Tabs: React.FC<TabsProps> = (props) => {
                 ref={tabRefs.current[i]}
                 key={tab.indexKey}
                 tabStyle={props.tabStyle}
-                onClick={() => props.onChange?.(tab.indexKey)}
+                onClick={() => handleChange(tab.indexKey)}
               >
                 {tab.tab}
               </TabItem>
