@@ -83,12 +83,12 @@ const SubscribeButtonText = styled.p<{ isSubscribe: boolean }>`
   ${VerticalHorizontalCenterMixin}
 `;
 
-const SubscribeIcon = styled(SubscribeSvgIcon)<{ isSubscribe: boolean }>`
+const SubscribeIcon = styled(SubscribeSvgIcon)<{ subscribed: boolean }>`
   transition: all 0.3s ease 0.2s;
   position: absolute;
   top: 50%;
-  right: ${(props) => (props.isSubscribe ? "50%" : "8px")};
-  transform: ${(props) => (props.isSubscribe ? "translate(50%, -50%)" : "translate(0, -50%)")};
+  right: ${(props) => (props.subscribed ? "50%" : "8px")};
+  transform: ${(props) => (props.subscribed ? "translate(50%, -50%)" : "translate(0, -50%)")};
   background: rgba(255, 255, 255, 0.2);
   width: 44px;
   height: 44px;
@@ -151,7 +151,7 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
           <SubscribeButtonText isSubscribe={props.isSubscribe} onClick={props.onSubscribe}>
             subscribe
           </SubscribeButtonText>
-          <SubscribeIcon isSubscribe={props.isSubscribe} onClick={props.onSubscribe} />
+          <SubscribeIcon subscribed={props.isSubscribe} onClick={props.onSubscribe} />
         </SubscribeButton>
       )}
     </Container>

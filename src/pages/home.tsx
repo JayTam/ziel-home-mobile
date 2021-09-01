@@ -3,11 +3,17 @@ import BottomTabBar from "../components/BottomTabBar";
 import Tabs from "../../lib/Tabs";
 import TabPanel from "../../lib/Tabs/TabPanel";
 import styled from "styled-components";
-import { useState } from "react";
-import { getMagazineList, MagazineType, subscribeMagazine } from "../apis";
+import { useEffect, useState } from "react";
+import {
+  getMagazineList,
+  getSubscribeMagazinePaperList,
+  MagazineType,
+  subscribeMagazine,
+} from "../apis";
 import MagazineCard from "../components/home/MagazineCard";
 import produce from "immer";
 import { composeAuthHeaders, useLogin } from "../utils";
+import SubscribeMagazinePreview from "../components/home/SubscribeMagazinePreview";
 
 const HomeTabs = styled(Tabs)`
   height: 44px;
@@ -38,7 +44,9 @@ interface HomeProps {
 
 const Home: NextPage<HomeProps> = (props) => {
   const [homeActiveTab, setHomeActiveTab] = useState("1");
-  const [magazines, setMagazines] = useState(props.magazines);
+  const [exploreMagazines, setExploreMagazines] = useState(props.magazines);
+  const [subscribedMagazines, setSubscribedMagazines] = useState<MagazineType[] | null>(null);
+
   const { withLogin } = useLogin();
 
   /**
@@ -48,7 +56,7 @@ const Home: NextPage<HomeProps> = (props) => {
     if (!magazine) return;
     const isSubscribe = !magazine.isSubscribe;
     await subscribeMagazine(magazine.id, isSubscribe);
-    setMagazines((prev) =>
+    setExploreMagazines((prev) =>
       produce(prev, (draft) => {
         draft.forEach((item) => {
           if (item.id === magazine.id) {
@@ -64,13 +72,21 @@ const Home: NextPage<HomeProps> = (props) => {
       })
     );
   });
+  useEffect(() => {
+    (async () => {
+      if (subscribedMagazines === null && homeActiveTab === "2") {
+        const response = await getSubscribeMagazinePaperList({ page: 1 });
+        setSubscribedMagazines(response.data.result.data);
+      }
+    })();
+  }, [homeActiveTab]);
 
   return (
     <>
       <HomeTabs activeKey={homeActiveTab} onChange={(val) => setHomeActiveTab(val)} center fixed>
         <TabPanel tab="Explore" indexKey="1">
           <ExploreContainer>
-            {magazines.map((magazine) => (
+            {exploreMagazines.map((magazine) => (
               <MagazineCard
                 key={magazine.id}
                 {...magazine}
@@ -80,7 +96,11 @@ const Home: NextPage<HomeProps> = (props) => {
           </ExploreContainer>
         </TabPanel>
         <TabPanel tab="Subscribed" indexKey="2">
-          <SubscribeContainer>hello world 2</SubscribeContainer>
+          <SubscribeContainer>
+            {subscribedMagazines?.map((magazine) => (
+              <SubscribeMagazinePreview key={magazine.id} {...magazine} />
+            ))}
+          </SubscribeContainer>
         </TabPanel>
       </HomeTabs>
       <BottomTabBar />
@@ -92,7 +112,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const headers = composeAuthHeaders(req.headers.cookie);
   const response = await getMagazineList({ page: 1 }, { headers });
   const magazines = response.data.result.data;
-  console.log(magazines);
 
   return {
     props: {

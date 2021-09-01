@@ -52,7 +52,7 @@ export type PaperType = {
   style: string;
 };
 
-const mapPaperItem = (item: Record<string, any>) => {
+export const mapPaperItem = (item: Record<string, any>) => {
   const spec = JSON.parse(item.spec || "{}");
   return {
     id: item.id ?? "",
