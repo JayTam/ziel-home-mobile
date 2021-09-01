@@ -6,7 +6,7 @@ import styled from "styled-components";
 import TitleImg from "../../assets/imgs/profileBg.png";
 import Image from "next/image";
 import Button from "../../../lib/Button";
-import { composeAuthHeaders, digitalScale } from "../../utils";
+import { composeAuthHeaders, digitalScale, useLogin } from "../../utils";
 import Header from "../../components/Header";
 import TabPanel from "../../../lib/Tabs/TabPanel";
 import Tabs from "../../../lib/Tabs";
@@ -143,6 +143,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
   const [profile, setProfile] = useState<ProfileType>(props.profile);
   const user = useAppSelector((state) => state.user);
   const isMyProfile = useMemo(() => user.uid === props.userId, [props.userId, user.uid]);
+  const { withLogin } = useLogin();
   const handleChange = (key: string) => {
     setType(key as "1" | "2" | "3");
   };
@@ -150,7 +151,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
     setStarType(key as "1" | "2");
   };
 
-  const handleFollow = async (profile: ProfileType) => {
+  const handleFollow = withLogin<ProfileType>(async (profile) => {
     if (!profile) return;
     const isFollow = !profile.isFollow;
     await followUser(props.userId, isFollow);
@@ -165,7 +166,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
         return draft;
       })
     );
-  };
+  });
   return (
     <Container>
       <Header fixed>Profile</Header>
