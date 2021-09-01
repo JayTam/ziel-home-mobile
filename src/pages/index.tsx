@@ -419,6 +419,9 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
         onCommentClose={() => {
           handleCommentClose();
         }}
+        onClickOverlay={() => {
+          handleCommentClose();
+        }}
         open={open}
         {...paperProp}
       />
