@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { MagazineType } from "../../apis";
 import { TextEllipsisMixin, VerticalHorizontalCenterMixin } from "../../../lib/mixins";
 import DefaultPaperPoster from "../../../public/video_placeholder.jpg";
-import TopIcon from "../../assets/icons/top.svg";
 import MorePaperIcon from "../../assets/icons/more-paper.svg";
+import Link from "next/link";
 
 const Container = styled.div`
   border-bottom: 1px solid #f5f5f5;
@@ -95,10 +95,6 @@ const PaperTitle = styled.p`
   ${TextEllipsisMixin}
 `;
 
-const PaperTopIcon = styled(TopIcon)`
-  vertical-align: bottom;
-`;
-
 type SubscribeMagazinePreviewProps = MagazineType;
 
 const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props) => {
@@ -115,17 +111,18 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
         </MagazineInfoContainer>
       </MagazineContainer>
       <PapersContainer>
-        {props.papers?.map((paper) => (
-          <PaperItem key={paper.id} cover={paper.poster}>
-            <PaperTitle>
-              {paper.isTop ? <PaperTopIcon /> : null}
-              {paper.title}
-            </PaperTitle>
-          </PaperItem>
+        {props.papers?.map((paper, index) => (
+          <Link href={`/feed?magazine_id=${props.id}&active_index=${index}`} key={paper.id}>
+            <PaperItem cover={paper.poster}>
+              <PaperTitle>{paper.title}</PaperTitle>
+            </PaperItem>
+          </Link>
         ))}
-        <PaperMore>
-          <PaperMoreIcon />
-        </PaperMore>
+        <Link href={`/feed?magazine_id=${props.id}&active_index=3`}>
+          <PaperMore>
+            <PaperMoreIcon />
+          </PaperMore>
+        </Link>
       </PapersContainer>
     </Container>
   );

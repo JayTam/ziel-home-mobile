@@ -3,8 +3,6 @@ import { ThemeProvider } from "styled-components";
 import { theme } from "../../lib";
 import "normalize.css";
 import "swiper/swiper.min.css";
-import "swiper/components/effect-cube/effect-cube.min.css";
-import "swiper/components/pagination/pagination.min.css";
 import React from "react";
 import {
   composeAuthHeaders,
@@ -22,8 +20,9 @@ import { setUserInfo } from "../app/features/user/userSlice";
 import App from "next/app";
 import { PASSPORT_DEVICE_ID_KEY, PASSPORT_TENANT_NAME_KEY, PASSPORT_TOKEN_KEY } from "../constants";
 import { Provider } from "react-redux";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import "../styles/globals.css";
+import { KeepAliveProvider } from "react-next-keep-alive";
 
 // 需要登陆的路由，未登陆态访问这些路由，重定向到首页
 const needLoginRoutes = [
@@ -36,6 +35,7 @@ const needLoginRoutes = [
 
 function MyApp(app: AppProps) {
   const { Component, pageProps } = app;
+  const router = useRouter();
 
   const reduxStore = useStore(pageProps.initialReduxState);
 
@@ -63,7 +63,9 @@ function MyApp(app: AppProps) {
       <ThemeProvider theme={theme}>
         <Provider store={reduxStore}>
           <LoginContext.Provider value={loginState}>
-            <Component {...pageProps} />
+            <KeepAliveProvider router={router}>
+              <Component {...pageProps} />
+            </KeepAliveProvider>
           </LoginContext.Provider>
         </Provider>
       </ThemeProvider>

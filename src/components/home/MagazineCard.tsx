@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { MouseEventHandler, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { MagazineType } from "../../apis";
 import { TextEllipsisMixin, VerticalHorizontalCenterMixin } from "../../../lib/mixins";
@@ -137,8 +137,13 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
   const backgroundColor = useRef(randomColor());
   const user = useAppSelector((state) => state.user);
   const isMyMagazine = useMemo(() => user.uid === props.authorId, [props.authorId, user.uid]);
+  const handleSubscribe: MouseEventHandler = (event) => {
+    event.stopPropagation();
+    props.onSubscribe?.();
+  };
+
   return (
-    <Container color={backgroundColor.current}>
+    <Container color={backgroundColor.current} onClick={props.onClick}>
       <AuthorContainer>
         <Avatar src={props.avatar} />
         <AuthorName> {props.author} </AuthorName>
@@ -148,11 +153,11 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
       <MagazineNunContainer>{props.subscribeNum} subscribers · 112 stories</MagazineNunContainer>
       {isMyMagazine ? null : (
         <SubscribeButton isSubscribe={props.isSubscribe}>
-          <SubscribeButtonBg isSubscribe={props.isSubscribe} onClick={props.onSubscribe} />
-          <SubscribeButtonText isSubscribe={props.isSubscribe} onClick={props.onSubscribe}>
+          <SubscribeButtonBg isSubscribe={props.isSubscribe} onClick={handleSubscribe} />
+          <SubscribeButtonText isSubscribe={props.isSubscribe} onClick={handleSubscribe}>
             subscribe
           </SubscribeButtonText>
-          <SubscribeIcon subscribed={props.isSubscribe} onClick={props.onSubscribe} />
+          <SubscribeIcon subscribed={props.isSubscribe} onClick={handleSubscribe} />
         </SubscribeButton>
       )}
     </Container>
