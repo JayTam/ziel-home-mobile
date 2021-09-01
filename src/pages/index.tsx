@@ -17,7 +17,6 @@ import { composeAuthHeaders, useLogin } from "../utils";
 import { useAppSelector } from "../app/hook";
 import SubscribedIcon from "../assets/icons/subscribed.svg";
 import { followUser } from "../apis/profile";
-import BottomTabBar from "../components/BottomTabBar";
 import Comments from "../components/Comments";
 
 // install Virtual module
@@ -29,11 +28,6 @@ const Container = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-`;
-
-const SwiperContainer = styled.div`
-  position: relative;
-  height: calc(100% - 50px);
 `;
 
 const StyledSwiper = styled(Swiper)`
@@ -68,6 +62,7 @@ const MagazineTitle = styled.h1`
   font-size: 20px;
   line-height: 23px;
   margin-bottom: 6px;
+  font-family: "DidotBold", serif;
   ${TextEllipsisMixin}
 `;
 
@@ -254,7 +249,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   };
 
   useEffect(() => {
-    setSwiperHeight(window.innerHeight - 50);
+    setSwiperHeight(window.innerHeight);
   }, []);
 
   const user = useAppSelector((state) => state.user);
@@ -357,63 +352,59 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   return (
     <>
       <Container>
-        <SwiperContainer>
-          <StyledSwiper
-            direction="vertical"
-            virtual
-            height={swiperHeight}
-            onSliderFirstMove={handleTouchStart}
-            onSlideResetTransitionEnd={handleSwitchPaper}
-            onSlideChangeTransitionEnd={handleSwitchPaper}
-            onReachEnd={handleReachEnd}
-          >
-            {papers.map((paper, index) => (
-              <SwiperSlide key={paper.id} virtualIndex={index}>
-                <MagazineContainer>
-                  <MagazineInfo>
-                    <MagazineTitle>
-                      {currentMagazine.title}
-                      {!isMyMagazine && currentMagazine.isSubscribe ? (
-                        <StyledSubscribedIcon onClick={() => handleSubscribe(currentMagazine)} />
-                      ) : null}
-                    </MagazineTitle>
-                    <MagazineNumber>{currentMagazine.subscribeNum} subscribers</MagazineNumber>
-                  </MagazineInfo>
-                  {!isMyMagazine && !currentMagazine.isSubscribe ? (
-                    <MagazineSubscribeButton
-                      color="primary"
-                      onClick={() => handleSubscribe(currentMagazine)}
-                    >
-                      subscribe
-                    </MagazineSubscribeButton>
-                  ) : null}
-                </MagazineContainer>
-                <Paper
-                  {...paper}
-                  loading={videoLoading}
-                  active={activeIndex === index}
-                  onTogglePlay={() => handleTogglePlay(paper)}
-                  onFirstPlay={() => handleFirstPlay(paper)}
-                  onFollow={() => handleFollow(paper)}
-                  onLike={() => handleLikePaper(paper)}
-                  onStar={() => handleStarPaper(paper)}
-                  onComment={() => {
-                    handleCommentPaper(paper);
-                  }}
-                />
-              </SwiperSlide>
-            ))}
-          </StyledSwiper>
-          <VideoPlayer
-            ref={videoPlayerRef}
-            {...papers[activeIndex]}
-            hidden={hiddenVideoPlayer}
-            loading={videoLoading}
-            onChangeCurrentTime={(time) => handleChangeCurrentTime(papers[activeIndex], time)}
-          />
-        </SwiperContainer>
-
-        <BottomTabBar dark />
+        <StyledSwiper
+          direction="vertical"
+          virtual
+          height={swiperHeight}
+          onSliderFirstMove={handleTouchStart}
+          onSlideResetTransitionEnd={handleSwitchPaper}
+          onSlideChangeTransitionEnd={handleSwitchPaper}
+          onReachEnd={handleReachEnd}
+        >
+          {papers.map((paper, index) => (
+            <SwiperSlide key={paper.id} virtualIndex={index}>
+              <MagazineContainer>
+                <MagazineInfo>
+                  <MagazineTitle>
+                    {currentMagazine.title}
+                    {!isMyMagazine && currentMagazine.isSubscribe ? (
+                      <StyledSubscribedIcon onClick={() => handleSubscribe(currentMagazine)} />
+                    ) : null}
+                  </MagazineTitle>
+                  <MagazineNumber>{currentMagazine.subscribeNum} subscribers</MagazineNumber>
+                </MagazineInfo>
+                {!isMyMagazine && !currentMagazine.isSubscribe ? (
+                  <MagazineSubscribeButton
+                    color="primary"
+                    onClick={() => handleSubscribe(currentMagazine)}
+                  >
+                    subscribe
+                  </MagazineSubscribeButton>
+                ) : null}
+              </MagazineContainer>
+              <Paper
+                {...paper}
+                loading={videoLoading}
+                active={activeIndex === index}
+                onTogglePlay={() => handleTogglePlay(paper)}
+                onFirstPlay={() => handleFirstPlay(paper)}
+                onFollow={() => handleFollow(paper)}
+                onLike={() => handleLikePaper(paper)}
+                onStar={() => handleStarPaper(paper)}
+                onComment={() => {
+                  handleCommentPaper(paper);
+                }}
+              />
+            </SwiperSlide>
+          ))}
+        </StyledSwiper>
+        <VideoPlayer
+          ref={videoPlayerRef}
+          {...papers[activeIndex]}
+          hidden={hiddenVideoPlayer}
+          loading={videoLoading}
+          onChangeCurrentTime={(time) => handleChangeCurrentTime(papers[activeIndex], time)}
+        />
       </Container>
       <Comments
         onCommentClose={() => {

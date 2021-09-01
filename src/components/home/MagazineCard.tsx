@@ -52,6 +52,7 @@ const MagazineTitle = styled.p`
   line-height: 23px;
   font-weight: bold;
   margin-bottom: 2px;
+  font-family: "DidotBold", serif;
   ${TextEllipsisMixin}
 `;
 

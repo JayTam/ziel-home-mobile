@@ -41,6 +41,7 @@ const MagazineTitle = styled.p`
   font-size: 18px;
   line-height: 23px;
   font-weight: 500;
+  font-family: "DidotBold", serif;
 `;
 const MagazineCreateTime = styled.p`
   font-size: 14px;
