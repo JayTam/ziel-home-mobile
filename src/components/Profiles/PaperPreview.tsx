@@ -1,15 +1,18 @@
 import styled from "styled-components";
-import StarActiveIcon from "../../assets/icons/star-magazine-active.svg";
-import StarIcon from "../../assets/icons/star-magazine.svg";
+import TopFlagIcon from "../../assets/icons/star-magazine-active.svg";
+import TopActiveIcon from "../../assets/icons/star-magazine.svg";
 import PlayIcon from "../../assets/icons/play.svg";
 import { digitalScale } from "../../utils";
 import { PaperType } from "../../apis/paper";
 import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
 import Image from "next/image";
 import { TextEllipsisMixin } from "../../../lib/mixins";
+import TopIcon from "../../assets/icons/top.svg";
 
 interface ManazinePagePropType extends PaperType {
-  onLike?: () => void;
+  onTop?: () => void;
+  isShowTop?: boolean;
+  isStarContent?: boolean;
 }
 
 const Container = styled.div`
@@ -52,6 +55,10 @@ const BottomContent = styled.div`
   flex-direction: column;
   padding: 0px 7px 7px;
 `;
+const DescriptionStyle = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
 const Description = styled.div`
   font-size: 12px;
   line-height: 14px;
@@ -89,6 +96,19 @@ const PlayCount = styled.div`
   line-height: 16px;
   color: ${(props) => props.theme.palette.text?.secondary}; ;
 `;
+const IsReviewing = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 76px;
+  height: 24px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 24px;
+  color: #ff603e;
+  border-radius: 0 14px 0 14px;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
 const PaperPreview: React.FC<ManazinePagePropType> = (props) => {
   return (
     <Container>
@@ -98,11 +118,18 @@ const PaperPreview: React.FC<ManazinePagePropType> = (props) => {
         <PlacehoderImage src={VideoPlaceholderImage} />
       )}
       <PaperContent>
-        <TopConent onClick={props.onLike}>
-          {props.isLike ? <StarActiveIcon /> : <StarIcon />}
+        <TopConent
+          style={{ visibility: props.isShowTop ? "visible" : "hidden" }}
+          onClick={props.onTop}
+        >
+          {props.isTop ? <TopActiveIcon /> : <TopFlagIcon />}
         </TopConent>
+        {!props.isStarContent && props.status === 1 ? <IsReviewing>Is reviewing</IsReviewing> : ""}
         <BottomContent>
-          <Description>{props.description}</Description>
+          <DescriptionStyle>
+            <TopIcon />
+            <Description>{props.description}</Description>
+          </DescriptionStyle>
           <AutherLayout>
             <AvatarLayout>
               <Avatar src={props.avatar} />

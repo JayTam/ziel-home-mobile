@@ -50,6 +50,8 @@ export type PaperType = {
   space: string;
   size: string;
   style: string;
+  //文章状态 0-草稿 1-待审核 2-已发布 3-审核未通过
+  status: 0 | 1 | 2 | 3;
 };
 
 export const mapPaperItem = (item: Record<string, any>) => {
@@ -80,6 +82,7 @@ export const mapPaperItem = (item: Record<string, any>) => {
     space: spec?.space ?? "",
     style: spec?.style ?? "",
     size: spec?.acreage ?? "",
+    status: item.status ?? 0,
   };
 };
 
@@ -143,6 +146,24 @@ export const starPaper = (paperId: string, isStar: boolean) => {
     params: {
       article_id: paperId,
       is_state: isStar ? 1 : 0,
+    },
+  });
+};
+
+/**
+ * 置顶内容
+ * @param id 内容ID
+ * @param magazineId 杂志ID
+ * @param isTop
+ */
+export const topPaper = (id: string, magazineId: string, isTop: boolean) => {
+  return snsRequest({
+    url: "/article/top",
+    method: "POST",
+    params: {
+      id,
+      is_top: isTop ? 1 : 0,
+      magazine_id: magazineId,
     },
   });
 };

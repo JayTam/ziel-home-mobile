@@ -17,6 +17,7 @@ import PaperScrollList from "../../components/Profiles/PaperScrollList";
 import MagazineScrollList from "../../components/Profiles/MagazineScrollList";
 import { useAppSelector } from "../../app/hook";
 import Edit from "../../assets/icons/edit.svg";
+import Link from "next/link";
 
 interface ProfilePageProps {
   profile: ProfileType;
@@ -129,11 +130,13 @@ const TabsStyle = styled(Tabs)`
   justify-content: space-between;
 `;
 const TabsStarStyle = styled(Tabs)`
+  padding-left: 14px;
   display: flex;
 `;
 const TabPanelStyle = styled(TabPanel)`
   padding: 14px 14px 20px 7px;
 `;
+const StarTabPanelStyle = styled(TabPanel)``;
 const Profile: NextPage<ProfilePageProps> = (props) => {
   const [type, setType] = useState<"1" | "2" | "3">("1");
   const [starType, setStarType] = useState<"1" | "2">("1");
@@ -153,12 +156,13 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
     await followUser(props.userId, isFollow);
     setProfile((prev) =>
       produce(prev, (draft) => {
-        if (isFollow) {
-          draft.followerNum -= 1;
-        } else {
-          draft.followerNum += 1;
-        }
         draft.isFollow = isFollow;
+        if (isFollow) {
+          draft.followerNum = profile.followerNum + 1;
+        } else {
+          draft.followerNum = profile.followerNum - 1;
+        }
+        return draft;
       })
     );
   };
@@ -192,19 +196,23 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
               <Statistics>{digitalScale(profile.paperNum)}</Statistics>
               <TypeText>Papers</TypeText>
             </StatisticsItem>
-            <StatisticsItem>
-              <Statistics>{digitalScale(profile.followerNum)}</Statistics>
-              <TypeText>Followers</TypeText>
-            </StatisticsItem>
-            <StatisticsItem>
-              <Statistics>{digitalScale(profile.followingNum)}</Statistics>
-              <TypeText>Following</TypeText>
-            </StatisticsItem>
+            <Link href={`/followers/${props.userId}`}>
+              <StatisticsItem>
+                <Statistics>{digitalScale(profile.followerNum)}</Statistics>
+                <TypeText>Followers</TypeText>
+              </StatisticsItem>
+            </Link>
+            <Link href={`/followers/${props.userId}`}>
+              <StatisticsItem>
+                <Statistics>{digitalScale(profile.followingNum)}</Statistics>
+                <TypeText>Follewing</TypeText>
+              </StatisticsItem>
+            </Link>
           </StatisticsLayout>
         </TopContent>
       </TopLayout>
       <BottomLayout>
-        <TabsStyle activeKey={type} onChange={handleChange} tabBar tabStyle="line">
+        <TabsStyle activeKey={type} onChange={handleChange}>
           <TabPanelStyle
             indexKey="1"
             tab={`Paper ${digitalScale(props.usersPapers.count, "Int")}`}
@@ -219,7 +227,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
           >
             <MagazineScrollList userId={props.userId} />
           </TabPanelStyle>
-          <TabPanelStyle
+          <StarTabPanelStyle
             indexKey="3"
             tab={`Saved ${digitalScale(
               props.favoriteMagezine.count + props.favoritePaper.count,
@@ -229,13 +237,13 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
           >
             <TabsStarStyle activeKey={starType} onChange={handleStarChange} tabStyle="contain">
               <TabPanelStyle indexKey="1" tab="Paper" forceRender>
-                <PaperScrollList isStar userId={props.userId} />
+                <PaperScrollList isStarContent userId={props.userId} />
               </TabPanelStyle>
               <TabPanelStyle indexKey="2" tab="Magazine" forceRender>
-                <MagazineScrollList isStar userId={props.userId} />
+                <MagazineScrollList isStarContent userId={props.userId} />
               </TabPanelStyle>
             </TabsStarStyle>
-          </TabPanelStyle>
+          </StarTabPanelStyle>
         </TabsStyle>
       </BottomLayout>
     </Container>

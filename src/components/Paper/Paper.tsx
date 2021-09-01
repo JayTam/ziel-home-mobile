@@ -124,6 +124,7 @@ interface PaperInterface extends PaperType {
   // 喜欢
   onLike?: () => void;
   onStar?: () => void;
+  onComment?: () => void;
 }
 
 const Paper: React.FC<PaperInterface> = (props) => {
@@ -184,7 +185,7 @@ const Paper: React.FC<PaperInterface> = (props) => {
               <PaperActionNum>{props.likeNum}</PaperActionNum>
             </PaperActionItem>
 
-            <PaperActionItem>
+            <PaperActionItem onClick={props.onComment}>
               <CommentIcon />
               <PaperActionNum>{props.commentNum}</PaperActionNum>
             </PaperActionItem>

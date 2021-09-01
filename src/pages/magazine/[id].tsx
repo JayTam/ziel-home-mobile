@@ -1,16 +1,18 @@
 import { GetServerSideProps, NextPage } from "next";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MagazineType, getMagazineById, subscribeMagazine } from "../../apis";
 import Header from "../../components/Header";
 import { composeAuthHeaders, digitalScale, useInfiniteScroll } from "../../utils";
 import BtnShare from "../../assets/icons/btn_share.svg";
 import ShowMoreText from "react-show-more-text";
-import Chief from "../../assets/icons/CHIEF.svg";
-import Button from "../../../lib/Button";
 import produce from "immer";
 import PaperPreview from "../../components/Profiles/PaperPreview";
-import { getPaperList, likePaper, PaperType } from "../../apis/paper";
+import { getPaperList, PaperType, topPaper } from "../../apis/paper";
+import SubscribeBtn from "../../assets/icons/subscribe.svg";
+import UnSubscribeBtn from "../../assets/icons/unSubscribe.svg";
+import { TextEllipsisMixin } from "../../../lib/mixins";
+import { useAppSelector } from "../../app/hook";
 
 interface MagazineProps {
   magazine: MagazineType;
@@ -51,8 +53,32 @@ const Title = styled.div`
   width: 100%;
   font-weight: bold;
   font-size: 16px;
-  line-height: 19px;
+  line-height: 21px;
+  ${TextEllipsisMixin}
   color: ${(props) => props.theme.palette.text?.primary};
+  font-family: "DidotBold";
+`;
+const Statistics = styled.div`
+  display: flex;
+  font-size: 12px;
+  line-height: 16px;
+  margin-top: 6px;
+  color: ${(props) => props.theme.palette.text?.secondary};
+`;
+const SplitDiv = styled.div`
+  height: 1px;
+  width: 100%;
+  background-color: ${(props) => props.theme.palette.background?.paper};
+  margin-top: 30px;
+`;
+const DescriptionStyle = styled.div`
+  padding-top: 4px;
+`;
+const DescriptionTitle = styled.div`
+  margin-top: 14px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
 `;
 const Description = styled.div`
   width: 100%;
@@ -80,55 +106,11 @@ const AuthorName = styled.div`
   line-height: 16px;
   margin-left: 6px;
 `;
-const ChiefDiv = styled.div`
-  margin-left: 2px;
-`;
-const SubscribeButton = styled(Button)`
-  height: 30px;
-  border-radius: 26px;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 16px;
-  color: ${(props) => props.theme.palette.text?.primary};
-`;
-const MagazineStatistics = styled.div`
-  display: flex;
-  justify-content: space-between;
-  background-color: ${(props) => props.theme.palette.background?.paper};
-  border-radius: 14px;
-  height: 60px;
-  width: 100%;
-  margin-top: 30px;
-`;
-const StatisticsItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 13px 26px 14px 26px;
-`;
-const Statistics = styled.div`
-  text-align: center;
-  font-size: 16px;
-  line-height: 19px;
-  color: ${(props) => props.theme.palette.text?.primary};
-`;
-const TypeText = styled.div`
-  font-size: 12px;
-  line-height: 14px;
-  color: ${(props) => props.theme.palette.text?.secondary};
-`;
 const MagazinePaperLayout = styled.div`
-  margin-top: 30px;
+  margin-top: 12px;
   padding: 0px 14px 0px 7px;
   height: 100%;
   width: 100%;
-`;
-const PapaerCount = styled.div`
-  width: 100%;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 16px;
-  text-align: left;
 `;
 const PaperContent = styled.div`
   display: flex;
@@ -143,6 +125,9 @@ const PaperItem = styled.div`
   margin-top: 7px;
 `;
 const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
+  const user = useAppSelector((state) => state.user);
+  const isShowTop = useMemo(() => user.uid === magazine.authorId, [user.uid, magazine.authorId]);
+  const [paperCounts, setPaperCounts] = useState(0);
   const [currentMagazine, setCurrentMagazin] = useState(magazine);
   const [papers, setPapers] = useState<PaperType[]>([]);
   const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
@@ -155,6 +140,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
     getPaperList({ magazineId: magazine.id, page })
       .then((response) => {
         const list = response.data.result.data;
+        setPaperCounts(response.data.result.count);
         const hasMore = Boolean(response.data.result.hasmore);
         setHasMore(hasMore);
         setPapers((prev) => [...prev, ...list]);
@@ -167,32 +153,47 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const handleShare = () => {
     console.log("share!");
   };
+
+  /**
+   *  订阅杂志
+   * @
+   */
   const handleSubscribe = async (magazine: MagazineType) => {
     if (!magazine) return;
     const isSubscribe = !magazine.isSubscribe;
     await subscribeMagazine(magazine.id, isSubscribe);
     setCurrentMagazin((prev) =>
       produce(prev, (draft) => {
-        if (isSubscribe) {
-          draft.subscribeNum -= 1;
-        } else {
-          draft.subscribeNum += 1;
-        }
         draft.isSubscribe = isSubscribe;
+        if (isSubscribe) {
+          draft.subscribeNum = magazine.subscribeNum + 1;
+        } else {
+          draft.subscribeNum = magazine.subscribeNum - 1;
+        }
+        return draft;
       })
     );
   };
-  const handleStarPaper = async (paper: PaperType) => {
+
+  /**
+   *  置顶内容
+   * @
+   */
+  const handleTopPaper = async (paper: PaperType) => {
     if (!paper) return;
-    const isLike = !paper.isLike;
-    await likePaper(paper.id, isLike);
+    const isTop = !paper.isTop;
+    await topPaper(paper.id, magazine.id, isTop);
     setPapers((prev) =>
       produce(prev, (draft) => {
-        draft.forEach((item) => {
-          if (item.id === paper.id) item.isLike = isLike;
-          if (isLike) item.likeNum += 1;
-          else item.likeNum -= 1;
+        draft.forEach((item, index) => {
+          if (item.id === paper.id) {
+            item.isTop = isTop;
+            if (isTop) {
+              draft.unshift(draft.splice(index, 1)[0]);
+            }
+          }
         });
+        draft.sort((a, b) => (a.isTop > b.isTop ? -1 : 1));
         return draft;
       })
     );
@@ -207,59 +208,52 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
             <MagazineInfo>
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
-                <Description>
-                  <ShowMoreText
-                    className="react-more-text"
-                    anchorClass="anchor"
-                    lines={2}
-                    more="More"
-                    less="Collect"
-                  >
-                    {currentMagazine.description}
-                  </ShowMoreText>
-                </Description>
+                <Statistics>
+                  {digitalScale(paperCounts)} storys &nbsp;&nbsp;&nbsp;
+                  {digitalScale(magazine.subscribeNum)} subscribers
+                </Statistics>
               </TopContent>
               <BottomContent>
                 <AuthorContent>
                   <Avatar src={currentMagazine.avatar}></Avatar>
                   <AuthorName>{currentMagazine.author}</AuthorName>
-                  <ChiefDiv>
-                    <Chief></Chief>
-                  </ChiefDiv>
                 </AuthorContent>
                 <div
                   onClick={() => {
                     handleSubscribe(currentMagazine);
                   }}
                 >
-                  <SubscribeButton color={currentMagazine.isSubscribe ? "primary" : "secondary"}>
-                    {currentMagazine.isSubscribe ? "Subscribe" : "UnSubscribe"}
-                  </SubscribeButton>
+                  {currentMagazine.isSubscribe ? <UnSubscribeBtn /> : <SubscribeBtn />}
                 </div>
               </BottomContent>
             </MagazineInfo>
           </MagazineContent>
-          <MagazineStatistics>
-            <StatisticsItem>
-              <Statistics>{digitalScale(currentMagazine.viewNum)}</Statistics>
-              <TypeText>views</TypeText>
-            </StatisticsItem>
-            <StatisticsItem>
-              <Statistics>{digitalScale(currentMagazine.subscribeNum)}</Statistics>
-              <TypeText>subscribers</TypeText>
-            </StatisticsItem>
-            <StatisticsItem>
-              <Statistics>{digitalScale(currentMagazine.editorNum)}</Statistics>
-              <TypeText>editors</TypeText>
-            </StatisticsItem>
-          </MagazineStatistics>
+          <SplitDiv />
+          <DescriptionStyle>
+            <DescriptionTitle>Description</DescriptionTitle>
+            <Description>
+              <ShowMoreText
+                className="react-more-text"
+                anchorClass="anchor"
+                lines={2}
+                more="More"
+                less="Collect"
+              >
+                {currentMagazine.description}
+              </ShowMoreText>
+            </Description>
+          </DescriptionStyle>
         </Content>
         <MagazinePaperLayout>
-          <PapaerCount>Paper 1344</PapaerCount>
           <PaperContent>
             {papers.map((paper) => (
               <PaperItem key={paper.id}>
-                <PaperPreview {...paper} onLike={() => handleStarPaper(paper)}></PaperPreview>
+                <PaperPreview
+                  {...paper}
+                  authorId={magazine.authorId}
+                  isShowTop={isShowTop}
+                  onTop={() => handleTopPaper(paper)}
+                ></PaperPreview>
               </PaperItem>
             ))}
             {hasMore ? <div ref={loaderRef}>loading...</div> : null}

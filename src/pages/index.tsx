@@ -18,6 +18,7 @@ import { useAppSelector } from "../app/hook";
 import SubscribedIcon from "../assets/icons/subscribed.svg";
 import { followUser } from "../apis/profile";
 import BottomTabBar from "../components/BottomTabBar";
+import Comments from "../components/Comments";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -102,6 +103,8 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
 
   const [swiperHeight, setSwiperHeight] = useState(0);
   const { withLogin } = useLogin();
+  const [open, setOpen] = useState(false);
+  const [paperProp, setPaperProp] = useState<PaperType>(paperList[0]);
 
   useEffect(() => {
     const player = videoPlayerRef.current;
@@ -335,6 +338,22 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
     );
   });
 
+  /**
+   * 评论内容
+   */
+  const handleCommentPaper = withLogin<PaperType>((paper) => {
+    if (!paper) return;
+    setPaperProp(paper);
+    setOpen(true);
+  });
+
+  /**
+   * 关闭评论
+   */
+  const handleCommentClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
       <Container>
@@ -378,6 +397,9 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
                   onFollow={() => handleFollow(paper)}
                   onLike={() => handleLikePaper(paper)}
                   onStar={() => handleStarPaper(paper)}
+                  onComment={() => {
+                    handleCommentPaper(paper);
+                  }}
                 />
               </SwiperSlide>
             ))}
@@ -393,6 +415,16 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
 
         <BottomTabBar dark />
       </Container>
+      <Comments
+        onCommentClose={() => {
+          handleCommentClose();
+        }}
+        onClickOverlay={() => {
+          handleCommentClose();
+        }}
+        open={open}
+        {...paperProp}
+      />
     </>
   );
 };
