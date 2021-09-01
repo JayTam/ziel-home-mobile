@@ -25,17 +25,21 @@ import { Provider } from "react-redux";
 import Router from "next/router";
 
 const GlobalStyle = createGlobalStyle`
-  html,
+  html {
+    width: 100%;
+    height: 100%;
+  }
   body {
     width: 100%;
-    overflow-x: hidden;
     height: 100%;
+    overflow-x: hidden;
     padding: 0;
     margin: 0;
     font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell,
     Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
     -webkit-tap-highlight-color: transparent;
   }
+
 
   #__next {
     height: 100%;
