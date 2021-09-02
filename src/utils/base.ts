@@ -21,3 +21,10 @@ export function randomInt(min: number, max: number) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+export function isIPV4(checkValue?: string) {
+  if (checkValue) {
+    return /\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}/.test(checkValue);
+  }
+  return false;
+}

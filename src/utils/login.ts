@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { isServer } from "./base";
+import { isIPV4, isServer } from "./base";
 import { PASSPORT_SUB_APP_ID_KEY } from "../constants";
 import { AppContext } from "next/app";
 
@@ -41,7 +41,7 @@ export const parsePassportRedirectURL = (appContext?: AppContext) => {
       const port = chunks?.[1];
       if (host) {
         // localhost 开发环境下，加上端口，比如 localhost:3000
-        host = host + (host === "localhost" ? ":" + port : "");
+        host = host + (host === "localhost" || isIPV4(host) ? ":" + port : "");
       }
       const protocol = port === "443" ? "https" : "http";
       redirectURI = `${protocol}://${host}${asPath}`;

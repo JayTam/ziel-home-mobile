@@ -271,7 +271,6 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   };
 
   useEffect(() => {
-    alert(window.innerHeight);
     setSwiperHeight(window.innerHeight);
   }, []);
 
