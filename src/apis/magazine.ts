@@ -203,6 +203,27 @@ export const getMagazineList = (params: MagazineParams, options?: AxiosRequestCo
 };
 
 /**
+ * 推荐杂志列表
+ * @param params
+ * @param options
+ */
+export const getPopularMagazineList = (params: MagazineParams, options?: AxiosRequestConfig) => {
+  return snsRequest({
+    url: "/magazines",
+    method: "GET",
+    params: {
+      limit: 8,
+      is_recommend: 1,
+      ...params,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    return response;
+  });
+};
+
+/**
  * 订阅的杂志和内容列表
  * @param params
  * @param options

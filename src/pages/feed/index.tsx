@@ -50,8 +50,14 @@ const HeaderContainer = styled.div`
   display: flex;
 `;
 
+const RouteBack = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const RouteBackIcon = styled(FeedBackIcon)`
-  margin: 14px 0 0 14px;
+  margin: 0 14px;
 `;
 
 const MagazineContainer = styled.div`
@@ -59,7 +65,7 @@ const MagazineContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 14px;
+  padding: 16px 14px 16px 0;
 `;
 
 const MagazineInfo = styled.div`
@@ -265,6 +271,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   };
 
   useEffect(() => {
+    alert(window.innerHeight);
     setSwiperHeight(window.innerHeight);
   }, []);
 
@@ -381,7 +388,9 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
           {papers.map((paper, index) => (
             <SwiperSlide key={paper.id} virtualIndex={index}>
               <HeaderContainer>
-                <RouteBackIcon onClick={() => router.back()} />
+                <RouteBack onClick={() => router.back()}>
+                  <RouteBackIcon />
+                </RouteBack>
                 <MagazineContainer>
                   <MagazineInfo>
                     <MagazineTitle>

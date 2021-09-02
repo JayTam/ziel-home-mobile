@@ -34,10 +34,10 @@ const Home = () => {
   return (
     <>
       <HomeTabs activeKey={homeActiveTab} onChange={(val) => handleChangeHomeTab(val)} center fixed>
-        <TabPanel tab="Explore" indexKey="1">
+        <TabPanel tab="Explore" indexKey="1" forceRender>
           <ExploreMagazineScrollList />
         </TabPanel>
-        <TabPanel tab="Subscribed" indexKey="2">
+        <TabPanel tab="Subscribed" indexKey="2" forceRender>
           <SubscribeMagazineScrollList />
         </TabPanel>
       </HomeTabs>
