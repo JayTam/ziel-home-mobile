@@ -2,7 +2,7 @@ import styled from "styled-components";
 import TopFlagIcon from "../../assets/icons/star-magazine-active.svg";
 import TopActiveIcon from "../../assets/icons/star-magazine.svg";
 import PlayIcon from "../../assets/icons/play.svg";
-import { digitalScale } from "../../utils";
+import { digitalScale } from "../../utils/";
 import { PaperType } from "../../apis/paper";
 import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
 import Image from "next/image";
@@ -105,7 +105,7 @@ const IsReviewing = styled.div`
   text-align: center;
   font-size: 12px;
   line-height: 24px;
-  color: #ff603e;
+  color: ${(props) => props.theme.palette.common?.white};
   border-radius: 0 14px 0 14px;
   background-color: rgba(0, 0, 0, 0.5);
 `;

@@ -77,7 +77,7 @@ export const getNextMagazine = (magazineId?: string, options?: AxiosRequestConfi
     },
     ...options,
   }).then((response) => {
-    response.data.result = mapMagazineItem(response.data.result);
+    response.data.result.data = mapMagazineItem(response.data.result.data);
     return response;
   });
 };

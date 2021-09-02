@@ -8,6 +8,7 @@ export const theme: DefaultTheme = {
       primary: "#333333",
       secondary: "#999999",
       hint: "rgba(255, 255, 255, 0.5)",
+      special: "#ff603e",
     },
     background: {
       default: "#fff",

@@ -24,6 +24,7 @@ interface TypeText {
   secondary: string;
   disabled: string;
   hint: string;
+  special: string;
 }
 
 interface TypeBackground {

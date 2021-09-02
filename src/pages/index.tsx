@@ -18,7 +18,7 @@ import { useAppSelector } from "../app/hook";
 import SubscribedIcon from "../assets/icons/subscribed.svg";
 import { followUser } from "../apis/profile";
 import BottomTabBar from "../components/BottomTabBar";
-import Comments from "../components/Comments";
+import Comments from "../components/Comment/Comment";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -432,7 +432,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const headers = composeAuthHeaders(req.headers.cookie);
   const magazineResponse = await getNextMagazine(undefined, { headers });
-  const magazine: MagazineType = magazineResponse.data.result;
+  const magazine: MagazineType = magazineResponse.data.result.data;
 
   let paperList = [];
   if (magazine?.id) {
