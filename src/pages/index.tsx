@@ -40,10 +40,10 @@ const SubscribeContainer = styled.div`
 `;
 
 const Home = () => {
+  const router = useRouter();
   const [homeActiveTab, setHomeActiveTab] = useState("1");
   const [exploreMagazines, setExploreMagazines] = useState<MagazineType[]>([]);
   const [subscribedMagazines, setSubscribedMagazines] = useState<MagazineType[] | null>(null);
-  const router = useRouter();
 
   const { withLogin } = useLogin();
 
@@ -53,7 +53,7 @@ const Home = () => {
         const magazineResponse = await getMagazineList({ page: 1 });
         setExploreMagazines(magazineResponse.data.result.data);
       }
-      if (subscribedMagazines === null && homeActiveTab === "2") {
+      if (homeActiveTab === "2") {
         const response = await getSubscribeMagazinePaperList({ page: 1 });
         setSubscribedMagazines(response.data.result.data);
       }

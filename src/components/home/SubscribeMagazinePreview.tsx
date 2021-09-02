@@ -100,16 +100,19 @@ type SubscribeMagazinePreviewProps = MagazineType;
 const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props) => {
   return (
     <Container>
-      <MagazineContainer>
-        <MagazineCoverContainer>
-          <MagazineCoverBackground />
-          <MagazineCover src={props.cover} />
-        </MagazineCoverContainer>
-        <MagazineInfoContainer>
-          <MagazineTitle>{props.title}</MagazineTitle>
-          <MagazineCreateTime>{props.updatedAt}</MagazineCreateTime>
-        </MagazineInfoContainer>
-      </MagazineContainer>
+      <Link href={`/magazine/${props.id}`}>
+        <MagazineContainer>
+          <MagazineCoverContainer>
+            <MagazineCoverBackground />
+            <MagazineCover src={props.cover} />
+          </MagazineCoverContainer>
+          <MagazineInfoContainer>
+            <MagazineTitle>{props.title}</MagazineTitle>
+            <MagazineCreateTime>{props.updatedAt}</MagazineCreateTime>
+          </MagazineInfoContainer>
+        </MagazineContainer>
+      </Link>
+
       <PapersContainer>
         {props.papers?.map((paper, index) => (
           <Link href={`/feed?magazine_id=${props.id}&active_index=${index}`} key={paper.id}>
