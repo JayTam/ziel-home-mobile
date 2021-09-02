@@ -57,7 +57,6 @@ const Loading = React.forwardRef<HTMLDivElement, LoadingProps>((props, ref) => {
       style={{
         width: props.size,
         height: props.size,
-        margin: `${props.spacing ?? 0}px auto`,
       }}
     >
       <DoubleBounce1 />
