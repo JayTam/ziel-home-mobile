@@ -58,7 +58,7 @@ const TitleBg = styled(Image)`
   width: 100vw;
 `;
 const TopContent = styled.div`
-  padding: 0px 14px;
+  padding: 0 14px;
   z-index: 2;
   margin-top: -32px;
 `;
@@ -236,7 +236,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
             )}`}
             forceRender
           >
-            <TabsStarStyle isSecondary activeKey={starType} onChange={handleStarChange}>
+            <TabsStarStyle activeKey={starType} onChange={handleStarChange} tabStyle="contain">
               <TabPanelStyle indexKey="1" tab="Paper" forceRender>
                 <PaperScrollList isStarContent userId={props.userId} />
               </TabPanelStyle>
