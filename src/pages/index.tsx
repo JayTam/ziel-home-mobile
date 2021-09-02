@@ -47,6 +47,19 @@ const Home = () => {
 
   const { withLogin } = useLogin();
 
+  useEffect(() => {
+    (async () => {
+      if (homeActiveTab === "1") {
+        const magazineResponse = await getMagazineList({ page: 1 });
+        setExploreMagazines(magazineResponse.data.result.data);
+      }
+      if (subscribedMagazines === null && homeActiveTab === "2") {
+        const response = await getSubscribeMagazinePaperList({ page: 1 });
+        setSubscribedMagazines(response.data.result.data);
+      }
+    })();
+  }, [homeActiveTab]);
+
   /**
    * 订阅杂志
    */
@@ -70,22 +83,17 @@ const Home = () => {
       })
     );
   });
-  useEffect(() => {
-    (async () => {
-      if (homeActiveTab === "1") {
-        const magazineResponse = await getMagazineList({ page: 1 });
-        setExploreMagazines(magazineResponse.data.result.data);
-      }
-      if (subscribedMagazines === null && homeActiveTab === "2") {
-        const response = await getSubscribeMagazinePaperList({ page: 1 });
-        setSubscribedMagazines(response.data.result.data);
-      }
-    })();
-  }, [homeActiveTab]);
+
+  /**
+   * 切换explore/subscribe标签选项卡
+   */
+  const handleChangeHomeTab = withLogin<string>((tabKey) => {
+    if (tabKey) setHomeActiveTab(tabKey);
+  });
 
   return (
     <>
-      <HomeTabs activeKey={homeActiveTab} onChange={(val) => setHomeActiveTab(val)} center fixed>
+      <HomeTabs activeKey={homeActiveTab} onChange={(val) => handleChangeHomeTab(val)} center fixed>
         <TabPanel tab="Explore" indexKey="1">
           <ExploreContainer>
             {exploreMagazines.map((magazine) => (
