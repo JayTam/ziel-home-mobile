@@ -271,7 +271,10 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   };
 
   useEffect(() => {
-    setSwiperHeight(window.innerHeight);
+    // 因为浏览器底部工具栏的问题，等DOM渲染好出现工具栏之后，再设置Swiper的高度
+    setTimeout(() => setSwiperHeight(window.innerHeight), 0);
+    setTimeout(() => setSwiperHeight(window.innerHeight), 30);
+    setTimeout(() => setSwiperHeight(window.innerHeight), 100);
   }, []);
 
   const user = useAppSelector((state) => state.user);
