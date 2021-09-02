@@ -5045,6 +5045,11 @@ react-is@^16.13.1, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-next-keep-alive@^1.0.14:
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/react-next-keep-alive/-/react-next-keep-alive-1.0.14.tgz#5260f9b3a6bd8fbf0d57296c6132755da4a456a6"
+  integrity sha512-YEeiix59OFIPItjWl+5DUcjhg2hJVyJwKPaF1UnLea19mGuKY2tDRH9M9qe0ZE51tEyFfhS5NEaavCoGIE3Gyg==
+
 react-parallax@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/react-parallax/-/react-parallax-3.3.0.tgz#79f7a33451e7a419d0052f795c5d3655aa1e20b4"
@@ -5943,9 +5948,9 @@ svgo@^1.2.2:
     util.promisify "~1.0.0"
 
 swiper@^6.8.1:
-  version "6.8.1"
-  resolved "https://registry.yarnpkg.com/swiper/-/swiper-6.8.1.tgz#79a48ee5c9105c16d55da035eb0245cc2f696f2b"
-  integrity sha512-Gc2rKe0XH3zoB0ogonlielduGM9DDQCJtXAeFeD2ujwzhEqw+5udwebCMNjhAcQ+xl9ygM5PnRoziAUol3Dx5w==
+  version "6.8.4"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-6.8.4.tgz#938fed4144f4d7952fbf9c44e5832d133a4de794"
+  integrity sha512-O+buF9Q+sMA0H7luMS8R59hCaJKlpo8PXhQ6ZYu6Rn2v9OsFd4d1jmrv14QvxtQpKAvL/ZiovEeANI/uDGet7g==
   dependencies:
     dom7 "^3.0.0"
     ssr-window "^3.0.0"

@@ -1,5 +1,6 @@
 import snsRequest from "./requests/snsRequest";
 import { AxiosRequestConfig } from "axios";
+import { mapPaperItem, PaperType } from "./paper";
 
 export type MagazineType = {
   id: string;
@@ -31,6 +32,9 @@ export type MagazineType = {
   isRecommend: boolean;
   // 是否选中
   isActive: boolean;
+  // 更新时间
+  updatedAt: string;
+  papers?: PaperType[];
 };
 
 const mapMagazineItem = (item: Record<string, any>) => ({
@@ -49,6 +53,8 @@ const mapMagazineItem = (item: Record<string, any>) => ({
   isPublic: item.is_pub ?? false,
   isRecommend: item.is_recommend ?? false,
   isActive: false,
+  updatedAt: item.updated_at ?? "",
+  papers: item.article?.map((item: any) => mapPaperItem(item)) ?? [],
 });
 
 export type MagazineParams = {
@@ -77,7 +83,7 @@ export const getNextMagazine = (magazineId?: string, options?: AxiosRequestConfi
     },
     ...options,
   }).then((response) => {
-    response.data.result = mapMagazineItem(response.data.result);
+    response.data.result.data = mapMagazineItem(response.data.result.data);
     return response;
   });
 };
@@ -175,3 +181,67 @@ export function getStarMagazines(params: UserMagazineParams, options?: AxiosRequ
     return response;
   });
 }
+
+/**
+ * 杂志列表
+ * @param params
+ * @param options
+ */
+export const getMagazineList = (params: MagazineParams, options?: AxiosRequestConfig) => {
+  return snsRequest({
+    url: "/magazines",
+    method: "GET",
+    params: {
+      limit: 8,
+      ...params,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    return response;
+  });
+};
+
+/**
+ * 推荐杂志列表
+ * @param params
+ * @param options
+ */
+export const getPopularMagazineList = (params: MagazineParams, options?: AxiosRequestConfig) => {
+  return snsRequest({
+    url: "/magazines",
+    method: "GET",
+    params: {
+      limit: 8,
+      is_recommend: 1,
+      ...params,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    return response;
+  });
+};
+
+/**
+ * 订阅的杂志和内容列表
+ * @param params
+ * @param options
+ */
+export const getSubscribeMagazinePaperList = (
+  params: MagazineParams,
+  options?: AxiosRequestConfig
+) => {
+  return snsRequest({
+    url: "/user/subscribe_magazine",
+    method: "GET",
+    params: {
+      limit: 8,
+      ...params,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapMagazineItem);
+    return response;
+  });
+};

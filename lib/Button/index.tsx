@@ -12,7 +12,7 @@ interface Props {
 
 const defaultProps: Props = {
   color: "default",
-  size: "small",
+  size: "medium",
   round: true,
 };
 

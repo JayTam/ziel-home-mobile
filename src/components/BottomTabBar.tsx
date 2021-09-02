@@ -45,7 +45,7 @@ const BottomTabBar: React.FC<BottomTabBarProps> = (props) => {
       </Link>
       <Link href={PAPER_CREATE_ROUTE}>
         <TabBarItem>
-          <CreateIcon style={{ position: "relative", bottom: -5 }} />
+          <CreateIcon />
         </TabBarItem>
       </Link>
       <Link href={PERSONAL_ROUTE}>
