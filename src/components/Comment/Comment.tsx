@@ -13,7 +13,8 @@ import {
 } from "../../apis/comment";
 import Button from "../../../lib/Button";
 import produce from "immer";
-import { useLogin } from "../../utils";
+import { useInfiniteScroll, useLogin } from "../../utils";
+import Loading from "../../../lib/Loading";
 
 interface CommentProps extends PaperType {
   open: boolean;
@@ -112,25 +113,34 @@ const Comment: React.FC<CommentProps> = (props) => {
   const commentTextContent = useMemo(() => {
     return commentText.replace(/Reply @(.+):/, "").trim();
   }, [commentText]);
-
+  const scrollTopRef = useRef<HTMLDivElement | null>(null);
+  const { loaderRef, hasMore, page, setHasMore, setLoading, firstLoading, setFirstLoading } =
+    useInfiniteScroll<HTMLDivElement>({
+      hasMore: false,
+      initialPage: 1,
+    });
   useEffect(() => {
     (async () => {
       if (props.open) {
         try {
-          const response = await getCommentList(props.id, { page: 1 });
+          setLoading(true);
+          const response = await getCommentList(props.id, { page });
           const list = response.data.result.data;
-          // const hasMore = Boolean(response.data.result.hasmore);
+          const hasMore = Boolean(response.data.result.hasmore);
+          setHasMore(hasMore);
           setCommentList((prev) => [...prev, ...list]);
         } catch {
           console.log("getComment error");
         } finally {
-          console.log("getComment finally");
+          setLoading(false);
+          setFirstLoading(false);
         }
       } else {
+        setFirstLoading(true);
         setCommentList([]);
       }
     })();
-  }, [props.id, props.open]);
+  }, [props.id, props.open, page, setFirstLoading, setHasMore, setLoading]);
   const handleComment = async () => {
     if (!commentText) return;
     if (currentComment) {
@@ -159,6 +169,7 @@ const Comment: React.FC<CommentProps> = (props) => {
           avatar: data.user_info.avatar,
           userId: data.user_info.id,
           isLike: false,
+          replyNum: data.reply_num,
         };
         // 更新当前评论的回复，更新当前评论的回复量
         setCommentList((commentList) =>
@@ -185,10 +196,14 @@ const Comment: React.FC<CommentProps> = (props) => {
         avatar: data.user_info.avatar,
         userId: data.user_info.id,
         isLike: false,
+        replyNum: data.reply_num,
       };
       setCommentList((commentList) => [comment, ...commentList]);
+      scrollTopRef.current?.scrollIntoView();
     }
     setCommentText("");
+    setCurrentReply(null);
+    setCurrentComment(null);
   };
   const handleClickreplyComment = async (comment: CommentType, reply: CommentType) => {
     setCommentText(`Reply @${comment.author}: `);
@@ -233,33 +248,36 @@ const Comment: React.FC<CommentProps> = (props) => {
               <HeaderTitle>{`Comments·${props.commentNum ? props.commentNum : 0}`}</HeaderTitle>
               <CloseIcon onClick={props.onCommentClose} />
             </HeaderContent>
-            {!commentList.length ? (
+
+            {commentList.length === 0 && !firstLoading ? (
               <EmptyComment>
                 <span>No comments yet. Grab the couch</span>
               </EmptyComment>
-            ) : (
+            ) : null}
+
+            {commentList.length > 0 ? (
               <CommentAreaStyle>
-                {commentList.map((comment) => (
-                  <CommentItemStyle
-                    onClickreply={(reply) => handleClickreplyComment(comment, reply)}
-                    onClickLike={handleLike}
-                    open={props.open}
-                    key={comment.id}
-                    authorId={props.authorId}
-                    {...comment}
-                    ref={comment.id === currentComment?.id ? currentCommentRef : null}
-                  />
-                ))}
+                <div ref={scrollTopRef}>
+                  {commentList.map((comment) => (
+                    <CommentItemStyle
+                      onClickreply={(reply) => handleClickreplyComment(comment, reply)}
+                      onClickLike={handleLike}
+                      open={props.open}
+                      key={comment.id}
+                      authorId={props.authorId}
+                      {...comment}
+                      ref={comment.id === currentComment?.id ? currentCommentRef : null}
+                    />
+                  ))}
+                  {hasMore ? <Loading ref={loaderRef} /> : null}
+                </div>
               </CommentAreaStyle>
-            )}
+            ) : null}
           </CommentStyle>
           <CommentHandle>
             <InputContent>
               <InputStyle
-                onChange={(e) => {
-                  console.log(e);
-                  return setCommentText(e.target.value);
-                }}
+                onChange={(e) => setCommentText(e.target.value)}
                 value={commentText}
                 placeholder="say something…"
               />

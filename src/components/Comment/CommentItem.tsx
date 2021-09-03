@@ -4,10 +4,14 @@ import styled from "styled-components";
 import ReplyItem from "./ReplyItem";
 import { CommentType, getReplyList, likeComment } from "../../apis/comment";
 import { digitalScale, getCreateTime, useLogin } from "../../utils/";
-import React, { useEffect, useImperativeHandle, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import Button from "../../../lib/Button";
 import { useAppSelector } from "../../app/hook";
 import produce from "immer";
+import { useUpdateEffect } from "ahooks";
+import Loading from "../../../lib/Loading";
+import TriangleOpen from "../../assets/icons/triangle_open.svg";
+import TriangleHide from "../../assets/icons/triangle_hide.svg";
 
 interface CommentItemType extends CommentType {
   authorId: string;
@@ -77,10 +81,17 @@ const CommentContentBottom = styled.div`
 const ReplyButton = styled(Button)`
   color: ${(props) => props.theme.palette.text?.hint};
   background: none;
+  height: auto;
 `;
-// const CommentMore = styled(ReplyItem)``;
-
-// const ViewMore = styled.div``;
+const ViewMore = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 0 0 99px;
+  font-size: 14px;
+  line-height: 16px;
+  color: ${(props) => props.theme.palette.text?.hint};
+`;
 
 interface CommentItemRef {
   addNewReply: (reply: CommentType) => void;
@@ -89,40 +100,75 @@ interface CommentItemRef {
 const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, ref) => {
   const user = useAppSelector((state) => state.user);
   const [replys, setReplys] = useState<CommentType[]>([]);
-  const [isExpand, setIsExpand] = useState(false);
+  const [moreStatus, setMoreStatus] = useState<"close" | "more" | "hide">("close");
   const { withLogin } = useLogin();
+  const commentRef = useRef<HTMLDivElement | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [count, setCount] = useState(0);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     (async () => {
-      if (props.open) {
+      if (props.open && props.replyNum > 0) {
         const response = await getReplyList(props.id, { page: 1 });
-        const list = response.data.result.data;
-        // const hasMore = Boolean(response.data.result.hasmore);
-        setReplys((prev) => [...prev, ...list]);
-      } else {
-        setReplys([]);
+        setCount(response.data.result.count);
       }
     })();
-  }, [props.id, props.open]);
+  });
+
+  useUpdateEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        if (props.open && moreStatus !== "close") {
+          const response = await getReplyList(props.id, { page });
+          const list = response.data.result.data;
+          setCount(response.data.result.count);
+          setHasMore(Boolean(response.data.result.hasmore));
+          if (!response.data.result.hasmore) setMoreStatus("hide");
+          setReplys((prev) => [...prev, ...list]);
+        } else {
+          setReplys([]);
+        }
+      } catch {
+        console.log("error");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [page]);
   useImperativeHandle(ref, () => ({
     addNewReply,
   }));
+
+  /**
+   * 点击更多
+   */
+  const handleMore = () => {
+    switch (moreStatus) {
+      case "close":
+        setPage(1);
+        setMoreStatus("more");
+        break;
+      case "more":
+        if (hasMore) setPage(page + 1);
+        break;
+      case "hide":
+        setMoreStatus("close");
+        setPage(0);
+        break;
+    }
+  };
 
   /**
    * 在评论中，新增一个新的回复
    * @param reply
    */
   const addNewReply = (reply: CommentType) => {
-    if (isExpand) {
-      setReplys((replys) => [reply, ...replys]);
-    } else {
-      if (replys.length === 0) {
-        setIsExpand(true);
-      } else {
-        setIsExpand(true);
-        setReplys((replys) => [reply, ...replys]);
-      }
-    }
+    setReplys((replys) => [reply, ...replys]);
+    commentRef.current?.scrollIntoView();
   };
   /**
    * 回复点赞
@@ -145,9 +191,24 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
       );
     }
   });
+  const getViewMoreText = (count: number) => {
+    let resultText = "";
+    switch (moreStatus) {
+      case "close":
+        resultText = `See more replies (${count})`;
+        break;
+      case "more":
+        resultText = "See more replies";
+        break;
+      case "hide":
+        resultText = "Hide";
+        break;
+    }
+    return resultText;
+  };
 
   return (
-    <>
+    <div ref={commentRef}>
       <CommentContent>
         <CommentContentTop>
           <AvatarLevel1 src={props.avatar} />
@@ -173,16 +234,27 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
           )}
         </CommentContentBottom>
       </CommentContent>
-      {replys.map((reply) => (
-        <ReplyItem
-          authorId={props.authorId}
-          onClickLike={replyHandleLike}
-          onClickreply={props.onClickreply}
-          key={reply.id}
-          {...reply}
-        ></ReplyItem>
-      ))}
-    </>
+      <div>
+        {replys.map((reply) => (
+          <ReplyItem
+            authorId={props.authorId}
+            onClickLike={replyHandleLike}
+            onClickreply={props.onClickreply}
+            key={reply.id}
+            {...reply}
+          ></ReplyItem>
+        ))}
+        {hasMore && loading ? <Loading ref={loaderRef} /> : null}
+        {count !== 0 ? (
+          <ViewMore onClick={handleMore}>
+            <span>{getViewMoreText(count)}</span>
+            {moreStatus !== "hide" ? <TriangleOpen /> : <TriangleHide />}
+          </ViewMore>
+        ) : (
+          ""
+        )}
+      </div>
+    </div>
   );
 });
 
