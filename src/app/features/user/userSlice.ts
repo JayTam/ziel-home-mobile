@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchLogout } from "../../../apis";
 import { AppThunk } from "../../store";
-import { removeAuth } from "../../../utils";
+import { parsePassportRedirectURL, removeAuth } from "../../../utils";
 import Router from "next/router";
 
 // http://passport-doc.zieldev.com/api/%E8%B4%A6%E6%88%B7%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/#%E6%A0%B9%E6%8D%AEtoken%E8%8E%B7%E5%8F%96%E8%B4%A6%E6%88%B7%E4%BF%A1%E6%81%AFgetaccountinfo
@@ -110,15 +110,24 @@ export const { setUserInfo, cleanUser } = userSlice.actions;
 /**
  * 注销登陆
  * 该方法会在client调用，server端用户认证异常处理在 _app.tsx 获取用户信息的时候处理
+ * @param isRedirectPassport 是否重定向到passport
  */
-export const logoutAsync = (): AppThunk => async (dispatch) => {
-  try {
-    await fetchLogout();
-  } finally {
-    removeAuth();
-    await Router.push("/");
-    dispatch(cleanUser());
-  }
-};
+export const logoutAsync =
+  (isRedirectPassport = false): AppThunk =>
+  async (dispatch) => {
+    try {
+      await fetchLogout();
+    } catch (error) {
+      console.error("[logout error]:", error);
+    } finally {
+      removeAuth();
+      if (isRedirectPassport) {
+        await Router.push(parsePassportRedirectURL());
+      } else {
+        await Router.push("/");
+      }
+      dispatch(cleanUser());
+    }
+  };
 
 export default userSlice.reducer;

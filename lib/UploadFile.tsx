@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import axios, { CancelTokenSource } from "axios";
+import axios, { AxiosError, CancelTokenSource } from "axios";
 import UploadIcon from "../src/assets/icons/upload.svg";
 import DeleteIcon from "../src/assets/icons/delete.svg";
 import Button from "./Button";
@@ -15,7 +15,7 @@ interface UploadFileProps {
   headers?: Record<string, string>;
   action?: string;
   onChange?: (value: string) => void;
-  onError?: () => void;
+  onError?: (error: AxiosError) => void;
   error?: boolean;
   placeholder?: string;
   placeholderList?: string[];
@@ -167,10 +167,10 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
         }
         onChange?.(uploadedURL);
       })
-      .catch((error) => {
+      .catch((error: AxiosError) => {
         if (axios.isCancel(error)) return;
         alert(`An error occurred while uploading the file, please retry!`);
-        onError?.();
+        onError?.(error);
       })
       .finally(() => {
         setLoading(false);

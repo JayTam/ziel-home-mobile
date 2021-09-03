@@ -10,6 +10,9 @@ import UploadFile from "../../../lib/UploadFile";
 import Button from "../../../lib/Button";
 import { useRouter } from "next/router";
 import { useAppSelector } from "../../app/hook";
+import { AxiosError } from "axios";
+import { store } from "../../app/store";
+import { logoutAsync } from "../../app/features/user/userSlice";
 
 const PageContainer = styled.div`
   padding: 20px 14px;
@@ -158,6 +161,16 @@ const EditPaper: NextPage<EditPaperProps> = (props) => {
     await router.push(`/profile/${user.uid}`);
   });
 
+  /**
+   * 账号问题，跳转到passport重新登陆
+   * @param error
+   */
+  const handleUploadError = async (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      await store?.dispatch(logoutAsync(true));
+    }
+  };
+
   return (
     <>
       <Header>{isEdit ? "update" : "new"} paper</Header>
@@ -170,6 +183,7 @@ const EditPaper: NextPage<EditPaperProps> = (props) => {
             onChange={(value) =>
               setValue("video", value, { shouldValidate: true, shouldDirty: true })
             }
+            onError={handleUploadError}
           />
           <MagazineTitleInput
             placeholder="Enter the main heading..."
