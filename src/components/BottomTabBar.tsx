@@ -11,58 +11,57 @@ import PersonalActive from "../assets/icons/personal-active.svg";
 import Personal from "../assets/icons/personal.svg";
 import TabBar from "../../lib/TabBar";
 import { useRouter } from "next/router";
-import Link from "next/link";
+import { useLogin } from "../utils";
 
 interface BottomTabBarProps {
   dark?: boolean;
 }
 
 const HOME_ROUTE = "/";
-const PERSONAL_ROUTE = "/personal";
 const PAPER_CREATE_ROUTE = "/paper/create";
+const PERSONAL_ROUTE = "/personal";
 
 const BottomTabBar: React.FC<BottomTabBarProps> = (props) => {
   const router = useRouter();
+  const { withLogin } = useLogin();
   const isHomeRoute = useMemo(() => router.asPath === HOME_ROUTE, [router.asPath]);
   const isPersonalRoute = useMemo(() => router.asPath === PERSONAL_ROUTE, [router.asPath]);
 
+  const toHomeRoute = withLogin(() => router.push(HOME_ROUTE));
+  const toCreateRoute = withLogin(() => router.push(PAPER_CREATE_ROUTE));
+  const toPersonalRoute = withLogin(() => router.push(PERSONAL_ROUTE));
+
   return (
     <TabBar dark={props.dark}>
-      <Link href={HOME_ROUTE}>
-        <TabBarItem>
-          {props.dark ? (
-            isHomeRoute ? (
-              <HomeDarkActiveIcon />
-            ) : (
-              <HomeDarkIcon />
-            )
-          ) : isHomeRoute ? (
-            <HomeActiveIcon />
+      <TabBarItem onClick={toHomeRoute}>
+        {props.dark ? (
+          isHomeRoute ? (
+            <HomeDarkActiveIcon />
           ) : (
-            <HomeIcon />
-          )}
-        </TabBarItem>
-      </Link>
-      <Link href={PAPER_CREATE_ROUTE}>
-        <TabBarItem>
-          <CreateIcon />
-        </TabBarItem>
-      </Link>
-      <Link href={PERSONAL_ROUTE}>
-        <TabBarItem>
-          {props.dark ? (
-            isPersonalRoute ? (
-              <PersonalDarkActive />
-            ) : (
-              <PersonalDark />
-            )
-          ) : isPersonalRoute ? (
-            <PersonalActive />
+            <HomeDarkIcon />
+          )
+        ) : isHomeRoute ? (
+          <HomeActiveIcon />
+        ) : (
+          <HomeIcon />
+        )}
+      </TabBarItem>
+      <TabBarItem onClick={toCreateRoute}>
+        <CreateIcon />
+      </TabBarItem>
+      <TabBarItem onClick={toPersonalRoute}>
+        {props.dark ? (
+          isPersonalRoute ? (
+            <PersonalDarkActive />
           ) : (
-            <Personal />
-          )}
-        </TabBarItem>
-      </Link>
+            <PersonalDark />
+          )
+        ) : isPersonalRoute ? (
+          <PersonalActive />
+        ) : (
+          <Personal />
+        )}
+      </TabBarItem>
     </TabBar>
   );
 };

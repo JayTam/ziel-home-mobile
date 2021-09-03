@@ -125,8 +125,9 @@ export const logoutAsync =
         await Router.push(parsePassportRedirectURL());
       } else {
         await Router.push("/");
+        dispatch(cleanUser());
+        await Router.reload();
       }
-      dispatch(cleanUser());
     }
   };
 
