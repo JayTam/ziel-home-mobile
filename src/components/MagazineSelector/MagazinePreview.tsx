@@ -25,6 +25,7 @@ const MagazineCover = styled.img<{ active?: boolean }>`
 `;
 
 const MagazineTitle = styled.h2`
+  font-family: "DidotBold", serif;
   font-weight: bold;
   font-size: 14px;
   line-height: 16px;
@@ -49,6 +50,7 @@ const AuthorContainer = styled.div`
 `;
 
 const AuthorName = styled.p`
+  margin-left: 8px;
   font-size: 12px;
   line-height: 14px;
   ${TextEllipsisMixin}

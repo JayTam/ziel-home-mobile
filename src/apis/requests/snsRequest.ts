@@ -28,16 +28,21 @@ request.interceptors.request.use(async (config) => {
   return config;
 });
 
-request.interceptors.response.use(async (response) => {
-  switch (response.data.status) {
-    case 0:
-      return response;
-    case 40002:
-      await store?.dispatch(logoutAsync());
-      return Promise.reject(new Error("Authentication error"));
-    default:
-      return Promise.reject(new Error(`Unknown error: ${JSON.stringify(response.data)}`));
+request.interceptors.response.use(
+  async (response) => {
+    switch (response.data.status) {
+      case 0:
+        return response;
+      case 40002:
+        await store?.dispatch(logoutAsync());
+        return Promise.reject(new Error("Authentication error"));
+      default:
+        return Promise.reject(new Error(`Unknown error: ${JSON.stringify(response.data)}`));
+    }
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-});
+);
 
 export default request;

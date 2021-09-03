@@ -2,6 +2,8 @@ import axios from "axios";
 import JSONBigint from "json-bigint";
 import { composeAuthHeaders } from "../../utils";
 import { isServer } from "../../utils";
+import { store } from "../../app/store";
+import { logoutAsync } from "../../app/features/user/userSlice";
 
 const request = axios.create({
   baseURL: isServer() ? process.env.PAASPORT_BASE_URL : process.env.NEXT_PUBLIC_PAASPORT_BASE_URL,
@@ -27,16 +29,16 @@ request.interceptors.request.use(
   }
 );
 
-// request.interceptors.response.use(
-//   async (response) => {
-//     if (response.data.status !== 0) {
-//       return Promise.reject();
-//     }
-//     return response;
-//   },
-//   async (error) => {
-//     return error;
-//   }
-// );
+request.interceptors.response.use(
+  async (response) => {
+    return response;
+  },
+  async (error) => {
+    if (error.response.status === 401) {
+      await store?.dispatch(logoutAsync(true));
+    }
+    return error;
+  }
+);
 
 export default request;
