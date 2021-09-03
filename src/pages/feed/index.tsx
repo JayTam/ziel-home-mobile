@@ -143,7 +143,6 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
    * @param swiper
    */
   const handleSwitchPaper: SwiperEvents["slideChangeTransitionEnd"] = (swiper) => {
-    if (!activeIndex) return;
     const prevActiveIndex = activeIndex;
     const currentActiveIndex = swiper.activeIndex;
 
@@ -217,7 +216,6 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
     (async () => {
       setLoading(true);
       try {
-        console.log("currentMagazine.id", currentMagazine.id);
         const response = await getPaperList({ magazineId: currentMagazine.id, page });
         const list = response.data.result.data;
         // const  = Boolean(response.data.result.hasmore);
