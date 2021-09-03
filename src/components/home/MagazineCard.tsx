@@ -89,7 +89,8 @@ const SubscribeIcon = styled(SubscribeSvgIcon)<{ subscribed: boolean }>`
   position: absolute;
   top: 50%;
   right: ${(props) => (props.subscribed ? "50%" : "8px")};
-  transform: ${(props) => (props.subscribed ? "translate(50%, -50%)" : "translate(0, -50%)")};
+  transform: ${(props) =>
+    props.subscribed ? "translate(50%, -50%) rotate(0);" : "translate(0, -50%) rotate(360deg);"};
   background: rgba(255, 255, 255, 0.2);
   width: 44px;
   height: 44px;
