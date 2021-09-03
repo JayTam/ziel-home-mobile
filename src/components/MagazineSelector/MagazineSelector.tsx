@@ -11,6 +11,7 @@ import { getMagazinesForChoose, MagazineType } from "../../apis";
 import MagazinePreview from "./MagazinePreview";
 import { useUpdateEffect } from "ahooks";
 import { useInfiniteScroll } from "../../utils";
+import Loading from "../../../lib/Loading";
 
 const Container = styled.div`
   display: flex;
@@ -43,6 +44,7 @@ const MagazineCover = styled.img`
 `;
 
 const MagazineTitle = styled.p`
+  font-family: "DidotBold", serif;
   margin-left: 10px;
   font-weight: 500;
   font-size: 14px;
@@ -98,25 +100,29 @@ interface MagazineSelectorProps {
 const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>((props, ref) => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<"1" | "2" | "3">("1");
+  const [type, setType] = useState<"1" | "2" | "3">("3");
   const [magazines, setMagazines] = useState<MagazineType[]>([]);
   const [selectedMagazine, setSelectedMagazine] = useState<MagazineType | null>(null);
   const { loaderRef, page, setPage, setLoading, setHasMore, hasMore } =
     useInfiniteScroll<HTMLDivElement>({
       hasMore: false,
-      initialPage: 0,
+      initialPage: 1,
     });
 
   useUpdateEffect(() => {
-    if (open) {
-      setPage(1);
-      setTitle("");
-      setType("1");
-      setMagazines([]);
-    }
+    // skip close magazine selector
+    if (!open) return;
+
+    setPage(1);
+    setTitle("");
+    setType("3");
+    setMagazines([]);
   }, [open]);
 
   useUpdateEffect(() => {
+    // skip close magazine selector
+    if (!open) return;
+
     setLoading(true);
     getMagazinesForChoose({ page, title, type, limit: 4 })
       .then((response) => {
@@ -128,7 +134,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
       .finally(() => {
         setLoading(false);
       });
-  }, [page, setHasMore, setLoading, title, type]);
+  }, [open, page, setHasMore, setLoading, title, type]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -177,6 +183,17 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
 
         <PageContainer>
           <StyledTabs activeKey={type} onChange={handleChange} tabBar tabStyle="line">
+            <StyledTabPanel indexKey="3" tab="Discover" forceRender>
+              {magazines.map((magazine) => (
+                <StyledMagazinePreview
+                  key={magazine.id}
+                  active={magazine.id === selectedMagazine?.id}
+                  {...magazine}
+                  onClick={() => setSelectedMagazine(magazine)}
+                />
+              ))}
+              {hasMore ? <Loading ref={loaderRef} /> : null}
+            </StyledTabPanel>
             <StyledTabPanel indexKey="1" tab="My Magazines" forceRender>
               {magazines.map((magazine) => (
                 <StyledMagazinePreview
@@ -186,18 +203,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                   onClick={() => setSelectedMagazine(magazine)}
                 />
               ))}
-              {hasMore ? <div ref={loaderRef}>loading...</div> : null}
-            </StyledTabPanel>
-            <StyledTabPanel indexKey="2" tab="Published" forceRender>
-              {magazines.map((magazine) => (
-                <StyledMagazinePreview
-                  key={magazine.id}
-                  active={magazine.id === selectedMagazine?.id}
-                  {...magazine}
-                  onClick={() => setSelectedMagazine(magazine)}
-                />
-              ))}
-              {hasMore ? <div ref={loaderRef}>loading...</div> : null}
+              {hasMore ? <Loading ref={loaderRef} /> : null}
             </StyledTabPanel>
           </StyledTabs>
         </PageContainer>
