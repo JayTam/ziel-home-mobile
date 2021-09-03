@@ -4,12 +4,12 @@ import Header from "../../components/Header";
 import LogoImage from "../../assets/imgs/logo2.png";
 import TopImage from "../../assets/imgs/banner2.png";
 import Image from "next/image";
-import ContentBg from "../../../public/Mask Group.png";
+import ContentBg from "../../../public/mask_group.png";
 import SongmicsLogo from "../../assets/imgs/logo3.png";
 import VasagleLogo from "../../assets/imgs/logo4.png";
 import FeanareaLogo from "../../assets/imgs/logo5.png";
 import { Parallax } from "react-parallax";
-import BgGif from "../../../public/Bggif.gif";
+import BgGif from "../../../public/about_bg.gif";
 
 interface AboutType {
   id: string;
