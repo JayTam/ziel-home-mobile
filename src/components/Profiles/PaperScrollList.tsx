@@ -16,6 +16,7 @@ const PaperItem = styled.div`
   height: auto;
   box-sizing: border-box;
   padding-left: 7px;
+  margin-top: 2px;
 `;
 const PaperScrollList: React.FC<PaperListProps> = (props) => {
   const [papers, setPapers] = useState<PaperType[]>([]);

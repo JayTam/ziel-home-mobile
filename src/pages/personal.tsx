@@ -7,10 +7,8 @@ import FreeTrialIcon from "../assets/imgs/free trial.png";
 import AddressIcon from "../assets/icons/your address.svg";
 import HelpIcon from "../assets/icons/help & support.svg";
 import SettingIcon from "../assets/icons/setting.svg";
-import { useAppSelector, useAppDispatch } from "../app/hook";
-import Button from "../../lib/Button";
+import { useAppSelector } from "../app/hook";
 import { ClickableMixin } from "../../lib/mixins";
-import { logoutAsync } from "../app/features/user/userSlice";
 import BottomTabBar from "../components/BottomTabBar";
 import Link from "next/link";
 
@@ -35,7 +33,7 @@ const HeaderBg = styled(Image)`
 const HeaderContent = styled.div`
   position: absolute;
   left: 0;
-  bottom: 0px;
+  bottom: 4px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -67,14 +65,15 @@ const UserName = styled.div`
 const RegisterTime = styled.div`
   font-size: 14px;
   line-height: 16px;
-  color: ${(props) => props.theme.palette.text?.primary};
+  margin-top: 6px;
+  color: #666666;
 `;
 const ProfileEntry = styled.div`
   display: flex;
   align-items: center;
 `;
 const ProfileText = styled.div`
-  color: ${(props) => props.theme.palette.text?.secondary};
+  color: #666666;
   font-size: 14px;
   line-height: 16px;
 `;
@@ -103,18 +102,7 @@ const UserAvatar = styled.img`
   height: 80px;
   border-radius: 50%;
 `;
-const LogOut = styled.div`
-  height: 100%;
-  width: 100%;
-  padding: 0px 14px 70px 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-`;
-const LogOutButton = styled(Button)`
-  width: 100%;
-  height: 49px;
-`;
+
 const FreeTrial = styled.div`
   width: 24px;
   height: 24px;
@@ -123,7 +111,6 @@ const FreeTrialImg = styled(Image)``;
 const Personal: NextPage<UserProps> = () => {
   const user = useAppSelector((state) => state.user);
   const PAPER_PROFILE_ROUTE = `/profile/${user.uid}`;
-  const dispatch = useAppDispatch();
   const getRegistTime = (time: string) => {
     const currentTime = Number(new Date().valueOf());
     const registerTime = Number(new Date(time).valueOf());
@@ -132,11 +119,6 @@ const Personal: NextPage<UserProps> = () => {
   };
   const handleFreeTrial = () => {
     console.log("click free trial");
-  };
-
-  const handleLogOut = async () => {
-    //登出
-    dispatch(logoutAsync());
   };
 
   return (
@@ -184,11 +166,6 @@ const Personal: NextPage<UserProps> = () => {
             </ListItem>
           </Link>
         </MenuList>
-        <LogOut>
-          <LogOutButton onClick={handleLogOut} color={"default"}>
-            Log Out
-          </LogOutButton>
-        </LogOut>
         <BottomTabBar />
       </Container>
     </>

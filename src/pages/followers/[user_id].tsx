@@ -51,6 +51,7 @@ const FollowBtn = styled(Button)`
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
+  height: 30px;
 `;
 const TabsStyle = styled(Tabs)`
   display: flex;
@@ -130,7 +131,7 @@ const Followers: NextPage<FollowersType> = ({ profileInfo }) => {
                     onClick={() => {
                       handleFollow(follower);
                     }}
-                    color={follower.isFollow ? "secondary" : "primary"}
+                    color={follower.isFollow ? "default" : "primary"}
                   >
                     {follower.isFollow ? "unFollow" : "Follow"}
                   </FollowBtn>

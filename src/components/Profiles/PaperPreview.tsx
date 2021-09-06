@@ -53,7 +53,7 @@ const BottomContent = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0px 7px 7px;
+  padding: 0px 7px 11px;
 `;
 const DescriptionStyle = styled.div`
   display: flex;

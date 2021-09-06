@@ -14,6 +14,7 @@ const PaperItem = styled.div`
   height: auto;
   box-sizing: border-box;
   padding-left: 7px;
+  margin-top: 2px;
 `;
 const MagazineScrollList: React.FC<MagazineListType> = (props) => {
   const [magazines, setMagazines] = useState<MagazineType[]>([]);
