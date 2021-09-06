@@ -16,6 +16,8 @@ export type CommentType = {
   commentNum: number;
   // 对于当前用户是否喜欢
   isLike: boolean;
+  // 回复数量
+  replyNum: number;
 };
 
 const mapCommentItem = (item: Record<string, any>) => {
@@ -29,6 +31,7 @@ const mapCommentItem = (item: Record<string, any>) => {
     commentNum: item.comment_num ?? 0,
     isLike: Boolean(item.is_like),
     createTime: item.created_at ?? "",
+    replyNum: item.reply_num ?? 0,
   };
 };
 
@@ -61,7 +64,7 @@ export const getReplyList = (commentId: string, params?: ReplyParams) => {
     method: "GET",
     params: {
       reply_id: commentId,
-      limit: 8,
+      limit: 6,
       ...params,
     },
   }).then((response) => {

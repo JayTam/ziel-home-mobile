@@ -5,7 +5,8 @@ import Button from "../../../lib/Button";
 import { CommentType } from "../../apis/comment";
 import { digitalScale, getCreateTime } from "../../utils";
 import { useAppSelector } from "../../app/hook";
-interface CommentMoreType extends CommentType {
+import React from "react";
+interface ReplyItemType extends CommentType {
   onClickreply?: (comment: CommentType) => void;
   onClickLike?: (comment: CommentType) => void;
   authorId: string;
@@ -59,7 +60,7 @@ const LikeStyle = styled.div`
   }
 `;
 const CommentContentBottom = styled.div`
-  padding-left: 56px;
+  padding-left: 46px;
   span {
     font-weight: 300;
     font-size: 14px;
@@ -71,40 +72,40 @@ const CommentContentBottom = styled.div`
 const ReplyButton = styled(Button)`
   color: ${(props) => props.theme.palette.text?.hint};
   background: none;
+  height: auto;
 `;
-const CommentMore: React.FC<CommentMoreType> = (props) => {
+const ReplyItem = React.forwardRef<HTMLDivElement, ReplyItemType>((props, ref) => {
   const user = useAppSelector((state) => state.user);
-  // const getCommentText = () => {};
+
   return (
-    <>
-      <MoreContents>
-        <MoreContentItem>
-          <CommentContentTop>
-            <AvatarLevel2 src={props.avatar} />
-            <ContentContainer>
-              <UserInfo>
-                {props.author} {props.authorId === props.userId ? <span>·originator</span> : ""}
-              </UserInfo>
-              <ContentText>{props.content}</ContentText>
-            </ContentContainer>
-            <LikeStyle onClick={() => props.onClickLike?.(props)}>
-              {props.isLike ? <LikedIcon /> : <UnLikeIcon />}
-              <span>{digitalScale(props.likeNum)}</span>
-            </LikeStyle>
-          </CommentContentTop>
-          <CommentContentBottom>
-            <span>{getCreateTime(props.createTime)}</span>
-            {user.uid !== props.userId ? (
-              <ReplyButton onClick={() => props.onClickreply?.(props as CommentType)}>
-                Reply
-              </ReplyButton>
-            ) : (
-              ""
-            )}
-          </CommentContentBottom>
-        </MoreContentItem>
-      </MoreContents>
-    </>
+    <MoreContents ref={ref}>
+      <MoreContentItem>
+        <CommentContentTop>
+          <AvatarLevel2 src={props.avatar} />
+          <ContentContainer>
+            <UserInfo>
+              {props.author} {props.authorId === props.userId ? <span>·originator</span> : ""}
+            </UserInfo>
+            <ContentText>{props.content}</ContentText>
+          </ContentContainer>
+          <LikeStyle onClick={() => props.onClickLike?.(props)}>
+            {props.isLike ? <LikedIcon /> : <UnLikeIcon />}
+            <span>{digitalScale(props.likeNum)}</span>
+          </LikeStyle>
+        </CommentContentTop>
+        <CommentContentBottom>
+          <span>{getCreateTime(props.createTime)}</span>
+          {user.uid !== props.userId ? (
+            <ReplyButton onClick={() => props.onClickreply?.(props as CommentType)}>
+              Reply
+            </ReplyButton>
+          ) : (
+            ""
+          )}
+        </CommentContentBottom>
+      </MoreContentItem>
+    </MoreContents>
   );
-};
-export default CommentMore;
+});
+ReplyItem.displayName = "ReplyItem";
+export default ReplyItem;
