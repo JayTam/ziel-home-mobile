@@ -94,6 +94,10 @@ const Followers: NextPage<FollowersType> = ({ profileInfo }) => {
   const handleFollow = withLogin<FollowersType>(async (follower) => {
     if (!follower) return;
     const isFollow = !follower.isFollow;
+    if (!isFollow) {
+      const alertResult = confirm("Are you sure you want to unfollow?");
+      if (!alertResult) return;
+    }
     await followUser(follower.id, isFollow);
     setFollowers((prev) =>
       produce(prev, (draft) => {

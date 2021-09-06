@@ -113,11 +113,19 @@ const UserSetting: NextPage<SettingType> = () => {
       <Container>
         <TopContainer>
           <Hearder>Account</Hearder>
-          <SettingItem>
+          <SettingItem
+            onClick={() => {
+              window.location.href = `${process.env.NEXT_PUBLIC_PAASPORT_URL}/profiles`;
+            }}
+          >
             <ItemTitle>Edit Profile</ItemTitle>
             <Right />
           </SettingItem>
-          <SettingItem>
+          <SettingItem
+            onClick={() => {
+              window.location.href = `${process.env.NEXT_PUBLIC_PAASPORT_URL}/account_security`;
+            }}
+          >
             <ItemTitle>Account Security</ItemTitle>
             <Right />
           </SettingItem>

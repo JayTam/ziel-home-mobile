@@ -154,6 +154,10 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
   const handleFollow = withLogin<ProfileType>(async (profile) => {
     if (!profile) return;
     const isFollow = !profile.isFollow;
+    if (!isFollow) {
+      const alertResult = confirm("Are you sure you want to unfollow?");
+      if (!alertResult) return;
+    }
     await followUser(props.userId, isFollow);
     setProfile((prev) =>
       produce(prev, (draft) => {

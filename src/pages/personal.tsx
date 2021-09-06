@@ -151,7 +151,11 @@ const Personal: NextPage<UserProps> = () => {
             </FreeTrial>
             <ItemText>Free trial</ItemText>
           </ListItem>
-          <ListItem>
+          <ListItem
+            onClick={() => {
+              window.location.href = `${process.env.NEXT_PUBLIC_PAASPORT_URL}/address_book`;
+            }}
+          >
             <AddressIcon />
             <ItemText>Your address</ItemText>
           </ListItem>
