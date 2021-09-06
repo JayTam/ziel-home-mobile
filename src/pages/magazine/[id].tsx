@@ -44,6 +44,7 @@ const MagazineInfo = styled.div`
   justify-content: space-between;
   margin-left: 14px;
   padding: 4px 0px;
+  width: 100%;
 `;
 const TopContent = styled.div`
   display: flex;
