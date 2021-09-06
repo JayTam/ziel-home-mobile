@@ -114,14 +114,14 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
       </Link>
 
       <PapersContainer>
-        {props.papers?.map((paper, index) => (
-          <Link href={`/feed?magazine_id=${props.id}&active_index=${index}`} key={paper.id}>
+        {props.papers?.map((paper) => (
+          <Link href={`/feed?paper_id=${paper.id}&type=subscribe`} key={paper.id}>
             <PaperItem cover={paper.poster}>
               <PaperTitle>{paper.title}</PaperTitle>
             </PaperItem>
           </Link>
         ))}
-        <Link href={`/feed?magazine_id=${props.id}&active_index=3`}>
+        <Link href={`/feed?magazine_id=${props.id}`}>
           <PaperMore>
             <PaperMoreIcon />
           </PaperMore>

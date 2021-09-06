@@ -3,7 +3,7 @@ import styled from "styled-components";
 import CloseIcon from "../../assets/icons/btn_access_highlight.svg";
 import CommentsItem from "./CommentItem";
 import { PaperType } from "../../apis/paper";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   CommentType,
   getCommentList,

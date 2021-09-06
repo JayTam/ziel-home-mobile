@@ -1,5 +1,6 @@
 import snsRequest from "./requests/snsRequest";
 import { AxiosRequestConfig } from "axios";
+import { MagazineType, mapMagazineItem } from "./magazine";
 
 export type PaperType = {
   // 内容ID
@@ -52,6 +53,7 @@ export type PaperType = {
   style: string;
   //文章状态 0-草稿 1-待审核 2-已发布 3-审核未通过
   status: 0 | 1 | 2 | 3;
+  magazine?: MagazineType;
 };
 
 export const mapPaperItem = (item: Record<string, any>) => {
@@ -83,6 +85,7 @@ export const mapPaperItem = (item: Record<string, any>) => {
     style: spec?.style ?? "",
     size: spec?.acreage ?? "",
     status: item.status ?? 0,
+    magazine: item.magazine ? mapMagazineItem(item.magazine) : null,
   };
 };
 
@@ -256,6 +259,34 @@ export function getStarPapers(params: UserPaperParams, options?: AxiosRequestCon
       user_id: params.userId,
       limit: params.limit ?? 8,
       page: params.page ?? 1,
+    },
+    ...options,
+  }).then((response) => {
+    response.data.result.data = response.data.result.data.map(mapPaperItem);
+    return response;
+  });
+}
+
+interface UserSubscribePaperParams extends Omit<UserPaperParams, "userId"> {
+  paperId: string;
+}
+
+/**
+ * 获取用户的文章列表
+ * @param params
+ * @param options
+ */
+export function getUserSubscribePapers(
+  params: UserSubscribePaperParams,
+  options?: AxiosRequestConfig
+) {
+  return snsRequest({
+    method: "GET",
+    url: "/user/subscribe_article",
+    params: {
+      limit: params.limit ?? 8,
+      page: params.page,
+      article_id: params.paperId,
     },
     ...options,
   }).then((response) => {
