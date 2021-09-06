@@ -7,6 +7,8 @@ import { logoutAsync } from "../../app/features/user/userSlice";
 import { useAppDispatch } from "../../app/hook";
 import Right from "../../assets/icons/right.svg";
 import Hearder from "../../components/Header";
+import Popup from "../../../lib/Popup";
+import { useState } from "react";
 
 interface SettingType {
   userId: string;
@@ -60,44 +62,98 @@ const LogOutButton = styled(Button)`
   width: 100%;
   height: 49px;
 `;
+const LogoutPopup = styled(Popup)`
+  width: 100%;
+  height: 150px;
+  border-radius: 20px 20px 0 0;
+  padding: 0;
+  div {
+    height: 50px;
+    width: 100%;
+    font-size: 14px;
+    line-height: 16px;
+    color: ${(props) => props.theme.palette.text?.secondary};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  div:nth-of-type(n + 2) {
+    ${ClickableMixin}
+  }
+  div:nth-of-type(2) span {
+    font-weight: 500;
+    color: ${(props) => props.theme.palette.text?.primary};
+  }
+  div:nth-of-type(3) {
+    height: 0px;
+    width: calc(100% - 28px);
+    margin-left: 14px;
+    border: 1px solid ${(props) => props.theme.palette.background?.paper};
+    span {
+      font-size: 12px;
+      line-height: 50px;
+    }
+  }
+`;
 const UserSetting: NextPage<SettingType> = () => {
+  const [popupOpen, setPopupOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const showLogout = () => {
+    setPopupOpen(true);
+  };
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
   const handleLogOut = async () => {
     //登出
     dispatch(logoutAsync());
   };
   return (
-    <Container>
-      <TopContainer>
-        <Hearder>Account</Hearder>
-        <SettingItem>
-          <ItemTitle>Edit Profile</ItemTitle>
-          <Right />
-        </SettingItem>
-        <SettingItem>
-          <ItemTitle>Account Security</ItemTitle>
-          <Right />
-        </SettingItem>
-        <SplitDiv />
-        <SettingItem>
-          <ItemTitle>Help & Feedback</ItemTitle>
-          <Right />
-        </SettingItem>
-        <Link href={"/setting/about/"}>
+    <>
+      <Container>
+        <TopContainer>
+          <Hearder>Account</Hearder>
           <SettingItem>
-            <ItemTitle>About</ItemTitle>
+            <ItemTitle>Edit Profile</ItemTitle>
             <Right />
           </SettingItem>
-        </Link>
-      </TopContainer>
-      <BottomContainer>
-        <LogOut>
-          <LogOutButton onClick={handleLogOut} color={"default"}>
-            Log Out
-          </LogOutButton>
-        </LogOut>
-      </BottomContainer>
-    </Container>
+          <SettingItem>
+            <ItemTitle>Account Security</ItemTitle>
+            <Right />
+          </SettingItem>
+          <SplitDiv />
+          <SettingItem>
+            <ItemTitle>Help & Feedback</ItemTitle>
+            <Right />
+          </SettingItem>
+          <Link href={"/setting/about/"}>
+            <SettingItem>
+              <ItemTitle>About</ItemTitle>
+              <Right />
+            </SettingItem>
+          </Link>
+        </TopContainer>
+        <BottomContainer>
+          <LogOut>
+            <LogOutButton onClick={showLogout} color={"default"}>
+              Log Out
+            </LogOutButton>
+          </LogOut>
+        </BottomContainer>
+      </Container>
+      <LogoutPopup onClickOverlay={closePopup} open={popupOpen} position="bottom">
+        <div>
+          <span>Whether to log out of the current account？</span>
+        </div>
+        <div onClick={handleLogOut}>
+          <span>Log out</span>
+        </div>
+        <div />
+        <div onClick={closePopup}>
+          <span>cancel</span>
+        </div>
+      </LogoutPopup>
+    </>
   );
 };
 export default UserSetting;

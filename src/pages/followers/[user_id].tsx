@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import Header from "../../components/Header";
 import styled from "styled-components";
-import { composeAuthHeaders, digitalScale, useInfiniteScroll } from "../../utils";
+import { composeAuthHeaders, digitalScale, useInfiniteScroll, useLogin } from "../../utils";
 import { followUser, getFollowers, getProfileInfo, ProfileType } from "../../apis/profile";
 import Tabs from "../../../lib/Tabs";
 import TabPanel from "../../../lib/Tabs/TabPanel";
@@ -62,6 +62,7 @@ const TabsStyle = styled(Tabs)`
 const TabPanelStyle = styled(TabPanel)``;
 
 const Followers: NextPage<FollowersType> = ({ profileInfo }) => {
+  const { withLogin } = useLogin();
   const user = useAppSelector((state) => state.user);
   const [type, setType] = useState<"1" | "2">("1");
   const [profile, setProfile] = useState<ProfileType>(profileInfo);
@@ -90,7 +91,7 @@ const Followers: NextPage<FollowersType> = ({ profileInfo }) => {
       });
   }, [followType, page, profile.id, setHasMore, setLoading]);
 
-  const handleFollow = async (follower: FollowersType) => {
+  const handleFollow = withLogin<FollowersType>(async (follower) => {
     if (!follower) return;
     const isFollow = !follower.isFollow;
     await followUser(follower.id, isFollow);
@@ -111,7 +112,7 @@ const Followers: NextPage<FollowersType> = ({ profileInfo }) => {
         })
       );
     }
-  };
+  });
   return (
     <>
       <Container>
