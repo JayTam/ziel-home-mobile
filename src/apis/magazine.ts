@@ -37,7 +37,7 @@ export type MagazineType = {
   papers?: PaperType[];
 };
 
-const mapMagazineItem = (item: Record<string, any>) => ({
+export const mapMagazineItem = (item: Record<string, any>) => ({
   id: item.id ?? item.magazine_id ?? "",
   title: item.title ?? "",
   description: item.desc ?? "",
@@ -47,7 +47,7 @@ const mapMagazineItem = (item: Record<string, any>) => ({
   viewNum: item.view_num ?? 0,
   showNum: item.show_num ?? 0,
   editorNum: item.editor_num ?? 0,
-  subscribeNum: item.subscriber ?? 0,
+  subscribeNum: item.subscriber ?? item.subscribe_num ?? 0,
   cover: item.img_url ?? "",
   isSubscribe: item.is_subscribe ?? false,
   isPublic: item.is_pub ?? false,

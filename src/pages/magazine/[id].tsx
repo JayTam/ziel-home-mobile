@@ -43,7 +43,7 @@ const MagazineInfo = styled.div`
   flex-direction: column;
   justify-content: space-between;
   margin-left: 14px;
-  padding: 4px 0px;
+  padding: 4px 0;
 `;
 const TopContent = styled.div`
   display: flex;
@@ -108,7 +108,7 @@ const AuthorName = styled.div`
 `;
 const MagazinePaperLayout = styled.div`
   margin-top: 12px;
-  padding: 0px 14px 0px 7px;
+  padding: 0 14px 0 7px;
   height: 100%;
   width: 100%;
 `;
@@ -128,7 +128,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const user = useAppSelector((state) => state.user);
   const isShowTop = useMemo(() => user.uid === magazine.authorId, [user.uid, magazine.authorId]);
   const [paperCounts, setPaperCounts] = useState(0);
-  const [currentMagazine, setCurrentMagazin] = useState(magazine);
+  const [currentMagazine, setCurrentMagazine] = useState(magazine);
   const [papers, setPapers] = useState<PaperType[]>([]);
   const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
     hasMore: false,
@@ -162,7 +162,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
     if (!magazine) return;
     const isSubscribe = !magazine.isSubscribe;
     await subscribeMagazine(magazine.id, isSubscribe);
-    setCurrentMagazin((prev) =>
+    setCurrentMagazine((prev) =>
       produce(prev, (draft) => {
         draft.isSubscribe = isSubscribe;
         if (isSubscribe) {
@@ -204,7 +204,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
-            <MagazineImg src={currentMagazine.cover}></MagazineImg>
+            <MagazineImg src={currentMagazine.cover} />
             <MagazineInfo>
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
@@ -215,14 +215,10 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
               </TopContent>
               <BottomContent>
                 <AuthorContent>
-                  <Avatar src={currentMagazine.avatar}></Avatar>
+                  <Avatar src={currentMagazine.avatar} />
                   <AuthorName>{currentMagazine.author}</AuthorName>
                 </AuthorContent>
-                <div
-                  onClick={() => {
-                    handleSubscribe(currentMagazine);
-                  }}
-                >
+                <div onClick={() => handleSubscribe(currentMagazine)}>
                   {currentMagazine.isSubscribe ? <UnSubscribeBtn /> : <SubscribeBtn />}
                 </div>
               </BottomContent>
@@ -253,7 +249,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
                   authorId={magazine.authorId}
                   isShowTop={isShowTop}
                   onTop={() => handleTopPaper(paper)}
-                ></PaperPreview>
+                />
               </PaperItem>
             ))}
             {hasMore ? <div ref={loaderRef}>loading...</div> : null}
