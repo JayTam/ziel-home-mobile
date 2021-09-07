@@ -45,4 +45,4 @@ const Home = () => {
   );
 };
 
-export default withKeepAlive(Home, "index", { keepScrollEnabled: true });
+export default withKeepAlive(Home, "index");
