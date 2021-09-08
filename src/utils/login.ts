@@ -31,7 +31,6 @@ export const useLogin = () => {
  * 解析passport重定向地址
  */
 export const parsePassportRedirectURL = (appContext?: AppContext) => {
-  console.log("[parsePassportRedirectURL]:", appContext?.ctx.req?.headers.host);
   let redirectURI = "";
   if (appContext) {
     const { req, asPath } = appContext.ctx;

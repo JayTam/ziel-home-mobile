@@ -8,8 +8,10 @@ import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
 import Image from "next/image";
 import { TextEllipsisMixin } from "../../../lib/mixins";
 import TopIcon from "../../assets/icons/top.svg";
+import React from "react";
+import Link from "next/link";
 
-interface ManazinePagePropType extends PaperType {
+interface MagazinePagePropType extends PaperType {
   onTop?: () => void;
   isShowTop?: boolean;
   isStarContent?: boolean;
@@ -26,7 +28,7 @@ const PosterImage = styled.img`
   width: 100%;
   border-radius: 14px;
 `;
-const PlacehoderImage = styled(Image)`
+const PlaceholderImage = styled(Image)`
   height: 100%;
   width: 100%;
   border-radius: 14px;
@@ -42,7 +44,7 @@ const PaperContent = styled.div`
   flex-direction: column;
   justify-content: space-between;
 `;
-const TopConent = styled.div`
+const TopContent = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-end;
@@ -65,7 +67,7 @@ const Description = styled.div`
   color: ${(props) => props.theme.palette.common?.white};
   ${TextEllipsisMixin}
 `;
-const AutherLayout = styled.div`
+const AuthorLayout = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -109,40 +111,50 @@ const IsReviewing = styled.div`
   border-radius: 0 14px 0 14px;
   background-color: rgba(0, 0, 0, 0.5);
 `;
-const PaperPreview: React.FC<ManazinePagePropType> = (props) => {
+const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
   return (
-    <Container>
-      {props.poster ? (
-        <PosterImage src={props.poster} />
-      ) : (
-        <PlacehoderImage src={VideoPlaceholderImage} />
-      )}
-      <PaperContent>
-        <TopConent
-          style={{ visibility: props.isShowTop ? "visible" : "hidden" }}
-          onClick={props.onTop}
-        >
-          {props.isTop ? <TopActiveIcon /> : <TopFlagIcon />}
-        </TopConent>
-        {!props.isStarContent && props.status === 1 ? <IsReviewing>Is reviewing</IsReviewing> : ""}
-        <BottomContent>
-          <DescriptionStyle>
-            <TopIcon />
-            <Description>{props.description}</Description>
-          </DescriptionStyle>
-          <AutherLayout>
-            <AvatarLayout>
-              <Avatar src={props.avatar} />
-              <Name>{props.author}</Name>
-            </AvatarLayout>
-            <PlayContent>
-              <PlayIcon />
-              <PlayCount>{digitalScale(props.playNum)}</PlayCount>
-            </PlayContent>
-          </AutherLayout>
-        </BottomContent>
-      </PaperContent>
-    </Container>
+    <Link
+      href={`/feed?user=${props.authorId}&type=${
+        props.isStarContent ? "user_saved" : "user_paper"
+      }`}
+    >
+      <Container>
+        {props.poster ? (
+          <PosterImage src={props.poster} />
+        ) : (
+          <PlaceholderImage src={VideoPlaceholderImage} />
+        )}
+        <PaperContent>
+          <TopContent
+            style={{ visibility: props.isShowTop ? "visible" : "hidden" }}
+            onClick={props.onTop}
+          >
+            {props.isTop ? <TopActiveIcon /> : <TopFlagIcon />}
+          </TopContent>
+          {!props.isStarContent && props.status === 1 ? (
+            <IsReviewing>Is reviewing</IsReviewing>
+          ) : (
+            ""
+          )}
+          <BottomContent>
+            <DescriptionStyle>
+              <TopIcon />
+              <Description>{props.description}</Description>
+            </DescriptionStyle>
+            <AuthorLayout>
+              <AvatarLayout>
+                <Avatar src={props.avatar} />
+                <Name>{props.author}</Name>
+              </AvatarLayout>
+              <PlayContent>
+                <PlayIcon />
+                <PlayCount>{digitalScale(props.playNum)}</PlayCount>
+              </PlayContent>
+            </AuthorLayout>
+          </BottomContent>
+        </PaperContent>
+      </Container>
+    </Link>
   );
 };
 export default PaperPreview;

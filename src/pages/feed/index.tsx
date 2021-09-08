@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import SwiperCore, { Virtual } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -7,12 +7,18 @@ import { SwiperEvents } from "swiper/types";
 import produce from "immer";
 import VideoPlayer from "../../components/Paper/VideoPlayer";
 import { VideoReadyState } from "../../constants";
-import { GetServerSideProps, NextPage } from "next";
-import { getMagazineById, getNextMagazine, MagazineType, subscribeMagazine } from "../../apis";
-import { getPaperList, likePaper, PaperType, starPaper } from "../../apis/paper";
-import { useUpdateEffect } from "ahooks";
+import { subscribeMagazine } from "../../apis";
+import {
+  getPaperList,
+  getStarPapers,
+  getUserPapers,
+  getUserSubscribePapers,
+  likePaper,
+  PaperType,
+  starPaper,
+} from "../../apis/paper";
 import { TextEllipsisMixin } from "../../../lib/mixins";
-import { composeAuthHeaders, useLogin } from "../../utils";
+import { useLogin } from "../../utils";
 import { useAppSelector } from "../../app/hook";
 import SubscribedIcon from "../../assets/icons/subscribed.svg";
 import { followUser } from "../../apis/profile";
@@ -20,7 +26,6 @@ import Comments from "../../components/Comment/Comment";
 import SubscribeButtonIcon from "../../assets/icons/subscribe-button.svg";
 import FeedBackIcon from "../../assets/icons/feed-back.svg";
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -31,6 +36,7 @@ const Container = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
+  background-color: #333;
 `;
 
 const StyledSwiper = styled(Swiper)`
@@ -67,11 +73,16 @@ const MagazineContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 16px 14px 16px 0;
+  max-width: calc(100% - 48px);
+  width: calc(100% - 48px);
+  min-width: calc(100% - 48px);
 `;
 
 const MagazineInfo = styled.div`
   flex: 1;
-  overflow: hidden;
+  max-width: calc(100% - 54px);
+  width: calc(100% - 54px);
+  min-width: calc(100% - 54px);
 `;
 
 const MagazineTitle = styled.h1`
@@ -96,31 +107,24 @@ const MagazineNumber = styled.p`
 `;
 
 const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
-  margin-left: 14px;
+  //margin-right: 14px;
 `;
 
-interface HomePageProps {
-  magazine: MagazineType;
-  paperList: PaperType[];
-}
+type TType = "default" | "subscribe" | "user_paper" | "user_saved";
 
-const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
+const Feed = () => {
   const router = useRouter();
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(
-    parseInt(router.query.active_index as string) || 0
-  );
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
-  const [papers, setPapers] = useState<PaperType[]>(paperList);
-  const [currentMagazine, setCurrentMagazine] = useState(magazine);
-  const [page, setPage] = useState(2);
+  const [papers, setPapers] = useState<PaperType[]>([]);
+  const [currentPaper, setCurrentPaper] = useState<PaperType | null>(null);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-
   const [swiperHeight, setSwiperHeight] = useState(0);
   const { withLogin } = useLogin();
   const [open, setOpen] = useState(false);
-  const [paperProp, setPaperProp] = useState<PaperType>(paperList[0]);
 
   useEffect(() => {
     const player = videoPlayerRef.current;
@@ -137,8 +141,50 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
     }
   }, [activeIndex]);
 
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const type: TType = (router.query.type as TType) ?? "default";
+        let response;
+        switch (type) {
+          case "subscribe":
+            response = await getUserSubscribePapers({
+              paperId: router.query["paper_id"] as string,
+              page,
+            });
+            break;
+          case "user_paper":
+            response = await getUserPapers({
+              userId: router.query["user"] as string,
+              page,
+            });
+            break;
+          case "user_saved":
+            response = await getStarPapers({
+              userId: router.query["user"] as string,
+              page,
+            });
+            break;
+          case "default":
+          default:
+            response = await getPaperList({
+              magazineId: router.query["magazine_id"] as string,
+              page,
+            });
+            break;
+        }
+        const list = response.data.result.data;
+        // const  = Boolean(response.data.result.hasmore);
+        setPapers((prev) => [...prev, ...list]);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [page, router.query]);
+
   /**
-   * 切换杂志
+   * 切换内容
    * 1. 播放状态，切换前后保持一直
    * 2. 播放进度，清零
    * @param swiper
@@ -213,27 +259,6 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
     setPage((prev) => prev + 1);
   };
 
-  useUpdateEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const response = await getPaperList({ magazineId: currentMagazine.id, page });
-        const list = response.data.result.data;
-        // const  = Boolean(response.data.result.hasmore);
-        if (list.length > 0) {
-          setPapers((prev) => [...prev, ...list]);
-        } else {
-          const magazineResponse = await getNextMagazine(currentMagazine.id);
-          const nextMagazine: MagazineType = magazineResponse.data.result.data;
-          setCurrentMagazine(nextMagazine);
-          setPage(1);
-        }
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [page]);
-
   /**
    * 浏览器限制，video 要得到播放授权，需要在用户事件处理函数中执行video.play，不能在其他地方执行，会因丢失 user gesture token，导致无法播放
    * @param paper
@@ -277,28 +302,28 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   }, []);
 
   const user = useAppSelector((state) => state.user);
-  const isMyMagazine = useMemo(
-    () => user.uid === currentMagazine.authorId,
-    [currentMagazine.authorId, user.uid]
-  );
 
   /**
    * 订阅杂志
    */
-  const handleSubscribe = withLogin<MouseEvent, MagazineType>(async (event, magazine) => {
+  const handleSubscribe = withLogin<MouseEvent, PaperType | null>(async (event, paper) => {
     event?.stopPropagation();
-    if (!magazine) return;
+    const magazine = paper?.magazine;
+    if (!paper || !magazine) return;
     const isSubscribe = !magazine.isSubscribe;
     await subscribeMagazine(magazine.id, isSubscribe);
-    setCurrentMagazine((prev) =>
+    setPapers((prev) =>
       produce(prev, (draft) => {
-        draft.isSubscribe = isSubscribe;
-        if (isSubscribe) {
-          draft.subscribeNum = magazine.subscribeNum + 1;
-        } else {
-          draft.subscribeNum = magazine.subscribeNum - 1;
-        }
-        return draft;
+        draft.forEach((item) => {
+          if (item.id === paper.id && item.magazine) {
+            item.magazine.isSubscribe = isSubscribe;
+            if (isSubscribe) {
+              item.magazine.subscribeNum = magazine.subscribeNum + 1;
+            } else {
+              item.magazine.subscribeNum = magazine.subscribeNum - 1;
+            }
+          }
+        });
       })
     );
   });
@@ -363,7 +388,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
    */
   const handleCommentPaper = withLogin<PaperType>((paper) => {
     if (!paper) return;
-    setPaperProp(paper);
+    setCurrentPaper(paper);
     setOpen(true);
   });
 
@@ -394,22 +419,20 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
                   <RouteBackIcon />
                 </RouteBack>
                 <MagazineContainer>
-                  <Link href={`/magazine/${paper.magazineId}`}>
-                    <MagazineInfo>
-                      <MagazineTitle>
-                        {currentMagazine.title}
-                        {!isMyMagazine && currentMagazine.isSubscribe ? (
-                          <StyledSubscribedIcon
-                            onClick={(event: MouseEvent) => handleSubscribe(event, currentMagazine)}
-                          />
-                        ) : null}
-                      </MagazineTitle>
-                      <MagazineNumber>{currentMagazine.subscribeNum} subscribers</MagazineNumber>
-                    </MagazineInfo>
-                  </Link>
-                  {!isMyMagazine && !currentMagazine.isSubscribe ? (
+                  <MagazineInfo>
+                    <MagazineTitle>
+                      {paper.magazine?.title}
+                      {user.uid !== paper.magazine?.authorId && paper.magazine?.isSubscribe ? (
+                        <StyledSubscribedIcon
+                          onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
+                        />
+                      ) : null}
+                    </MagazineTitle>
+                    <MagazineNumber>{paper.magazine?.subscribeNum} subscribers</MagazineNumber>
+                  </MagazineInfo>
+                  {user.uid !== paper.magazine?.authorId && !paper.magazine?.isSubscribe ? (
                     <MagazineSubscribeButton
-                      onClick={(event: MouseEvent) => handleSubscribe(event, currentMagazine)}
+                      onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
                     />
                   ) : null}
                 </MagazineContainer>
@@ -423,9 +446,7 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
                 onFollow={() => handleFollow(paper)}
                 onLike={() => handleLikePaper(paper)}
                 onStar={() => handleStarPaper(paper)}
-                onComment={() => {
-                  handleCommentPaper(paper);
-                }}
+                onComment={() => handleCommentPaper(paper)}
               />
             </SwiperSlide>
           ))}
@@ -438,44 +459,17 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
           onChangeCurrentTime={(time) => handleChangeCurrentTime(papers[activeIndex], time)}
         />
       </Container>
-      <Comments
-        onCommentClose={() => {
-          handleCommentClose();
-        }}
-        onClickOverlay={() => {
-          handleCommentClose();
-        }}
-        open={open}
-        {...paperProp}
-      />
+      {/* 评论组件 */}
+      {currentPaper ? (
+        <Comments
+          {...currentPaper}
+          open={open}
+          onCommentClose={() => handleCommentClose()}
+          onClickOverlay={() => handleCommentClose()}
+        />
+      ) : null}
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-  const magazineId = query["magazine_id"] as string;
-  const headers = composeAuthHeaders(req.headers.cookie);
-
-  const magazineResponse = magazineId
-    ? await getMagazineById(magazineId, { headers })
-    : await getNextMagazine(undefined, { headers });
-  const magazine: MagazineType = magazineResponse.data.result.data;
-
-  let paperList = [];
-  if (magazine?.id) {
-    const paperResponse = await getPaperList(
-      { magazineId: magazine.id, page: 1, limit: 2 },
-      { headers }
-    );
-    paperList = paperResponse.data.result.data;
-  }
-
-  return {
-    props: {
-      magazine,
-      paperList,
-    },
-  };
-};
-
-export default Home;
+export default Feed;
