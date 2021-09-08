@@ -13,6 +13,9 @@ import SubscribeBtn from "../../assets/icons/subscribe.svg";
 import UnSubscribeBtn from "../../assets/icons/unSubscribe.svg";
 import { TextEllipsisMixin } from "../../../lib/mixins";
 import { useAppSelector } from "../../app/hook";
+import Head from "next/head";
+import MoreOperate from "../../components/MoreOperate";
+import Popup from "../../../lib/Popup";
 
 interface MagazineProps {
   magazine: MagazineType;
@@ -125,8 +128,14 @@ const PaperItem = styled.div`
   margin-left: 7px;
   margin-top: 7px;
 `;
+const SharePopup = styled(Popup)`
+  padding: 0;
+  margin: 0;
+  border-radius: 20px 20px 0 0;
+`;
 const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const user = useAppSelector((state) => state.user);
+  const [shareOpen, setShareOpen] = useState(false);
   const isShowTop = useMemo(() => user.uid === magazine.authorId, [user.uid, magazine.authorId]);
   const [paperCounts, setPaperCounts] = useState(0);
   const [currentMagazine, setCurrentMagazin] = useState(magazine);
@@ -152,7 +161,10 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   }, [magazine.id, page, setHasMore, setLoading]);
 
   const handleShare = () => {
-    console.log("share!");
+    setShareOpen(true);
+  };
+  const closePopup = () => {
+    setShareOpen(false);
   };
 
   /**
@@ -201,6 +213,15 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   };
   return (
     <>
+      <Head>
+        <meta property="og:title" content={currentMagazine.title} />
+        <meta property="og:image" content={currentMagazine.cover} />
+        <meta property="og:description" content={currentMagazine.description} />
+        <meta
+          property="og:url"
+          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magezine/${currentMagazine.id}`}
+        />
+      </Head>
       <Container>
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
@@ -261,6 +282,9 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
           </PaperContent>
         </MagazinePaperLayout>
       </Container>
+      <SharePopup position="bottom" onClickOverlay={closePopup} open={shareOpen}>
+        <MoreOperate onlyShare {...magazine} />
+      </SharePopup>
     </>
   );
 };

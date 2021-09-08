@@ -20,6 +20,7 @@ import Comments from "../../components/Comment/Comment";
 import SubscribeButtonIcon from "../../assets/icons/subscribe-button.svg";
 import FeedBackIcon from "../../assets/icons/feed-back.svg";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -284,7 +285,8 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
   /**
    * 订阅杂志
    */
-  const handleSubscribe = withLogin<MagazineType>(async (magazine) => {
+  const handleSubscribe = withLogin<MouseEvent, MagazineType>(async (event, magazine) => {
+    event?.stopPropagation();
     if (!magazine) return;
     const isSubscribe = !magazine.isSubscribe;
     await subscribeMagazine(magazine.id, isSubscribe);
@@ -392,17 +394,23 @@ const Home: NextPage<HomePageProps> = ({ magazine, paperList }) => {
                   <RouteBackIcon />
                 </RouteBack>
                 <MagazineContainer>
-                  <MagazineInfo>
-                    <MagazineTitle>
-                      {currentMagazine.title}
-                      {!isMyMagazine && currentMagazine.isSubscribe ? (
-                        <StyledSubscribedIcon onClick={() => handleSubscribe(currentMagazine)} />
-                      ) : null}
-                    </MagazineTitle>
-                    <MagazineNumber>{currentMagazine.subscribeNum} subscribers</MagazineNumber>
-                  </MagazineInfo>
+                  <Link href={`/magazine/${paper.magazineId}`}>
+                    <MagazineInfo>
+                      <MagazineTitle>
+                        {currentMagazine.title}
+                        {!isMyMagazine && currentMagazine.isSubscribe ? (
+                          <StyledSubscribedIcon
+                            onClick={(event: MouseEvent) => handleSubscribe(event, currentMagazine)}
+                          />
+                        ) : null}
+                      </MagazineTitle>
+                      <MagazineNumber>{currentMagazine.subscribeNum} subscribers</MagazineNumber>
+                    </MagazineInfo>
+                  </Link>
                   {!isMyMagazine && !currentMagazine.isSubscribe ? (
-                    <MagazineSubscribeButton onClick={() => handleSubscribe(currentMagazine)} />
+                    <MagazineSubscribeButton
+                      onClick={(event: MouseEvent) => handleSubscribe(event, currentMagazine)}
+                    />
                   ) : null}
                 </MagazineContainer>
               </HeaderContainer>

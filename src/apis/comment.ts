@@ -18,6 +18,10 @@ export type CommentType = {
   isLike: boolean;
   // 回复数量
   replyNum: number;
+  // 回复的评论发起者名字
+  parentUser: string;
+  // 回复的评论发起Id
+  parentUserId: string;
 };
 
 const mapCommentItem = (item: Record<string, any>) => {
@@ -32,6 +36,8 @@ const mapCommentItem = (item: Record<string, any>) => {
     isLike: Boolean(item.is_like),
     createTime: item.created_at ?? "",
     replyNum: item.reply_num ?? 0,
+    parentUser: item.parent_user ?? "",
+    parentUserId: item.parent_user_id ?? "",
   };
 };
 

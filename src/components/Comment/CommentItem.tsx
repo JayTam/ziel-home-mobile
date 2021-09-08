@@ -35,6 +35,8 @@ const CommentContentTop = styled.div`
 `;
 
 const AvatarLevel1 = styled.img`
+  align-self: flex-start;
+  margin-top: 2px;
   height: 34px;
   width: 34px;
   border-radius: 50%;
@@ -242,6 +244,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
             onClickreply={props.onClickreply}
             key={reply.id}
             {...reply}
+            isShowAt={props.userId !== reply.parentUserId}
           ></ReplyItem>
         ))}
         {hasMore && loading ? <Loading ref={loaderRef} /> : null}

@@ -182,7 +182,11 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
             <UserRight>
               <UserName>{profile.nickname}</UserName>
               {isMyProfile ? (
-                <Edit />
+                <Edit
+                  onClick={() => {
+                    window.location.href = `${process.env.NEXT_PUBLIC_PAASPORT_URL}/profiles`;
+                  }}
+                />
               ) : (
                 <FollowBtn
                   onClick={() => {
@@ -264,7 +268,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   const magazineResponse = await getUserMagazines({ userId, limit: 1, page: 1 }, { headers });
   const userPaperResponse = await getStarPapers({ userId, limit: 1, page: 1 }, { headers });
   const userMagazineResponse = await getStarMagazines({ userId, limit: 1, page: 1 }, { headers });
-
+  console.log(profileInfoResponse.data.result);
   return {
     props: {
       userId: userId,

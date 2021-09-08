@@ -10,6 +10,7 @@ interface ReplyItemType extends CommentType {
   onClickreply?: (comment: CommentType) => void;
   onClickLike?: (comment: CommentType) => void;
   authorId: string;
+  isShowAt: boolean;
 }
 const MoreContents = styled.div`
   padding-left: 53px;
@@ -20,6 +21,8 @@ const AvatarLevel2 = styled.img`
   height: 24px;
   width: 24px;
   border-radius: 50%;
+  align-self: flex-start;
+  margin-top: 2px;
 `;
 const CommentContentTop = styled.div`
   display: flex;
@@ -32,9 +35,10 @@ const CommentContentTop = styled.div`
 `;
 const ContentContainer = styled.div`
   padding-left: 8px;
-  width: 100%;
+  width: calc(100% - 22px);
   display: flex;
   flex-direction: column;
+  word-break: break-all;
 `;
 const UserInfo = styled.div`
   font-size: 14px;
@@ -47,6 +51,9 @@ const UserInfo = styled.div`
 const ContentText = styled.div`
   margin-top: 4px;
   color: ${(props) => props.theme.palette.common?.white};
+  span {
+    color: #ffa952;
+  }
 `;
 const LikeStyle = styled.div`
   display: flex;
@@ -86,7 +93,10 @@ const ReplyItem = React.forwardRef<HTMLDivElement, ReplyItemType>((props, ref) =
             <UserInfo>
               {props.author} {props.authorId === props.userId ? <span>·originator</span> : ""}
             </UserInfo>
-            <ContentText>{props.content}</ContentText>
+            <ContentText>
+              <span>{props.isShowAt ? `@${props.parentUser}:` : ""}</span>
+              {props.content}
+            </ContentText>
           </ContentContainer>
           <LikeStyle onClick={() => props.onClickLike?.(props)}>
             {props.isLike ? <LikedIcon /> : <UnLikeIcon />}

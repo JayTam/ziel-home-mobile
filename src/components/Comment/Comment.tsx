@@ -63,6 +63,7 @@ const EmptyComment = styled.div`
 const CommentAreaStyle = styled.div`
   height: 100%;
   overflow: scroll;
+  padding-bottom: 10px;
 `;
 const CommentItemStyle = styled(CommentsItem)`
   margin-bottom: 14px;
@@ -111,9 +112,7 @@ const Comment: React.FC<CommentProps> = (props) => {
   const currentCommentRef = useRef<CommentItemHandle>(null);
   const { withLogin } = useLogin();
   const commentTextContent = useMemo(() => {
-    return currentReply
-      ? commentText.replace("Reply", "").trim()
-      : commentText.replace(/Reply @(.+):/, "").trim();
+    return commentText.replace(/Reply @(.+):/, "").trim();
   }, [commentText]);
   const scrollTopRef = useRef<HTMLDivElement | null>(null);
   const { loaderRef, hasMore, page, setHasMore, setLoading, firstLoading, setFirstLoading } =
@@ -172,6 +171,8 @@ const Comment: React.FC<CommentProps> = (props) => {
           userId: data.user_info.id,
           isLike: false,
           replyNum: data.reply_num,
+          parentUser: data.parent_user,
+          parentUserId: data.parent_user_id,
         };
         // 更新当前评论的回复，更新当前评论的回复量
         setCommentList((commentList) =>
@@ -199,6 +200,8 @@ const Comment: React.FC<CommentProps> = (props) => {
         userId: data.user_info.id,
         isLike: false,
         replyNum: data.reply_num,
+        parentUser: data.parent_user,
+        parentUserId: data.parent_user_id,
       };
       setCommentList((commentList) => [comment, ...commentList]);
       scrollTopRef.current?.scrollIntoView();
@@ -208,7 +211,7 @@ const Comment: React.FC<CommentProps> = (props) => {
     setCurrentComment(null);
   };
   const handleClickreplyComment = async (comment: CommentType, reply: CommentType) => {
-    setCommentText(`Reply @${comment.author}: `);
+    setCommentText(`Reply @${reply.author}: `);
     if (comment.id === reply.id) {
       // 点击的是CommentItem的 reply
       setCurrentComment(comment);

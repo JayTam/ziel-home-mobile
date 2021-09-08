@@ -3,6 +3,7 @@ import { getStarMagazines, getUserMagazines, MagazineType } from "../../apis";
 import { useInfiniteScroll } from "../../utils";
 import MagazinePreview from "./MagazinePreview";
 import styled from "styled-components";
+import Link from "next/link";
 
 interface MagazineListType {
   userId: string;
@@ -41,9 +42,13 @@ const MagazineScrollList: React.FC<MagazineListType> = (props) => {
   return (
     <>
       {magazines.map((magazine) => (
-        <PaperItem key={magazine.id}>
-          <MagazinePreview key={magazine.id} {...magazine} />
-        </PaperItem>
+        <div key={magazine.id}>
+          <Link href={`/magazine/${magazine.id}`}>
+            <PaperItem>
+              <MagazinePreview key={magazine.id} {...magazine} />
+            </PaperItem>
+          </Link>
+        </div>
       ))}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}
     </>
