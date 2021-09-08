@@ -9,7 +9,7 @@ import SmsIgon from "../assets/icons/sms.svg";
 import PinterestIgon from "../assets/icons/Pinterest.svg";
 import CopyIgon from "../assets/icons/copy.svg";
 import FacebookIgon from "../assets/icons/facebook.svg";
-import InsIgon from "../assets/icons/ins.svg";
+// import InsIgon from "../assets/icons/ins.svg";
 import { MagazineType } from "../apis";
 
 interface MoreOperateType extends MagazineType {
@@ -67,15 +67,22 @@ const ShareTitle = styled.div`
 `;
 const MoreOperate: React.FC<MoreOperateType> = (props) => {
   const handleClick = (type: string) => {
+    const baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.id}`;
+    let url = "";
     switch (type) {
+      case "SMS":
+        url = `sms:'';?&body=${baseUrl}`;
+        break;
       case "facebook":
-        window.open(
-          `https://www.facebook.com/sharer.php?u=${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.id}`
-        );
+        url = `https://www.facebook.com/sharer.php?u=${baseUrl}`;
+        break;
+      case "pinterest":
+        url = `https://www.pinterest.com/pin/create/button/?url=${baseUrl}`;
         break;
       default:
         break;
     }
+    window.open(url);
   };
   return (
     <Container>
@@ -107,19 +114,19 @@ const MoreOperate: React.FC<MoreOperateType> = (props) => {
       )}
       <ShareTitle>Share to</ShareTitle>
       <BottomContainer>
-        <ItemStyle>
+        <ItemStyle onClick={() => handleClick("SMS")}>
           <SmsIgon />
           <span>SMS</span>
         </ItemStyle>
-        <ItemStyle>
+        {/* <ItemStyle>
           <InsIgon />
           <span>Ins</span>
-        </ItemStyle>
+        </ItemStyle> */}
         <ItemStyle onClick={() => handleClick("facebook")}>
           <FacebookIgon />
           <span>Facebook</span>
         </ItemStyle>
-        <ItemStyle>
+        <ItemStyle onClick={() => handleClick("pinterest")}>
           <PinterestIgon />
           <span>Pinterest</span>
         </ItemStyle>
