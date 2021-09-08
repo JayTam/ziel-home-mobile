@@ -53,7 +53,7 @@ const PapersContainer = styled.div`
   padding-left: 68px;
   padding-right: 20px;
   box-sizing: border-box;
-  width: calc(100% + 14px);
+  width: 100%;
   height: 224px;
   overflow-x: scroll;
   overflow-y: hidden;
