@@ -214,9 +214,11 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   return (
     <>
       <Head>
+        <title>{currentMagazine.title}</title>
+        <meta name="description" content={currentMagazine.description} />
         <meta property="og:title" content={currentMagazine.title} />
         <meta property="og:image" content={currentMagazine.cover} />
-        <meta property="og:description" content={currentMagazine.description} />
+        <meta property="og:image:secure_url" content={currentMagazine.cover} />
         <meta
           property="og:url"
           content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magezine/${currentMagazine.id}`}
