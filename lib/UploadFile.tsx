@@ -164,7 +164,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
       },
     });
     uploadId.current = response.data.upload_id;
-    return response.data.download_path !== "";
+    if (response.data.download_path !== "") return response.data.download_path;
   };
 
   /**
@@ -181,10 +181,8 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
       formData.append("chunk_num", index.toString());
       return { formData, index, fileName: file.name, isUpload: false, retryNum: 0 };
     });
-    setLoading(true);
     await sendUploadRequest(chunkFormDataList);
     const videoUrl = await mergeRequest();
-    setLoading(false);
     setPreview(videoUrl);
     props.onChange?.(videoUrl);
   };
@@ -236,6 +234,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
   const sendUploadRequest = (chunkFormDataList: ChunkFormData[], threadNum = 10): Promise<void> => {
     let uploadChunks = 0;
     const totalChunks = chunkFormDataList.length;
+    setUploadingProgress(0);
 
     return new Promise((resolve, reject) => {
       const singleRequest = () => {
@@ -249,6 +248,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
           .then(() => {
             chunkFormData.isUpload = true;
             uploadChunks += 1;
+            setUploadingProgress(uploadChunks / totalChunks);
             if (uploadChunks >= totalChunks) resolve();
             else singleRequest();
           })
@@ -272,7 +272,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
    */
   const mergeRequest = (): Promise<string> => {
     return new Promise((resolve) => {
-      const askCompleteTranscoding = (downloadPath: string) => {
+      const mergeCompleteTranscoding = (downloadPath: string) => {
         request({
           method: "GET",
           url: `/a1/file/metadata/?fd=${downloadPath}`,
@@ -282,7 +282,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
           })
           .catch(() => {
             setTimeout(() => {
-              askCompleteTranscoding(downloadPath);
+              mergeCompleteTranscoding(downloadPath);
             }, 1000);
           });
       };
@@ -295,11 +295,28 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
         },
       }).then((response) => {
         if (response.data.download_path !== "") {
-          askCompleteTranscoding(response.data.video.transcodes["mp4.h264.720p"].download_path);
+          mergeCompleteTranscoding(response.data.video.transcodes["mp4.h264.720p"].download_path);
         }
       });
     });
   };
+
+  const askCompleteTranscoding = (downloadPath: string) =>
+    new Promise((resolve) => {
+      const innerRequest = () => {
+        request({
+          method: "GET",
+          url: `/a1/file/metadata/?fd=${downloadPath}`,
+        })
+          .then(() => {
+            resolve(downloadPath);
+          })
+          .catch(() => {
+            setTimeout(() => innerRequest(), 1000);
+          });
+      };
+      innerRequest();
+    });
 
   /**
    * 打开文件选择
@@ -312,6 +329,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
    * 关闭文件选择
    */
   const handleClose = () => {
+    setUploadingProgress(0);
     setPreview("");
     onChange?.("");
   };
@@ -366,13 +384,17 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
     } else {
       // 分片上传
       // 是否上传过
-      const isUpload = await uploadInitial(file);
-      if (isUpload) {
+      setLoading(true);
+      const downloadPath = await uploadInitial(file);
+      if (downloadPath) {
         setUploadingProgress(1);
-        return;
+        await askCompleteTranscoding(downloadPath);
+        setPreview(downloadPath);
+        props.onChange?.(downloadPath);
       } else {
         await uploadChunks(file);
       }
+      setLoading(false);
     }
   };
 
