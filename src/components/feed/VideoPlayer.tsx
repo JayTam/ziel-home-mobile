@@ -3,8 +3,6 @@ import styled from "styled-components";
 import Play from "../../assets/play.svg";
 import { useCombinedRefs } from "../../utils";
 import Loading from "../../../lib/Loading";
-import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
-import Image from "next/image";
 
 export type VideoPlayerProps = {
   className?: string;
@@ -56,15 +54,6 @@ const Video = styled.video`
 `;
 
 const Poster = styled.img`
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const VideoPlaceHolder = styled(Image)`
   position: absolute;
   left: 0;
   top: 0;
@@ -212,12 +201,12 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       {/* 加载条 */}
       {props.type === "poster" ? <VideoLoading hidden={hiddenLoading} size={50} /> : null}
       {/* 视频封面 */}
-      {props.type === "poster" && showPoster ? (
-        props.poster ? (
-          <Poster src={props.poster} alt="poster" />
-        ) : (
-          <VideoPlaceHolder src={VideoPlaceholderImage} alt="poster" layout="fill" />
-        )
+      {props.type === "poster" ? (
+        <Poster
+          style={{ display: showPoster ? "inline-block" : "none" }}
+          src={props.poster}
+          alt="poster"
+        />
       ) : null}
       {/* 视频 */}
       {props.type === "video" ? (

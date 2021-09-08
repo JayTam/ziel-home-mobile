@@ -11,6 +11,7 @@ module.exports = {
     "node_modules/*",
     ".next/*",
     ".out/*",
+    "public/*",
     "!.prettierrc.js",
     "!.eslintrc.js",
     "!.lintstagedrc.js",
