@@ -217,7 +217,8 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         <title>{currentMagazine.title}</title>
         <meta name="description" content={currentMagazine.description} />
         <meta property="og:title" content={currentMagazine.title} />
-        <meta property="og:image" content={currentMagazine.cover} />
+        <meta property="og:description" content={currentMagazine.description} />
+        {/* <meta property="og:image" content={currentMagazine.cover} /> */}
         <meta
           property="og:url"
           content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magezine/${currentMagazine.id}`}
@@ -231,7 +232,12 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
-            <MagazineImg src={currentMagazine.cover} />
+            <MagazineImg
+              src={currentMagazine.cover.replace(
+                "https://s1.zielhome.com",
+                "https://ziel-pp-public.oss-cn-hongkong.aliyuncs.com"
+              )}
+            />
             <MagazineInfo>
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
