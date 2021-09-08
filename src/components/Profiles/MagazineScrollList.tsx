@@ -42,13 +42,11 @@ const MagazineScrollList: React.FC<MagazineListType> = (props) => {
   return (
     <>
       {magazines.map((magazine) => (
-        <div key={magazine.id}>
-          <Link href={`/magazine/${magazine.id}`}>
-            <PaperItem>
-              <MagazinePreview key={magazine.id} {...magazine} />
-            </PaperItem>
-          </Link>
-        </div>
+        <Link key={magazine.id} href={`/magazine/${magazine.id}`}>
+          <PaperItem>
+            <MagazinePreview key={magazine.id} {...magazine} />
+          </PaperItem>
+        </Link>
       ))}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}
     </>

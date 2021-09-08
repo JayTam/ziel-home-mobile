@@ -224,6 +224,10 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         />
       </Head>
       <Container>
+        <img
+          src={currentMagazine.cover}
+          style={{ position: "absolute", visibility: "hidden" }}
+        ></img>
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
