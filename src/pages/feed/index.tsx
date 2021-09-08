@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import SwiperCore, { Virtual } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import Paper from "../../components/Paper/Paper";
+import Paper from "../../components/feed/Paper";
 import { SwiperEvents } from "swiper/types";
 import produce from "immer";
-import VideoPlayer from "../../components/Paper/VideoPlayer";
+import VideoPlayer from "../../components/feed/VideoPlayer";
 import { VideoReadyState } from "../../constants";
 import { subscribeMagazine } from "../../apis";
 import {
