@@ -70,7 +70,7 @@ const MoreOperate: React.FC<MoreOperateType> = (props) => {
     switch (type) {
       case "facebook":
         window.open(
-          `https://www.facebook.com/sharer.php?u=${process.env.NEXT_PUBLIC_WEB_BASE_URL}/magezine/${props.id}`
+          `https://www.facebook.com/sharer.php?u=${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.id}`
         );
         break;
       default:
