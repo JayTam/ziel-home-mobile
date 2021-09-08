@@ -26,6 +26,7 @@ import Comments from "../../components/Comment/Comment";
 import SubscribeButtonIcon from "../../assets/icons/subscribe-button.svg";
 import FeedBackIcon from "../../assets/icons/feed-back.svg";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -419,17 +420,19 @@ const Feed = () => {
                   <RouteBackIcon />
                 </RouteBack>
                 <MagazineContainer>
-                  <MagazineInfo>
-                    <MagazineTitle>
-                      {paper.magazine?.title}
-                      {user.uid !== paper.magazine?.authorId && paper.magazine?.isSubscribe ? (
-                        <StyledSubscribedIcon
-                          onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
-                        />
-                      ) : null}
-                    </MagazineTitle>
-                    <MagazineNumber>{paper.magazine?.subscribeNum} subscribers</MagazineNumber>
-                  </MagazineInfo>
+                  <Link href={`/magazine/${paper.magazineId}`}>
+                    <MagazineInfo>
+                      <MagazineTitle>
+                        {paper.magazine?.title}
+                        {user.uid !== paper.magazine?.authorId && paper.magazine?.isSubscribe ? (
+                          <StyledSubscribedIcon
+                            onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
+                          />
+                        ) : null}
+                      </MagazineTitle>
+                      <MagazineNumber>{paper.magazine?.subscribeNum} subscribers</MagazineNumber>
+                    </MagazineInfo>
+                  </Link>
                   {user.uid !== paper.magazine?.authorId && !paper.magazine?.isSubscribe ? (
                     <MagazineSubscribeButton
                       onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
