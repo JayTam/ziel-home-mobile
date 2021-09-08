@@ -225,19 +225,10 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         />
       </Head>
       <Container>
-        <img
-          src={currentMagazine.cover}
-          style={{ position: "absolute", visibility: "hidden" }}
-        ></img>
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
-            <MagazineImg
-              src={currentMagazine.cover.replace(
-                "https://s1.zielhome.com",
-                "https://ziel-pp-public.oss-cn-hongkong.aliyuncs.com"
-              )}
-            />
+            <MagazineImg src={currentMagazine.cover} />
             <MagazineInfo>
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
