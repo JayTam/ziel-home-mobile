@@ -18,7 +18,7 @@ import {
   starPaper,
 } from "../../apis/paper";
 import { TextEllipsisMixin } from "../../../lib/mixins";
-import { useLogin } from "../../utils";
+import { replaceToImgBaseUrl, useLogin } from "../../utils";
 import { useAppSelector } from "../../app/hook";
 import SubscribedIcon from "../../assets/icons/subscribed.svg";
 import { followUser } from "../../apis/profile";
@@ -29,6 +29,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import MoreOperate from "../../components/MoreOperate";
 import Popup from "../../../lib/Popup";
+import Head from "next/head";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -304,7 +305,8 @@ const Feed = () => {
       });
   };
 
-  const handleMoreOperate = () => {
+  const handleMoreOperate = (paper: PaperType) => {
+    setCurrentPaper(paper);
     setMoreOpen(true);
   };
 
@@ -411,6 +413,7 @@ const Feed = () => {
    */
   const handleCommentClose = () => {
     setCommentOpen(false);
+    setCurrentPaper(null);
   };
 
   /**
@@ -418,10 +421,22 @@ const Feed = () => {
    */
   const closeSharePopup = () => {
     setMoreOpen(false);
+    setCurrentPaper(null);
   };
 
   return (
     <>
+      <Head>
+        <title>{currentPaper?.title}</title>
+        <meta name="description" content={currentPaper?.description} />
+        <meta property="og:title" content={currentPaper?.title} />
+        <meta property="og:description" content={currentPaper?.description} />
+        <meta property="og:img" content={replaceToImgBaseUrl(currentPaper?.poster)} />
+        <meta
+          property="og:url"
+          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${currentPaper?.magazineId}`}
+        />
+      </Head>
       <Container>
         <StyledSwiper
           direction="vertical"
@@ -470,13 +485,10 @@ const Feed = () => {
                 onLike={() => handleLikePaper(paper)}
                 onStar={() => handleStarPaper(paper)}
                 onMore={() => {
-                  handleMoreOperate();
+                  handleMoreOperate(paper);
                 }}
                 onComment={() => handleCommentPaper(paper)}
               />
-              <SharePopup position="bottom" onClickOverlay={closeSharePopup} open={moreOpen}>
-                <MoreOperate onlyShare moreType="paper" paper={paper} />
-              </SharePopup>
             </SwiperSlide>
           ))}
         </StyledSwiper>
@@ -490,12 +502,17 @@ const Feed = () => {
       </Container>
       {/* 评论组件 */}
       {currentPaper ? (
-        <Comments
-          {...currentPaper}
-          open={commentOpen}
-          onCommentClose={() => handleCommentClose()}
-          onClickOverlay={() => handleCommentClose()}
-        />
+        <>
+          <SharePopup position="bottom" onClickOverlay={closeSharePopup} open={moreOpen}>
+            <MoreOperate onlyShare moreType="paper" paper={currentPaper} />
+          </SharePopup>
+          <Comments
+            {...currentPaper}
+            open={commentOpen}
+            onCommentClose={() => handleCommentClose()}
+            onClickOverlay={() => handleCommentClose()}
+          />
+        </>
       ) : null}
     </>
   );

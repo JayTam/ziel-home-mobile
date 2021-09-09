@@ -14,7 +14,6 @@ import CommentIcon from "../../assets/icons/comment.svg";
 import MoreIcon from "../../assets/icons/more.svg";
 import { useAppSelector } from "../../app/hook";
 import Link from "next/link";
-import Head from "next/head";
 
 const Container = styled.div`
   position: relative;
@@ -138,16 +137,6 @@ const Paper: React.FC<PaperInterface> = (props) => {
 
   return (
     <>
-      <Head>
-        <title>{props.title}</title>
-        <meta name="description" content={props.description} />
-        <meta property="og:title" content={props.title} />
-        <meta property="og:description" content={props.description} />
-        <meta
-          property="og:url"
-          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${props.magazineId}`}
-        />
-      </Head>
       <Container>
         <VideoPlayer {...props} type="poster" />
         <BottomContainer>
