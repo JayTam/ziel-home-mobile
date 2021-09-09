@@ -151,7 +151,9 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
       </AuthorContainer>
       <MagazineCover src={props.cover} />
       <MagazineTitle>{props.title}</MagazineTitle>
-      <MagazineNunContainer>{props.subscribeNum} subscribers · 112 stories</MagazineNunContainer>
+      <MagazineNunContainer>
+        {props.subscribeNum} subscribers · {props.paperNum} stories
+      </MagazineNunContainer>
       {isMyMagazine ? null : (
         <SubscribeButton isSubscribe={props.isSubscribe}>
           <SubscribeButtonBg isSubscribe={props.isSubscribe} onClick={handleSubscribe} />
