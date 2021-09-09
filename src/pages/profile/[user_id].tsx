@@ -34,7 +34,7 @@ interface ProfilePageProps {
     data: PaperType[];
     count: number;
   };
-  favoriteMagezine: {
+  favoriteMagazine: {
     data: MagazineType[];
     count: number;
   };
@@ -240,7 +240,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
           <StarTabPanelStyle
             indexKey="3"
             tab={`Saved ${digitalScale(
-              props.favoriteMagezine.count + props.favoritePaper.count,
+              props.favoriteMagazine.count + props.favoritePaper.count,
               "Int"
             )}`}
             forceRender
@@ -276,7 +276,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
       profile: profileInfoResponse.data.result,
       usersPapers: papersResponse.data.result,
       userMagazine: magazineResponse.data.result,
-      favoriteMagezine: userPaperResponse.data.result,
+      favoriteMagazine: userPaperResponse.data.result,
       favoritePaper: userMagazineResponse.data.result,
     },
   };

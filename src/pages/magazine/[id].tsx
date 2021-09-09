@@ -221,7 +221,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         {/* <meta property="og:image" content={currentMagazine.cover} /> */}
         <meta
           property="og:url"
-          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magezine/${currentMagazine.id}`}
+          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${currentMagazine.id}`}
         />
       </Head>
       <Container>
