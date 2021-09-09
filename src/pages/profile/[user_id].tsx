@@ -135,7 +135,7 @@ const TabsStarStyle = styled(Tabs)`
   display: flex;
 `;
 const TabPanelStyle = styled(TabPanel)`
-  padding: 0px 14px 20px 7px;
+  padding: 0 14px 20px 7px;
 `;
 const StarTabPanelStyle = styled(TabPanel)``;
 const Profile: NextPage<ProfilePageProps> = (props) => {
