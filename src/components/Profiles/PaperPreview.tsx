@@ -24,7 +24,7 @@ const Container = styled.div`
   border-radius: 14px;
 `;
 const PosterImage = styled.img`
-  height: 100%;
+  height: 302px;
   width: 100%;
   border-radius: 14px;
 `;
