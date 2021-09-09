@@ -18,7 +18,7 @@ import {
   starPaper,
 } from "../../apis/paper";
 import { TextEllipsisMixin } from "../../../lib/mixins";
-import { useLogin } from "../../utils";
+import { replaceToImgBaseUrl, useLogin } from "../../utils";
 import { useAppSelector } from "../../app/hook";
 import SubscribedIcon from "../../assets/icons/subscribed.svg";
 import { followUser } from "../../apis/profile";
@@ -438,7 +438,7 @@ const Feed: NextPage<FeedProps> = (props) => {
         <meta name="description" content={currentPaper?.description} />
         <meta property="og:title" content={currentPaper?.title} />
         <meta property="og:description" content={currentPaper?.description} />
-        {/* <meta property="og:image" content={replaceToImgBaseUrl(currentPaper?.poster)} /> */}
+        <meta property="og:image" content={replaceToImgBaseUrl(currentPaper?.poster)} />
         <meta
           property="og:url"
           content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${currentPaper?.magazineId}`}
