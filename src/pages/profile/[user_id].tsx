@@ -18,6 +18,7 @@ import MagazineScrollList from "../../components/Profiles/MagazineScrollList";
 import { useAppSelector } from "../../app/hook";
 import Edit from "../../assets/icons/edit.svg";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface ProfilePageProps {
   profile: ProfileType;
@@ -139,6 +140,7 @@ const TabPanelStyle = styled(TabPanel)`
 `;
 const StarTabPanelStyle = styled(TabPanel)``;
 const Profile: NextPage<ProfilePageProps> = (props) => {
+  const router = useRouter();
   const [type, setType] = useState<"1" | "2" | "3">("1");
   const [starType, setStarType] = useState<"1" | "2">("1");
   const [profile, setProfile] = useState<ProfileType>(props.profile);
@@ -172,9 +174,25 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
       })
     );
   });
+
+  /**
+   * 处理路由返回
+   * 如果是从 /paper/create 跳转过来，返回逻辑是返回首页
+   * 否则是浏览器的back逻辑
+   */
+  const handleBack = async () => {
+    if (router.query.from === "/paper/create") {
+      await router.push("/");
+    } else {
+      await router.back();
+    }
+  };
+
   return (
     <Container>
-      <Header fixed>Profile</Header>
+      <Header fixed onBack={handleBack}>
+        Profile
+      </Header>
       <TopLayout>
         <TitleBg src={TitleImg} />
         <TopContent>
