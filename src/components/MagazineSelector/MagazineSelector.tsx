@@ -12,6 +12,7 @@ import MagazinePreview from "./MagazinePreview";
 import { useUpdateEffect } from "ahooks";
 import { useInfiniteScroll } from "../../utils";
 import Loading from "../../../lib/Loading";
+import Empty from "../../../lib/Empty";
 
 const Container = styled.div`
   display: flex;
@@ -103,7 +104,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
   const [type, setType] = useState<"1" | "2" | "3">("3");
   const [magazines, setMagazines] = useState<MagazineType[]>([]);
   const [selectedMagazine, setSelectedMagazine] = useState<MagazineType | null>(null);
-  const { loaderRef, page, setPage, setLoading, setHasMore, hasMore } =
+  const { loaderRef, page, setPage, setLoading, setHasMore, hasMore, firstLoading } =
     useInfiniteScroll<HTMLDivElement>({
       hasMore: false,
       initialPage: 1,
@@ -168,7 +169,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
             )}
           </MagazineCoverWrapper>
           <MagazineTitle>
-            {selectedMagazine ? selectedMagazine.title : "Publish In a Magazine"}{" "}
+            {selectedMagazine ? selectedMagazine.title : "Publish In a Magazine"}
           </MagazineTitle>
         </MagazineContainer>
         <RightIcon />
@@ -192,6 +193,9 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                   onClick={() => setSelectedMagazine(magazine)}
                 />
               ))}
+              {magazines.length === 0 && !firstLoading ? (
+                <Empty description="No magazines" />
+              ) : null}
               {hasMore ? <Loading ref={loaderRef} /> : null}
             </StyledTabPanel>
             <StyledTabPanel indexKey="1" tab="My Magazines" forceRender>
@@ -203,6 +207,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                   onClick={() => setSelectedMagazine(magazine)}
                 />
               ))}
+              {magazines.length === 0 ? <Empty description="No magazines" /> : null}
               {hasMore ? <Loading ref={loaderRef} /> : null}
             </StyledTabPanel>
           </StyledTabs>
