@@ -286,7 +286,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         </MagazinePaperLayout>
       </Container>
       <SharePopup position="bottom" onClickOverlay={closePopup} open={shareOpen}>
-        <MoreOperate onlyShare {...magazine} />
+        <MoreOperate moreType="magazine" onlyShare magazine={magazine} />
       </SharePopup>
     </>
   );

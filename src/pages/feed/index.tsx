@@ -27,6 +27,8 @@ import SubscribeButtonIcon from "../../assets/icons/subscribe-button.svg";
 import FeedBackIcon from "../../assets/icons/feed-back.svg";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import MoreOperate from "../../components/MoreOperate";
+import Popup from "../../../lib/Popup";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -107,6 +109,12 @@ const MagazineNumber = styled.p`
   ${TextEllipsisMixin}
 `;
 
+const SharePopup = styled(Popup)`
+  padding: 0;
+  margin: 0;
+  border-radius: 20px 20px 0 0;
+`;
+
 const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
   //margin-right: 14px;
 `;
@@ -125,7 +133,8 @@ const Feed = () => {
   const [loading, setLoading] = useState(false);
   const [swiperHeight, setSwiperHeight] = useState(0);
   const { withLogin } = useLogin();
-  const [open, setOpen] = useState(false);
+  const [commentOpen, setCommentOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     const player = videoPlayerRef.current;
@@ -295,6 +304,10 @@ const Feed = () => {
       });
   };
 
+  const handleMoreOperate = () => {
+    setMoreOpen(true);
+  };
+
   useEffect(() => {
     // 因为浏览器底部工具栏的问题，等DOM渲染好出现工具栏之后，再设置Swiper的高度
     setTimeout(() => setSwiperHeight(window.innerHeight), 0);
@@ -390,14 +403,21 @@ const Feed = () => {
   const handleCommentPaper = withLogin<PaperType>((paper) => {
     if (!paper) return;
     setCurrentPaper(paper);
-    setOpen(true);
+    setCommentOpen(true);
   });
 
   /**
    * 关闭评论
    */
   const handleCommentClose = () => {
-    setOpen(false);
+    setCommentOpen(false);
+  };
+
+  /**
+   * 关闭更多
+   */
+  const closeSharePopup = () => {
+    setMoreOpen(false);
   };
 
   return (
@@ -449,8 +469,14 @@ const Feed = () => {
                 onFollow={() => handleFollow(paper)}
                 onLike={() => handleLikePaper(paper)}
                 onStar={() => handleStarPaper(paper)}
+                onMore={() => {
+                  handleMoreOperate();
+                }}
                 onComment={() => handleCommentPaper(paper)}
               />
+              <SharePopup position="bottom" onClickOverlay={closeSharePopup} open={moreOpen}>
+                <MoreOperate onlyShare moreType="paper" paper={paper} />
+              </SharePopup>
             </SwiperSlide>
           ))}
         </StyledSwiper>
@@ -466,7 +492,7 @@ const Feed = () => {
       {currentPaper ? (
         <Comments
           {...currentPaper}
-          open={open}
+          open={commentOpen}
           onCommentClose={() => handleCommentClose()}
           onClickOverlay={() => handleCommentClose()}
         />
