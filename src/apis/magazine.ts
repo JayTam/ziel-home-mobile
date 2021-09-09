@@ -20,6 +20,8 @@ export type MagazineType = {
   showNum: number;
   // 订阅量
   subscribeNum: number;
+  // paper量
+  paperNum: number;
   // 参与编辑人数
   editorNum: number;
   // 封面图
@@ -48,6 +50,7 @@ export const mapMagazineItem = (item: Record<string, any>) => ({
   showNum: item.show_num ?? 0,
   editorNum: item.editor_num ?? 0,
   subscribeNum: item.subscriber ?? item.subscribe_num ?? 0,
+  paperNum: item.article_num ?? 0,
   cover: item.img_url ?? "",
   isSubscribe: item.is_subscribe ?? false,
   isPublic: item.is_pub ?? false,
