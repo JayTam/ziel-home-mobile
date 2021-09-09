@@ -18,7 +18,7 @@ import {
   starPaper,
 } from "../../apis/paper";
 import { TextEllipsisMixin } from "../../../lib/mixins";
-import { useLogin } from "../../utils";
+import { replaceToImgBaseUrl, useLogin } from "../../utils";
 import { useAppSelector } from "../../app/hook";
 import SubscribedIcon from "../../assets/icons/subscribed.svg";
 import { followUser } from "../../apis/profile";
@@ -27,6 +27,11 @@ import SubscribeButtonIcon from "../../assets/icons/subscribe-button.svg";
 import FeedBackIcon from "../../assets/icons/feed-back.svg";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import MoreOperate from "../../components/MoreOperate";
+import Popup from "../../../lib/Popup";
+import Head from "next/head";
+import { GetServerSideProps, NextPage } from "next";
+import { useUpdateEffect } from "ahooks";
 
 // install Virtual module
 SwiperCore.use([Virtual]);
@@ -107,25 +112,36 @@ const MagazineNumber = styled.p`
   ${TextEllipsisMixin}
 `;
 
+const SharePopup = styled(Popup)`
+  padding: 0;
+  margin: 0;
+  border-radius: 20px 20px 0 0;
+`;
+
 const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
   //margin-right: 14px;
 `;
 
 type TType = "default" | "subscribe" | "user_paper" | "user_saved";
 
-const Feed = () => {
+interface FeedProps {
+  initalPapers: PaperType[];
+}
+
+const Feed: NextPage<FeedProps> = (props) => {
   const router = useRouter();
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
-  const [papers, setPapers] = useState<PaperType[]>([]);
-  const [currentPaper, setCurrentPaper] = useState<PaperType | null>(null);
-  const [page, setPage] = useState(1);
+  const [papers, setPapers] = useState<PaperType[]>(props.initalPapers);
+  const [currentPaper, setCurrentPaper] = useState<PaperType | null>(props.initalPapers[0] ?? null);
+  const [page, setPage] = useState(2);
   const [loading, setLoading] = useState(false);
   const [swiperHeight, setSwiperHeight] = useState(0);
   const { withLogin } = useLogin();
-  const [open, setOpen] = useState(false);
+  const [commentOpen, setCommentOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     const player = videoPlayerRef.current;
@@ -142,7 +158,7 @@ const Feed = () => {
     }
   }, [activeIndex]);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     (async () => {
       setLoading(true);
       try {
@@ -171,6 +187,7 @@ const Feed = () => {
           default:
             response = await getPaperList({
               magazineId: router.query["magazine_id"] as string,
+              paperId: router.query["paper_id"] as string,
               page,
             });
             break;
@@ -295,6 +312,11 @@ const Feed = () => {
       });
   };
 
+  const handleMoreOperate = (paper: PaperType) => {
+    setCurrentPaper(paper);
+    setMoreOpen(true);
+  };
+
   useEffect(() => {
     // 因为浏览器底部工具栏的问题，等DOM渲染好出现工具栏之后，再设置Swiper的高度
     setTimeout(() => setSwiperHeight(window.innerHeight), 0);
@@ -390,18 +412,38 @@ const Feed = () => {
   const handleCommentPaper = withLogin<PaperType>((paper) => {
     if (!paper) return;
     setCurrentPaper(paper);
-    setOpen(true);
+    setCommentOpen(true);
   });
 
   /**
    * 关闭评论
    */
   const handleCommentClose = () => {
-    setOpen(false);
+    setCommentOpen(false);
+    setCurrentPaper(null);
+  };
+
+  /**
+   * 关闭更多
+   */
+  const closeSharePopup = () => {
+    setMoreOpen(false);
+    setCurrentPaper(null);
   };
 
   return (
     <>
+      <Head>
+        <title>{currentPaper?.title}</title>
+        <meta name="description" content={currentPaper?.description} />
+        <meta property="og:title" content={currentPaper?.title} />
+        <meta property="og:description" content={currentPaper?.description} />
+        <meta property="og:image" content={replaceToImgBaseUrl(currentPaper?.poster)} />
+        <meta
+          property="og:url"
+          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${currentPaper?.magazineId}&paper_id=${currentPaper?.id}`}
+        />
+      </Head>
       <Container>
         <StyledSwiper
           direction="vertical"
@@ -449,6 +491,9 @@ const Feed = () => {
                 onFollow={() => handleFollow(paper)}
                 onLike={() => handleLikePaper(paper)}
                 onStar={() => handleStarPaper(paper)}
+                onMore={() => {
+                  handleMoreOperate(paper);
+                }}
                 onComment={() => handleCommentPaper(paper)}
               />
             </SwiperSlide>
@@ -464,15 +509,58 @@ const Feed = () => {
       </Container>
       {/* 评论组件 */}
       {currentPaper ? (
-        <Comments
-          {...currentPaper}
-          open={open}
-          onCommentClose={() => handleCommentClose()}
-          onClickOverlay={() => handleCommentClose()}
-        />
+        <>
+          <SharePopup position="bottom" onClickOverlay={closeSharePopup} open={moreOpen}>
+            <MoreOperate onlyShare moreType="paper" paper={currentPaper} />
+          </SharePopup>
+          <Comments
+            {...currentPaper}
+            open={commentOpen}
+            onCommentClose={() => handleCommentClose()}
+            onClickOverlay={() => handleCommentClose()}
+          />
+        </>
       ) : null}
     </>
   );
 };
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const type: TType = (query.type as TType) ?? "default";
+  let response;
+  switch (type) {
+    case "subscribe":
+      response = await getUserSubscribePapers({
+        paperId: query["paper_id"] as string,
+        page: 1,
+      });
+      break;
+    case "user_paper":
+      response = await getUserPapers({
+        userId: query["user"] as string,
+        page: 1,
+      });
+      break;
+    case "user_saved":
+      response = await getStarPapers({
+        userId: query["user"] as string,
+        page: 1,
+      });
+      break;
+    case "default":
+    default:
+      response = await getPaperList({
+        magazineId: query["magazine_id"] as string,
+        paperId: query["paper_id"] as string,
+        page: 1,
+      });
+      break;
+  }
+  const list = response.data?.result?.data ?? [];
 
+  return {
+    props: {
+      initalPapers: list,
+    },
+  };
+};
 export default Feed;

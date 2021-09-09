@@ -90,6 +90,7 @@ export const mapPaperItem = (item: Record<string, any>) => {
 };
 
 export type PaperParams = {
+  paperId?: string;
   magazineId: string;
   page: number;
   limit?: number;
@@ -113,6 +114,7 @@ export const getPaperList = (params: PaperParams, options?: AxiosRequestConfig) 
       magazine_id: params.magazineId,
       limit: 8,
       page: params.page,
+      pages_id: params.paperId,
     },
     ...options,
   }).then((response) => {

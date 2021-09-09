@@ -7,13 +7,17 @@ import SaveIcon from "../assets/icons/save.svg";
 import CollectionIcon from "../assets/icons/collection.svg";
 import SmsIgon from "../assets/icons/sms.svg";
 import PinterestIgon from "../assets/icons/Pinterest.svg";
-import CopyIgon from "../assets/icons/copy.svg";
+// import CopyIgon from "../assets/icons/copy.svg";
 import FacebookIgon from "../assets/icons/facebook.svg";
 // import InsIgon from "../assets/icons/ins.svg";
 import { MagazineType } from "../apis";
+import { PaperType } from "../apis/paper";
 
-interface MoreOperateType extends MagazineType {
+interface MoreOperateType {
   onlyShare?: boolean;
+  magazine?: MagazineType;
+  paper?: PaperType;
+  moreType: "paper" | "magazine";
 }
 const Container = styled.div`
   padding: 30px 0px;
@@ -23,7 +27,6 @@ const TopContainer = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
   margin-bottom: 30px;
 
   div:nth-of-type(n + 5) {
@@ -47,7 +50,6 @@ const BottomContainer = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
   div:nth-of-type(n + 5) {
     margin-top: 20px;
   }
@@ -67,22 +69,28 @@ const ShareTitle = styled.div`
 `;
 const MoreOperate: React.FC<MoreOperateType> = (props) => {
   const handleClick = (type: string) => {
-    const baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.id}`;
-    let url = "";
+    let baseUrl = "";
+    if (props.moreType === "magazine") {
+      baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.magazine?.id}`;
+    } else {
+      baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${props.paper?.magazineId}&paper_id=${props.paper?.id}`;
+    }
     switch (type) {
       case "SMS":
-        url = `sms:'';?&body=${baseUrl}`;
+        window.open(`sms:'';?&body=${baseUrl}`);
         break;
       case "facebook":
-        url = `https://www.facebook.com/sharer.php?u=${baseUrl}`;
+        FB.ui({
+          method: "share",
+          link: baseUrl,
+        });
         break;
       case "pinterest":
-        url = `https://www.pinterest.com/pin/create/button/?url=${baseUrl}`;
+        // url = `https://www.pinterest.com/pin/create/button/?url=${baseUrl}`;
         break;
       default:
         break;
     }
-    window.open(url);
   };
   return (
     <Container>
@@ -130,10 +138,10 @@ const MoreOperate: React.FC<MoreOperateType> = (props) => {
           <PinterestIgon />
           <span>Pinterest</span>
         </ItemStyle>
-        <ItemStyle>
+        {/* <ItemStyle>
           <CopyIgon />
           <span>copy link</span>
-        </ItemStyle>
+        </ItemStyle> */}
       </BottomContainer>
     </Container>
   );

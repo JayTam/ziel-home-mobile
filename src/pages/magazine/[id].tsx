@@ -3,7 +3,12 @@ import styled from "styled-components";
 import { useEffect, useMemo, useState } from "react";
 import { MagazineType, getMagazineById, subscribeMagazine } from "../../apis";
 import Header from "../../components/Header";
-import { composeAuthHeaders, digitalScale, useInfiniteScroll } from "../../utils";
+import {
+  composeAuthHeaders,
+  digitalScale,
+  replaceToImgBaseUrl,
+  useInfiniteScroll,
+} from "../../utils";
 import BtnShare from "../../assets/icons/btn_share.svg";
 import ShowMoreText from "react-show-more-text";
 import produce from "immer";
@@ -142,7 +147,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const [papers, setPapers] = useState<PaperType[]>([]);
   const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
     hasMore: false,
-    initialPage: 0,
+    initialPage: 1,
   });
 
   useEffect(() => {
@@ -221,19 +226,14 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         {/* <meta property="og:image" content={currentMagazine.cover} /> */}
         <meta
           property="og:url"
-          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magezine/${currentMagazine.id}`}
+          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${currentMagazine.id}`}
         />
       </Head>
       <Container>
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
-            <MagazineImg
-              src={currentMagazine.cover.replace(
-                "https://s1.zielhome.com",
-                "https://ziel-pp-public.oss-cn-hongkong.aliyuncs.com"
-              )}
-            />
+            <MagazineImg src={replaceToImgBaseUrl(currentMagazine.cover)} />
             <MagazineInfo>
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
@@ -248,7 +248,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
                   <AuthorName>{currentMagazine.author}</AuthorName>
                 </AuthorContent>
                 <div onClick={() => handleSubscribe(currentMagazine)}>
-                  {currentMagazine.isSubscribe ? <UnSubscribeBtn /> : <SubscribeBtn />}
+                  {currentMagazine.isSubscribe ? <SubscribeBtn /> : <UnSubscribeBtn />}
                 </div>
               </BottomContent>
             </MagazineInfo>
@@ -286,7 +286,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         </MagazinePaperLayout>
       </Container>
       <SharePopup position="bottom" onClickOverlay={closePopup} open={shareOpen}>
-        <MoreOperate onlyShare {...magazine} />
+        <MoreOperate moreType="magazine" onlyShare magazine={magazine} />
       </SharePopup>
     </>
   );

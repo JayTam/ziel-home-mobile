@@ -125,6 +125,7 @@ interface PaperInterface extends PaperType {
   onLike?: () => void;
   onStar?: () => void;
   onComment?: () => void;
+  onMore?: () => void;
 }
 
 const Paper: React.FC<PaperInterface> = (props) => {
@@ -135,73 +136,75 @@ const Paper: React.FC<PaperInterface> = (props) => {
   );
 
   return (
-    <Container>
-      <VideoPlayer {...props} type="poster" />
-      <BottomContainer>
-        <AuthorInfo>
-          <Link href={`/profile/${props.authorId}`}>
-            <Avatar src={props.avatar} alt="avatar" />
-          </Link>
-          <AuthorName>{props.author}</AuthorName>
-          {showFollowIcon ? (
-            props.isFollow ? (
-              <FollowedIcon onClick={props.onFollow} />
-            ) : (
-              <UnFollowIcon onClick={props.onFollow} />
-            )
-          ) : null}
-        </AuthorInfo>
-
-        <PaperInfo>
-          <PaperTitle>
-            {props.isTop ? <PaperTopIcon /> : null}
-            {props.space || props.style || props.size ? (
-              <PaperTag>
-                <span>{props.space}</span>
-                <span hidden={!props.style}> | {props.style}</span>
-                <span hidden={!props.size}> | {props.size}</span>
-              </PaperTag>
+    <>
+      <Container>
+        <VideoPlayer {...props} type="poster" />
+        <BottomContainer>
+          <AuthorInfo>
+            <Link href={`/profile/${props.authorId}`}>
+              <Avatar src={props.avatar} alt="avatar" />
+            </Link>
+            <AuthorName>{props.author}</AuthorName>
+            {showFollowIcon ? (
+              props.isFollow ? (
+                <FollowedIcon onClick={props.onFollow} />
+              ) : (
+                <UnFollowIcon onClick={props.onFollow} />
+              )
             ) : null}
-            {props.title}
-          </PaperTitle>
+          </AuthorInfo>
 
-          <PaperDescription>
-            <ShowMoreText
-              className="react-more-text"
-              anchorClass="anchor"
-              lines={1}
-              more="More"
-              less="Collect"
-            >
-              {props.description}
-            </ShowMoreText>
-          </PaperDescription>
-        </PaperInfo>
+          <PaperInfo>
+            <PaperTitle>
+              {props.isTop ? <PaperTopIcon /> : null}
+              {props.space || props.style || props.size ? (
+                <PaperTag>
+                  <span>{props.space}</span>
+                  <span hidden={!props.style}> | {props.style}</span>
+                  <span hidden={!props.size}> | {props.size}</span>
+                </PaperTag>
+              ) : null}
+              {props.title}
+            </PaperTitle>
 
-        <PaperActionContainer>
-          <PaperActions>
-            <PaperActionItem onClick={props.onLike}>
-              {props.isLike ? <LikedIcon /> : <UnLikeIcon />}
-              <PaperActionNum>{props.likeNum}</PaperActionNum>
+            <PaperDescription>
+              <ShowMoreText
+                className="react-more-text"
+                anchorClass="anchor"
+                lines={1}
+                more="More"
+                less="Collect"
+              >
+                {props.description}
+              </ShowMoreText>
+            </PaperDescription>
+          </PaperInfo>
+
+          <PaperActionContainer>
+            <PaperActions>
+              <PaperActionItem onClick={props.onLike}>
+                {props.isLike ? <LikedIcon /> : <UnLikeIcon />}
+                <PaperActionNum>{props.likeNum}</PaperActionNum>
+              </PaperActionItem>
+
+              <PaperActionItem onClick={props.onComment}>
+                <CommentIcon />
+                <PaperActionNum>{props.commentNum}</PaperActionNum>
+              </PaperActionItem>
+
+              <PaperActionItem onClick={props.onStar}>
+                {props.isStar ? <StaredIcon /> : <UnStarIcon />}
+                <PaperActionNum>{props.starNum}</PaperActionNum>
+              </PaperActionItem>
+            </PaperActions>
+
+            <PaperActionItem onClick={props.onMore}>
+              <MoreIcon />
             </PaperActionItem>
-
-            <PaperActionItem onClick={props.onComment}>
-              <CommentIcon />
-              <PaperActionNum>{props.commentNum}</PaperActionNum>
-            </PaperActionItem>
-
-            <PaperActionItem onClick={props.onStar}>
-              {props.isStar ? <StaredIcon /> : <UnStarIcon />}
-              <PaperActionNum>{props.starNum}</PaperActionNum>
-            </PaperActionItem>
-          </PaperActions>
-
-          <PaperActionItem>
-            <MoreIcon />
-          </PaperActionItem>
-        </PaperActionContainer>
-      </BottomContainer>
-    </Container>
+          </PaperActionContainer>
+        </BottomContainer>
+      </Container>
+    </>
   );
 };
 

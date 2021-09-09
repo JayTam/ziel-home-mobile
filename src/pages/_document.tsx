@@ -14,6 +14,26 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+            window.fbAsyncInit = function() {
+              FB.init({
+                appId            : '478941256314025',
+                autoLogAppEvents : true,
+                xfbml            : true,
+                version          : 'v11.0',
+              });
+            };
+            `,
+            }}
+          />
+          <script
+            async
+            defer
+            crossOrigin="anonymous"
+            src="https://connect.facebook.net/en_US/sdk.js"
+          ></script>
         </Head>
         <body>
           <Main />
