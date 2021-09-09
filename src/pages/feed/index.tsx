@@ -441,7 +441,7 @@ const Feed: NextPage<FeedProps> = (props) => {
         <meta property="og:image" content={replaceToImgBaseUrl(currentPaper?.poster)} />
         <meta
           property="og:url"
-          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${currentPaper?.magazineId}`}
+          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${currentPaper?.magazineId}&paper_id=${currentPaper?.id}`}
         />
       </Head>
       <Container>
