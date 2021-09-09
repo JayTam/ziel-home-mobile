@@ -70,7 +70,6 @@ const ShareTitle = styled.div`
 const MoreOperate: React.FC<MoreOperateType> = (props) => {
   const handleClick = (type: string) => {
     let baseUrl = "";
-    let url = "";
     if (props.moreType === "magazine") {
       baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.magazine?.id}`;
     } else {
@@ -78,18 +77,20 @@ const MoreOperate: React.FC<MoreOperateType> = (props) => {
     }
     switch (type) {
       case "SMS":
-        url = `sms:'';?&body=${baseUrl}`;
+        window.open(`sms:'';?&body=${baseUrl}`);
         break;
       case "facebook":
-        url = `https://www.facebook.com/sharer.php?u=${baseUrl}`;
+        FB.ui({
+          method: "share",
+          link: baseUrl,
+        });
         break;
       case "pinterest":
-        url = `https://www.pinterest.com/pin/create/button/?url=${baseUrl}`;
+        // url = `https://www.pinterest.com/pin/create/button/?url=${baseUrl}`;
         break;
       default:
         break;
     }
-    window.open(url);
   };
   return (
     <Container>
