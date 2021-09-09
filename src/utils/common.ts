@@ -42,3 +42,13 @@ export const getCreateTime = (time: string) => {
     return `${(hours / 8640).toFixed(0)} years ago`;
   }
 };
+
+/**
+ * 替换成存放图片的原地址（分享时方便第三方抓取）
+ */
+export const replaceToImgBaseUrl = (cdnUrl?: string) => {
+  return cdnUrl?.replace(
+    "https://s1.zielhome.com",
+    "https://ziel-pp-public.oss-cn-hongkong.aliyuncs.com"
+  );
+};

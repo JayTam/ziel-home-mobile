@@ -3,7 +3,12 @@ import styled from "styled-components";
 import { useEffect, useMemo, useState } from "react";
 import { MagazineType, getMagazineById, subscribeMagazine } from "../../apis";
 import Header from "../../components/Header";
-import { composeAuthHeaders, digitalScale, useInfiniteScroll } from "../../utils";
+import {
+  composeAuthHeaders,
+  digitalScale,
+  replaceToImgBaseUrl,
+  useInfiniteScroll,
+} from "../../utils";
 import BtnShare from "../../assets/icons/btn_share.svg";
 import ShowMoreText from "react-show-more-text";
 import produce from "immer";
@@ -228,12 +233,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
-            <MagazineImg
-              src={currentMagazine.cover.replace(
-                "https://s1.zielhome.com",
-                "https://ziel-pp-public.oss-cn-hongkong.aliyuncs.com"
-              )}
-            />
+            <MagazineImg src={replaceToImgBaseUrl(currentMagazine.cover)} />
             <MagazineInfo>
               <TopContent>
                 <Title>{currentMagazine.title}</Title>

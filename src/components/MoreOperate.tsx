@@ -74,7 +74,7 @@ const MoreOperate: React.FC<MoreOperateType> = (props) => {
     if (props.moreType === "magazine") {
       baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.magazine?.id}`;
     } else {
-      baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?${props.paper?.id}`;
+      baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${props.paper?.magazineId}`;
     }
     switch (type) {
       case "SMS":

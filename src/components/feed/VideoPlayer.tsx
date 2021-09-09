@@ -1,7 +1,7 @@
 import React, { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import Play from "../../assets/play.svg";
-import { useCombinedRefs } from "../../utils";
+import { replaceToImgBaseUrl, useCombinedRefs } from "../../utils";
 import Loading from "../../../lib/Loading";
 
 export type VideoPlayerProps = {
@@ -204,7 +204,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       {props.type === "poster" ? (
         <Poster
           style={{ display: showPoster ? "inline-block" : "none" }}
-          src={props.poster}
+          src={replaceToImgBaseUrl(props.poster)}
           alt="poster"
         />
       ) : null}
