@@ -248,7 +248,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
                   <AuthorName>{currentMagazine.author}</AuthorName>
                 </AuthorContent>
                 <div onClick={() => handleSubscribe(currentMagazine)}>
-                  {currentMagazine.isSubscribe ? <UnSubscribeBtn /> : <SubscribeBtn />}
+                  {currentMagazine.isSubscribe ? <SubscribeBtn /> : <UnSubscribeBtn />}
                 </div>
               </BottomContent>
             </MagazineInfo>
