@@ -112,7 +112,7 @@ const Comment: React.FC<CommentProps> = (props) => {
   const currentCommentRef = useRef<CommentItemHandle>(null);
   const { withLogin } = useLogin();
   const commentTextContent = useMemo(() => {
-    return commentText.replace(/Reply @(.+):/, "").trim();
+    return commentText.replace(/Reply @(.+?):/, "").trim();
   }, [commentText]);
   const scrollTopRef = useRef<HTMLDivElement | null>(null);
   const { loaderRef, hasMore, page, setHasMore, setLoading, firstLoading, setFirstLoading } =
