@@ -138,7 +138,9 @@ const EditPaper: NextPage<EditPaperProps> = (props) => {
     handleSubmit,
     setValue,
     formState: { isDirty, isValid, isSubmitting },
-  } = useForm<Inputs>();
+  } = useForm<Inputs>({
+    mode: "onChange",
+  });
 
   const onSubmit = handleSubmit<PaperForm>(async (data) => {
     const createParams: CreatePaperParams = {
