@@ -130,7 +130,6 @@ interface FeedProps {
 
 const Feed: NextPage<FeedProps> = (props) => {
   const router = useRouter();
-  const type = router.query["type"];
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -139,7 +138,7 @@ const Feed: NextPage<FeedProps> = (props) => {
   const [currentPaper, setCurrentPaper] = useState<PaperType | null>(
     props.initialPapers[0] ?? null
   );
-  const [page, setPage] = useState(!type || type === "default" ? 1 : 2);
+  const [page, setPage] = useState(papers.length > 0 ? 1 : 0);
   const [loading, setLoading] = useState(false);
   const [swiperHeight, setSwiperHeight] = useState(0);
   const { withLogin } = useLogin();
