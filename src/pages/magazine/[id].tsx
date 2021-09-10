@@ -142,7 +142,6 @@ const SharePopup = styled(Popup)`
 `;
 const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const [shareOpen, setShareOpen] = useState(false);
-  const [paperCounts, setPaperCounts] = useState(0);
   const [currentMagazine, setCurrentMagazine] = useState(magazine);
   const [papers, setPapers] = useState<PaperType[]>([]);
   const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
@@ -155,7 +154,6 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
     getPaperList({ magazineId: magazine.id, page })
       .then((response) => {
         const list = response.data.result.data;
-        setPaperCounts(response.data.result.count);
         const hasMore = Boolean(response.data.result.hasmore);
         setHasMore(hasMore);
         setPapers((prev) => [...prev, ...list]);
@@ -215,7 +213,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
                 <Statistics>
-                  {digitalScale(paperCounts)} storys &nbsp;&nbsp;&nbsp;
+                  {digitalScale(magazine.paperNum)} stories &nbsp;&nbsp;&nbsp;
                   {digitalScale(magazine.subscribeNum)} subscribers
                 </Statistics>
               </TopContent>
