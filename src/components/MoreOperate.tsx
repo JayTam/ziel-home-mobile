@@ -76,6 +76,8 @@ const MoreOperate: React.FC<MoreOperateType> = (props) => {
     } else {
       baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${props.paper?.magazineId}&paper_id=${props.paper?.id}`;
     }
+
+    baseUrl = encodeURIComponent(baseUrl);
     switch (type) {
       case "SMS":
         url = `sms:'';?&body=${baseUrl}`;
