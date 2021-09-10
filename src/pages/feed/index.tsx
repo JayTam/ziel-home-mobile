@@ -125,18 +125,21 @@ const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
 type TType = "default" | "subscribe" | "user_paper" | "user_saved";
 
 interface FeedProps {
-  initalPapers: PaperType[];
+  initialPapers: PaperType[];
 }
 
 const Feed: NextPage<FeedProps> = (props) => {
   const router = useRouter();
+  const type = router.query["type"];
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
-  const [papers, setPapers] = useState<PaperType[]>(props.initalPapers);
-  const [currentPaper, setCurrentPaper] = useState<PaperType | null>(props.initalPapers[0] ?? null);
-  const [page, setPage] = useState(2);
+  const [papers, setPapers] = useState<PaperType[]>(props.initialPapers);
+  const [currentPaper, setCurrentPaper] = useState<PaperType | null>(
+    props.initialPapers[0] ?? null
+  );
+  const [page, setPage] = useState(!type || type === "default" ? 1 : 2);
   const [loading, setLoading] = useState(false);
   const [swiperHeight, setSwiperHeight] = useState(0);
   const { withLogin } = useLogin();
@@ -156,6 +159,9 @@ const Feed: NextPage<FeedProps> = (props) => {
       setVideoLoading(true);
       player.addEventListener("loadeddata", handleCloseLoading);
     }
+    return () => {
+      player.removeEventListener("loadeddata", handleCloseLoading);
+    };
   }, [activeIndex]);
 
   useUpdateEffect(() => {
@@ -524,45 +530,20 @@ const Feed: NextPage<FeedProps> = (props) => {
     </>
   );
 };
-export const getServerSideProps: GetServerSideProps = async ({ res, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const type: TType = (query.type as TType) ?? "default";
-  let response;
-  switch (type) {
-    case "subscribe":
-      response = await getUserSubscribePapers({
-        paperId: query["paper_id"] as string,
-        page: 1,
-      });
-      break;
-    case "user_paper":
-      response = await getUserPapers({
-        userId: query["user"] as string,
-        page: 1,
-      });
-      break;
-    case "user_saved":
-      response = await getStarPapers({
-        userId: query["user"] as string,
-        page: 1,
-      });
-      break;
-    case "default":
-    default:
-      response = await getPaperList({
-        magazineId: query["magazine_id"] as string,
-        paperId: query["paper_id"] as string,
-        page: 1,
-      });
-      break;
+  let list = [];
+  if (!type || type === "default") {
+    const response = await getPaperList({
+      magazineId: query["magazine_id"] as string,
+      paperId: query["paper_id"] as string,
+      page: 1,
+    });
+    list = response.data?.result?.data ?? [];
   }
-  const list = response.data?.result?.data ?? [];
-
-  res.setHeader("expires", "0");
-  res.setHeader("cache-control", "no-cache");
-
   return {
     props: {
-      initalPapers: list,
+      initialPapers: list,
     },
   };
 };

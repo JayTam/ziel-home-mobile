@@ -14,6 +14,7 @@ import CommentIcon from "../../assets/icons/comment.svg";
 import MoreIcon from "../../assets/icons/more.svg";
 import { useAppSelector } from "../../app/hook";
 import Link from "next/link";
+import { TextEllipsisMixin } from "../../../lib/mixins";
 
 const Container = styled.div`
   position: relative;
@@ -40,8 +41,9 @@ const AuthorInfo = styled.div`
 
 const Avatar = styled.img`
   width: 30px;
+  min-width: 30px;
+  max-width: 30px;
   height: 30px;
-  margin-right: 6px;
   border-radius: 999px;
 `;
 
@@ -49,8 +51,16 @@ const AuthorName = styled.p`
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
-  margin-right: 10px;
+  padding: 0 20px 0 10px;
   color: ${(props) => props.theme.palette.common?.white};
+  ${TextEllipsisMixin}
+`;
+
+const StyledFollowedIcon = styled(FollowedIcon)`
+  width: 20px;
+`;
+const StyledUnFollowIcon = styled(UnFollowIcon)`
+  width: 20px;
 `;
 
 const PaperInfo = styled.div`
@@ -147,9 +157,9 @@ const Paper: React.FC<PaperInterface> = (props) => {
             <AuthorName>{props.author}</AuthorName>
             {showFollowIcon ? (
               props.isFollow ? (
-                <FollowedIcon onClick={props.onFollow} />
+                <StyledFollowedIcon onClick={props.onFollow} />
               ) : (
-                <UnFollowIcon onClick={props.onFollow} />
+                <StyledUnFollowIcon onClick={props.onFollow} />
               )
             ) : null}
           </AuthorInfo>
