@@ -138,7 +138,9 @@ const EditPaper: NextPage<EditPaperProps> = (props) => {
     handleSubmit,
     setValue,
     formState: { isDirty, isValid, isSubmitting },
-  } = useForm<Inputs>();
+  } = useForm<Inputs>({
+    mode: "onChange",
+  });
 
   const onSubmit = handleSubmit<PaperForm>(async (data) => {
     const createParams: CreatePaperParams = {
@@ -158,7 +160,8 @@ const EditPaper: NextPage<EditPaperProps> = (props) => {
     } else {
       await createPaper(createParams);
     }
-    await router.push(`/profile/${user.uid}`);
+    // from 参数是用于 /profile 页面区分返回逻辑
+    await router.push(`/profile/${user.uid}?from=/paper/create`);
   });
 
   /**

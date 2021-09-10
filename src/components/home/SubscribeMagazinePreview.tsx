@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { MagazineType } from "../../apis";
-import { TextEllipsisMixin, VerticalHorizontalCenterMixin } from "../../../lib/mixins";
+import { VerticalHorizontalCenterMixin } from "../../../lib/mixins";
 import DefaultPaperPoster from "../../../public/video_placeholder.jpg";
 import MorePaperIcon from "../../assets/icons/more-paper.svg";
 import Link from "next/link";
+import ShowMoreText from "react-show-more-text";
 
 const Container = styled.div`
   border-bottom: 1px solid #f5f5f5;
@@ -83,7 +84,7 @@ const PaperMore = styled.div`
 const PaperMoreIcon = styled(MorePaperIcon)`
   ${VerticalHorizontalCenterMixin}
 `;
-const PaperTitle = styled.p`
+const PaperTitle = styled(ShowMoreText)`
   position: absolute;
   width: 100%;
   bottom: 0;
@@ -92,7 +93,6 @@ const PaperTitle = styled.p`
   font-size: 12px;
   line-height: 20px;
   color: ${(props) => props.theme.palette.common?.white};
-  ${TextEllipsisMixin}
 `;
 
 type SubscribeMagazinePreviewProps = MagazineType;
@@ -117,7 +117,9 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
         {props.papers?.map((paper) => (
           <Link href={`/feed?paper_id=${paper.id}&type=subscribe`} key={paper.id}>
             <PaperItem cover={paper.poster}>
-              <PaperTitle>{paper.title}</PaperTitle>
+              <PaperTitle width={110} anchorClass="anchor" lines={2} more={null} less={null}>
+                {paper.title}
+              </PaperTitle>
             </PaperItem>
           </Link>
         ))}

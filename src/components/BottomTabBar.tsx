@@ -24,16 +24,16 @@ const PERSONAL_ROUTE = "/personal";
 const BottomTabBar: React.FC<BottomTabBarProps> = (props) => {
   const router = useRouter();
   const { withLogin } = useLogin();
-  const isHomeRoute = useMemo(() => router.asPath === HOME_ROUTE, [router.asPath]);
-  const isPersonalRoute = useMemo(() => router.asPath === PERSONAL_ROUTE, [router.asPath]);
+  const isHomeRoute = useMemo(() => router.route === HOME_ROUTE, [router.route]);
+  const isPersonalRoute = useMemo(() => router.route === PERSONAL_ROUTE, [router.route]);
 
-  const toHomeRoute = withLogin(() => router.push(HOME_ROUTE));
-  const toCreateRoute = withLogin(() => router.push(PAPER_CREATE_ROUTE));
-  const toPersonalRoute = withLogin(() => router.push(PERSONAL_ROUTE));
+  const withLoginTo = (routePath: string) => {
+    if (router.route !== routePath) withLogin(() => router.push(routePath))();
+  };
 
   return (
     <TabBar dark={props.dark}>
-      <TabBarItem onClick={toHomeRoute}>
+      <TabBarItem onClick={() => withLoginTo(HOME_ROUTE)}>
         {props.dark ? (
           isHomeRoute ? (
             <HomeDarkActiveIcon />
@@ -46,10 +46,10 @@ const BottomTabBar: React.FC<BottomTabBarProps> = (props) => {
           <HomeIcon />
         )}
       </TabBarItem>
-      <TabBarItem onClick={toCreateRoute}>
+      <TabBarItem onClick={() => withLoginTo(PAPER_CREATE_ROUTE)}>
         <CreateIcon />
       </TabBarItem>
-      <TabBarItem onClick={toPersonalRoute}>
+      <TabBarItem onClick={() => withLoginTo(PERSONAL_ROUTE)}>
         {props.dark ? (
           isPersonalRoute ? (
             <PersonalDarkActive />

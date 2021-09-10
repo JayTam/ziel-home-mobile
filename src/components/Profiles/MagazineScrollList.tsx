@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getStarMagazines, getUserMagazines, MagazineType } from "../../apis";
 import { useInfiniteScroll } from "../../utils";
 import MagazinePreview from "./MagazinePreview";

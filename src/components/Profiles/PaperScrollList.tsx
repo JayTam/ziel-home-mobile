@@ -1,7 +1,7 @@
 import { useInfiniteScroll } from "../../utils";
 import styled from "styled-components";
-import PaperPrevew from "./PaperPreview";
-import { useEffect, useState } from "react";
+import PaperPreview from "./PaperPreview";
+import React, { useEffect, useState } from "react";
 import { getStarPapers, getUserPapers, PaperType } from "../../apis/paper";
 
 interface PaperListProps {
@@ -16,7 +16,6 @@ const PaperItem = styled.div`
   height: auto;
   box-sizing: border-box;
   padding-left: 7px;
-  margin-top: 2px;
 `;
 const PaperScrollList: React.FC<PaperListProps> = (props) => {
   const [papers, setPapers] = useState<PaperType[]>([]);
@@ -45,12 +44,7 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
     <>
       {papers.map((paper) => (
         <PaperItem key={paper.id}>
-          <PaperPrevew
-            isStarContent={props.isStarContent}
-            isShowTop={props.isShowTop}
-            key={paper.id}
-            {...paper}
-          />
+          <PaperPreview isStarContent={props.isStarContent} key={paper.id} {...paper} />
         </PaperItem>
       ))}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}

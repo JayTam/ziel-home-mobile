@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import styled from "styled-components";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { MagazineType, getMagazineById, subscribeMagazine } from "../../apis";
 import Header from "../../components/Header";
 import {
@@ -13,11 +13,10 @@ import BtnShare from "../../assets/icons/btn_share.svg";
 import ShowMoreText from "react-show-more-text";
 import produce from "immer";
 import PaperPreview from "../../components/Profiles/PaperPreview";
-import { getPaperList, PaperType, topPaper } from "../../apis/paper";
+import { getPaperList, PaperType } from "../../apis/paper";
 import SubscribeBtn from "../../assets/icons/subscribe.svg";
 import UnSubscribeBtn from "../../assets/icons/unSubscribe.svg";
 import { TextEllipsisMixin } from "../../../lib/mixins";
-import { useAppSelector } from "../../app/hook";
 import Head from "next/head";
 import MoreOperate from "../../components/MoreOperate";
 import Popup from "../../../lib/Popup";
@@ -44,14 +43,15 @@ const MagazineContent = styled.div`
 const MagazineImg = styled.img`
   border-radius: 14px;
   width: 90px;
+  min-width: 90px;
+  max-width: 90px;
   height: 120px;
 `;
 const MagazineInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-left: 14px;
-  padding: 4px 0;
+  padding: 4px 0 4px 14px;
   width: 100%;
 `;
 const TopContent = styled.div`
@@ -107,13 +107,15 @@ const AuthorContent = styled.div`
 `;
 const Avatar = styled.img`
   width: 30px;
+  min-width: 30px;
+  max-width: 30px;
   height: 30px;
   border-radius: 50%;
 `;
 const AuthorName = styled.div`
   font-size: 14px;
   line-height: 16px;
-  margin-left: 6px;
+  padding: 0 6px;
 `;
 const MagazinePaperLayout = styled.div`
   margin-top: 12px;
@@ -139,10 +141,7 @@ const SharePopup = styled(Popup)`
   border-radius: 20px 20px 0 0;
 `;
 const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
-  const user = useAppSelector((state) => state.user);
   const [shareOpen, setShareOpen] = useState(false);
-  const isShowTop = useMemo(() => user.uid === magazine.authorId, [user.uid, magazine.authorId]);
-  const [paperCounts, setPaperCounts] = useState(0);
   const [currentMagazine, setCurrentMagazine] = useState(magazine);
   const [papers, setPapers] = useState<PaperType[]>([]);
   const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
@@ -155,7 +154,6 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
     getPaperList({ magazineId: magazine.id, page })
       .then((response) => {
         const list = response.data.result.data;
-        setPaperCounts(response.data.result.count);
         const hasMore = Boolean(response.data.result.hasmore);
         setHasMore(hasMore);
         setPapers((prev) => [...prev, ...list]);
@@ -193,29 +191,6 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
     );
   };
 
-  /**
-   *  置顶内容
-   * @
-   */
-  const handleTopPaper = async (paper: PaperType) => {
-    if (!paper) return;
-    const isTop = !paper.isTop;
-    await topPaper(paper.id, magazine.id, isTop);
-    setPapers((prev) =>
-      produce(prev, (draft) => {
-        draft.forEach((item, index) => {
-          if (item.id === paper.id) {
-            item.isTop = isTop;
-            if (isTop) {
-              draft.unshift(draft.splice(index, 1)[0]);
-            }
-          }
-        });
-        draft.sort((a, b) => (a.isTop > b.isTop ? -1 : 1));
-        return draft;
-      })
-    );
-  };
   return (
     <>
       <Head>
@@ -238,7 +213,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
                 <Statistics>
-                  {digitalScale(paperCounts)} storys &nbsp;&nbsp;&nbsp;
+                  {digitalScale(magazine.paperNum)} stories &nbsp;&nbsp;&nbsp;
                   {digitalScale(magazine.subscribeNum)} subscribers
                 </Statistics>
               </TopContent>
@@ -273,12 +248,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
           <PaperContent>
             {papers.map((paper) => (
               <PaperItem key={paper.id}>
-                <PaperPreview
-                  {...paper}
-                  authorId={magazine.authorId}
-                  isShowTop={isShowTop}
-                  onTop={() => handleTopPaper(paper)}
-                />
+                <PaperPreview {...paper} authorId={magazine.authorId} />
               </PaperItem>
             ))}
             {hasMore ? <div ref={loaderRef}>loading...</div> : null}
