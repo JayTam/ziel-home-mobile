@@ -524,7 +524,7 @@ const Feed: NextPage<FeedProps> = (props) => {
     </>
   );
 };
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ res, query }) => {
   const type: TType = (query.type as TType) ?? "default";
   let response;
   switch (type) {
@@ -556,6 +556,9 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       break;
   }
   const list = response.data?.result?.data ?? [];
+
+  res.setHeader("expires", "0");
+  res.setHeader("cache-control", "no-cache");
 
   return {
     props: {
