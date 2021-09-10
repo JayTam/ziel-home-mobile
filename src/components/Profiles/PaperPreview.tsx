@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import TopFlagIcon from "../../assets/icons/star-magazine-active.svg";
-import TopActiveIcon from "../../assets/icons/star-magazine.svg";
 import PlayIcon from "../../assets/icons/play.svg";
 import { digitalScale } from "../../utils/";
 import { PaperType } from "../../apis/paper";
@@ -12,8 +10,6 @@ import React from "react";
 import Link from "next/link";
 
 interface MagazinePagePropType extends PaperType {
-  onTop?: () => void;
-  isShowTop?: boolean;
   isStarContent?: boolean;
 }
 
@@ -33,61 +29,45 @@ const PlaceholderImage = styled(Image)`
   width: 100%;
   border-radius: 14px;
 `;
-const PaperContent = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-const TopContent = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 4px;
-  padding-right: 4px;
-`;
 const BottomContent = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0px 7px 11px;
+  justify-content: flex-end;
+  padding: 0 7px 11px;
 `;
-const DescriptionStyle = styled.div`
+const TitleStyle = styled.div`
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
 `;
-const Description = styled.div`
+const Title = styled.div`
   font-size: 12px;
   line-height: 14px;
+  margin-bottom: 4px;
   color: ${(props) => props.theme.palette.common?.white};
-  ${TextEllipsisMixin}
 `;
 const AuthorLayout = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 4px;
-`;
-const AvatarLayout = styled.div`
-  display: flex;
+  justify-content: flex-start;
   align-items: center;
 `;
+
 const Avatar = styled.img`
   width: 20px;
   height: 20px;
   border-radius: 50%;
 `;
 const Name = styled.div`
+  flex: 1;
   margin-left: 4px;
   font-size: 12px;
   line-height: 14px;
-  color: ${(props) => props.theme.palette.text?.secondary}; ;
+  color: ${(props) => props.theme.palette.text?.secondary};
+  ${TextEllipsisMixin}
 `;
 const PlayContent = styled.div`
   display: flex;
@@ -111,6 +91,12 @@ const IsReviewing = styled.div`
   border-radius: 0 14px 0 14px;
   background-color: rgba(0, 0, 0, 0.5);
 `;
+
+const PaperTopIcon = styled(TopIcon)`
+  display: inline-block;
+  vertical-align: bottom;
+`;
+
 const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
   return (
     <Link
@@ -124,35 +110,25 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
         ) : (
           <PlaceholderImage src={VideoPlaceholderImage} />
         )}
-        <PaperContent>
-          <TopContent
-            style={{ visibility: props.isShowTop ? "visible" : "hidden" }}
-            onClick={props.onTop}
-          >
-            {props.isTop ? <TopActiveIcon /> : <TopFlagIcon />}
-          </TopContent>
-          {!props.isStarContent && props.status === 1 ? (
-            <IsReviewing>Is reviewing</IsReviewing>
-          ) : (
-            ""
-          )}
-          <BottomContent>
-            <DescriptionStyle>
-              <TopIcon />
-              <Description>{props.description}</Description>
-            </DescriptionStyle>
-            <AuthorLayout>
-              <AvatarLayout>
-                <Avatar src={props.avatar} />
-                <Name>{props.author}</Name>
-              </AvatarLayout>
-              <PlayContent>
-                <PlayIcon />
-                <PlayCount>{digitalScale(props.playNum)}</PlayCount>
-              </PlayContent>
-            </AuthorLayout>
-          </BottomContent>
-        </PaperContent>
+        {!props.isStarContent && props.status === 1 ? (
+          <IsReviewing>Is reviewing</IsReviewing>
+        ) : null}
+        <BottomContent>
+          <TitleStyle>
+            <Title>
+              {props.isTop ? <PaperTopIcon /> : null}
+              {props.title} {props.title}
+            </Title>
+          </TitleStyle>
+          <AuthorLayout>
+            <Avatar src={props.avatar} />
+            <Name>{props.author}</Name>
+            <PlayContent>
+              <PlayIcon />
+              <PlayCount>{digitalScale(props.playNum)}</PlayCount>
+            </PlayContent>
+          </AuthorLayout>
+        </BottomContent>
       </Container>
     </Link>
   );

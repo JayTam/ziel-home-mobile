@@ -44,12 +44,7 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
     <>
       {papers.map((paper) => (
         <PaperItem key={paper.id}>
-          <PaperPreview
-            isStarContent={props.isStarContent}
-            isShowTop={props.isShowTop}
-            key={paper.id}
-            {...paper}
-          />
+          <PaperPreview isStarContent={props.isStarContent} key={paper.id} {...paper} />
         </PaperItem>
       ))}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}
