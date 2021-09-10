@@ -9,6 +9,7 @@ import VideoPlayer from "../../components/feed/VideoPlayer";
 import { VideoReadyState } from "../../constants";
 import { subscribeMagazine } from "../../apis";
 import {
+  deletePaper,
   getPaperList,
   getStarPapers,
   getUserPapers,
@@ -27,8 +28,7 @@ import SubscribeButtonIcon from "../../assets/icons/subscribe-button.svg";
 import FeedBackIcon from "../../assets/icons/feed-back.svg";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import MoreOperate from "../../components/MoreOperate";
-import Popup from "../../../lib/Popup";
+import MorePopup from "../../components/MorePopup";
 import Head from "next/head";
 import { GetServerSideProps, NextPage } from "next";
 import { useUpdateEffect } from "ahooks";
@@ -110,12 +110,6 @@ const MagazineNumber = styled.p`
   font-size: 12px;
   line-height: 14px;
   ${TextEllipsisMixin}
-`;
-
-const SharePopup = styled(Popup)`
-  padding: 0;
-  margin: 0;
-  border-radius: 20px 20px 0 0;
 `;
 
 const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
@@ -412,6 +406,23 @@ const Feed: NextPage<FeedProps> = (props) => {
   });
 
   /**
+   * 删除paper
+   */
+  const handleDeletePaper = withLogin<PaperType>(async (paper) => {
+    if (!paper) return;
+    if (!confirm("confirm deletion")) return;
+    await deletePaper(paper.magazineId, paper.id);
+    setPapers((prev) =>
+      produce(prev, (draft) => {
+        const index = draft.findIndex(({ id }) => paper.id === id);
+        draft.splice(index, 1);
+        return draft;
+      })
+    );
+    closeSharePopup();
+  });
+
+  /**
    * 评论内容
    */
   const handleCommentPaper = withLogin<PaperType>((paper) => {
@@ -515,9 +526,13 @@ const Feed: NextPage<FeedProps> = (props) => {
       {/* 评论组件 */}
       {currentPaper ? (
         <>
-          <SharePopup position="bottom" onClickOverlay={closeSharePopup} open={moreOpen}>
-            <MoreOperate onlyShare moreType="paper" paper={currentPaper} />
-          </SharePopup>
+          <MorePopup
+            open={moreOpen}
+            moreType="paper"
+            paper={currentPaper}
+            onClose={closeSharePopup}
+            onDelete={() => handleDeletePaper(currentPaper)}
+          />
           <Comments
             {...currentPaper}
             open={commentOpen}

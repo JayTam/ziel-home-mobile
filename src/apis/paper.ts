@@ -296,3 +296,19 @@ export function getUserSubscribePapers(
     return response;
   });
 }
+
+/**
+ * 从杂志中删除某篇内容
+ * @param magazineId 杂志ID
+ * @param paperId 内容ID
+ */
+export const deletePaper = (magazineId: string, paperId: string) => {
+  return snsRequest({
+    url: "/article/del",
+    method: "POST",
+    params: {
+      magazine_id: magazineId,
+      id: paperId,
+    },
+  });
+};
