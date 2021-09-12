@@ -7,6 +7,8 @@ import SubscribeSvgIcon from "../../assets/icons/explore-subscribe.svg";
 
 import { randomInt } from "../../utils";
 import { useAppSelector } from "../../app/hook";
+import Image from "../../../lib/Image/Image";
+import { resizeImage } from "../../utils/oss";
 
 const Container = styled.div<{ color: string }>`
   width: 315px;
@@ -39,7 +41,7 @@ const AuthorName = styled.p`
   margin-left: 4px;
 `;
 
-const MagazineCover = styled.img`
+const MagazineCover = styled(Image)`
   width: 210px;
   height: 280px;
   object-fit: cover;
@@ -146,10 +148,10 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
   return (
     <Container color={backgroundColor.current} onClick={props.onClick}>
       <AuthorContainer>
-        <Avatar src={props.avatar} />
+        <Avatar src={resizeImage(props.avatar, { h: 48 })} />
         <AuthorName> {props.author} </AuthorName>
       </AuthorContainer>
-      <MagazineCover src={props.cover} />
+      <MagazineCover src={props.cover} height={280} />
       <MagazineTitle>{props.title}</MagazineTitle>
       <MagazineNunContainer>
         {props.subscribeNum} subscribers · {props.paperNum} stories
