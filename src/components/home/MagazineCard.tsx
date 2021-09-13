@@ -1,13 +1,13 @@
 import React, { MouseEventHandler, useMemo, useRef } from "react";
 import styled from "styled-components";
-import { MagazineType } from "../../apis";
-import { TextEllipsisMixin, VerticalHorizontalCenterMixin } from "../../../lib/mixins";
-import SubscribeSvgIcon from "../../assets/icons/explore-subscribe.svg";
+import { MagazineType } from "@/apis";
+import { TextEllipsisMixin, VerticalHorizontalCenterMixin } from "@/lib/mixins";
+import SubscribeSvgIcon from "@/assets/icons/explore-subscribe.svg";
 // import SubscribedSvgIcon from "../../assets/icons/explore-subscribed.svg";
 
-import { randomInt } from "../../utils";
-import { useAppSelector } from "../../app/hook";
-import Image from "../../../lib/Image/Image";
+import { randomInt } from "@/utils";
+import { useAppSelector } from "@/app/hook";
+import Image from "@/lib/Image";
 
 const Container = styled.div<{ color: string }>`
   width: 315px;
