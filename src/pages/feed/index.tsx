@@ -482,7 +482,7 @@ const Feed: NextPage<FeedProps> = (props) => {
                     <MagazineInfo>
                       <MagazineTitle>
                         {paper.magazine?.title}
-                        {user.uid !== paper.magazine?.authorId && paper.magazine?.isSubscribe ? (
+                        {user.uid !== paper.magazine?.authorId && !paper.magazine?.isSubscribe ? (
                           <StyledSubscribedIcon
                             onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
                           />
@@ -491,7 +491,7 @@ const Feed: NextPage<FeedProps> = (props) => {
                       <MagazineNumber>{paper.magazine?.subscribeNum} subscribers</MagazineNumber>
                     </MagazineInfo>
                   </Link>
-                  {user.uid !== paper.magazine?.authorId && !paper.magazine?.isSubscribe ? (
+                  {user.uid !== paper.magazine?.authorId && paper.magazine?.isSubscribe ? (
                     <MagazineSubscribeButton
                       onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
                     />
