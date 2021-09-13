@@ -1,4 +1,6 @@
-module.exports = {
+const withTM = require("next-transpile-modules")(["lodash-es"]);
+
+module.exports = withTM({
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
@@ -8,4 +10,4 @@ module.exports = {
     return config;
   },
   reactStrictMode: true,
-};
+});

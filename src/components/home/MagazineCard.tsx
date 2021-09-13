@@ -8,7 +8,6 @@ import SubscribeSvgIcon from "../../assets/icons/explore-subscribe.svg";
 import { randomInt } from "../../utils";
 import { useAppSelector } from "../../app/hook";
 import Image from "../../../lib/Image/Image";
-import { resizeImage } from "../../utils/oss";
 
 const Container = styled.div<{ color: string }>`
   width: 315px;
@@ -30,9 +29,10 @@ const AuthorContainer = styled.div`
   align-items: center;
   margin-bottom: 14px;
 `;
-const Avatar = styled.img`
+const Avatar = styled(Image)`
+  min-width: 24px;
+  max-width: 24px;
   width: 24px;
-  height: 24px;
   border-radius: 999px;
 `;
 const AuthorName = styled.p`
@@ -42,9 +42,6 @@ const AuthorName = styled.p`
 `;
 
 const MagazineCover = styled(Image)`
-  width: 210px;
-  height: 280px;
-  object-fit: cover;
   border-radius: 20px;
   margin-bottom: 10px;
 `;
@@ -148,10 +145,10 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
   return (
     <Container color={backgroundColor.current} onClick={props.onClick}>
       <AuthorContainer>
-        <Avatar src={resizeImage(props.avatar, { h: 48 })} />
+        <Avatar src={props.avatar} width={24} height={24} />
         <AuthorName> {props.author} </AuthorName>
       </AuthorContainer>
-      <MagazineCover src={props.cover} height={280} />
+      <MagazineCover src={props.cover} height={280} width={210} blur fit="cover" />
       <MagazineTitle>{props.title}</MagazineTitle>
       <MagazineNunContainer>
         {props.subscribeNum} subscribers · {props.paperNum} stories
