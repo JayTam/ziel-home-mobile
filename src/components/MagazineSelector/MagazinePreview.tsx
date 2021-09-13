@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { MagazineType } from "../../apis";
-import { TextEllipsisMixin } from "../../../lib/mixins";
+import { MagazineType } from "@/apis";
+import { TextEllipsisMixin } from "@/lib/mixins";
+import Image from "@/lib/Image";
 
 interface MagazinePreviewProps extends MagazineType {
   className?: string;
@@ -15,7 +16,7 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const MagazineCover = styled.img<{ active?: boolean }>`
+const MagazineCover = styled(Image)<{ active?: boolean }>`
   width: 100%;
   height: 226px;
   object-fit: cover;
@@ -56,8 +57,10 @@ const AuthorName = styled.p`
   ${TextEllipsisMixin}
 `;
 
-const Avatar = styled.img`
+const Avatar = styled(Image)`
   width: 20px;
+  min-width: 20px;
+  max-width: 20px;
   height: 20px;
   object-fit: cover;
   border-radius: 999px;
@@ -71,11 +74,19 @@ const SubscribeNum = styled.div`
 const MagazinePreview: React.FC<MagazinePreviewProps> = (props) => {
   return (
     <Container className={props.className} onClick={props.onClick}>
-      <MagazineCover src={props.cover} alt="cover" active={props.active} />
+      <MagazineCover
+        height={226}
+        width="100%"
+        src={props.cover}
+        alt="cover"
+        active={props.active}
+        fit="cover"
+        loading
+      />
       <MagazineTitle>{props.title}</MagazineTitle>
       <Row>
         <AuthorContainer>
-          <Avatar src={props.avatar} alt="avatar" />
+          <Avatar src={props.avatar} width={20} height={20} alt="avatar" />
           <AuthorName>{props.author}</AuthorName>
         </AuthorContainer>
         <SubscribeNum>{props.subscribeNum} picks</SubscribeNum>

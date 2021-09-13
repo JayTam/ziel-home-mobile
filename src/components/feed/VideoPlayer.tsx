@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Play from "../../assets/play.svg";
 import { replaceToImgBaseUrl, useCombinedRefs } from "../../utils";
 import Loading from "../../../lib/Loading";
+import Image from "@/lib/Image";
 
 export type VideoPlayerProps = {
   className?: string;
@@ -53,7 +54,7 @@ const Video = styled.video`
   font-size: 0;
 `;
 
-const Poster = styled.img`
+const Poster = styled(Image)`
   position: absolute;
   left: 0;
   top: 0;
@@ -204,6 +205,8 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       {props.type === "poster" ? (
         <Poster
           style={{ display: showPoster ? "inline-block" : "none" }}
+          width="100%"
+          height="100%"
           src={replaceToImgBaseUrl(props.poster)}
           alt="poster"
         />
