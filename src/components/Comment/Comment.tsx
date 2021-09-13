@@ -108,9 +108,9 @@ const Comment: React.FC<CommentProps> = (props) => {
   const [commentText, setCommentText] = useState("");
   const [currentComment, setCurrentComment] = useState<CommentType | null>(null);
   const [currentReply, setCurrentReply] = useState<CommentType | null>(null);
-
   const currentCommentRef = useRef<CommentItemHandle>(null);
   const { withLogin } = useLogin();
+  // const commentCount = useMemo(()=> )
   const commentTextContent = useMemo(() => {
     return commentText.replace(/Reply @(.+?):/, "").trim();
   }, [commentText]);
@@ -204,6 +204,7 @@ const Comment: React.FC<CommentProps> = (props) => {
         parentUserId: data.parent_user_id,
       };
       setCommentList((commentList) => [comment, ...commentList]);
+      console.log(commentList);
       scrollTopRef.current?.scrollIntoView();
     }
     setCommentText("");
@@ -250,7 +251,7 @@ const Comment: React.FC<CommentProps> = (props) => {
         <CommentContainer>
           <CommentStyle>
             <HeaderContent>
-              <HeaderTitle>{`Comments·${props.commentNum ? props.commentNum : 0}`}</HeaderTitle>
+              <HeaderTitle>{`Comments·${commentList.length ? commentList.length : 0}`}</HeaderTitle>
               <CloseIcon onClick={props.onCommentClose} />
             </HeaderContent>
 
