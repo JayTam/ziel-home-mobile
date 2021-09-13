@@ -18,8 +18,7 @@ import SubscribeBtn from "../../assets/icons/subscribe.svg";
 import UnSubscribeBtn from "../../assets/icons/unSubscribe.svg";
 import { TextEllipsisMixin } from "../../../lib/mixins";
 import Head from "next/head";
-import MoreOperate from "../../components/MoreOperate";
-import Popup from "../../../lib/Popup";
+import MorePopup from "../../components/MorePopup";
 
 interface MagazineProps {
   magazine: MagazineType;
@@ -134,11 +133,6 @@ const PaperItem = styled.div`
   height: calc((100vw - 35px) / 2 / 0.56);
   margin-left: 7px;
   margin-top: 7px;
-`;
-const SharePopup = styled(Popup)`
-  padding: 0;
-  margin: 0;
-  border-radius: 20px 20px 0 0;
 `;
 const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const [shareOpen, setShareOpen] = useState(false);
@@ -255,9 +249,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
           </PaperContent>
         </MagazinePaperLayout>
       </Container>
-      <SharePopup position="bottom" onClickOverlay={closePopup} open={shareOpen}>
-        <MoreOperate moreType="magazine" onlyShare magazine={magazine} />
-      </SharePopup>
+      <MorePopup open={shareOpen} moreType="magazine" magazine={magazine} onClose={closePopup} />
     </>
   );
 };
