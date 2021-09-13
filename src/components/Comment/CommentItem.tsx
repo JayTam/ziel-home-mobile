@@ -113,7 +113,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
 
   useEffect(() => {
     (async () => {
-      if (props.open && props.replyNum > 0) {
+      if (props.open && props.replyNum > 0 && count === 0) {
         const response = await getReplyList(props.id, { page: 1 });
         setCount(response.data.result.count);
       }
