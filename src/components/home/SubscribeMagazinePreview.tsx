@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { MagazineType } from "../../apis";
-import { VerticalHorizontalCenterMixin } from "../../../lib/mixins";
-import DefaultPaperPoster from "../../../public/video_placeholder.jpg";
-import MorePaperIcon from "../../assets/icons/more-paper.svg";
+import { MagazineType } from "@/apis";
+import { VerticalHorizontalCenterMixin } from "@/lib/mixins";
+import MorePaperIcon from "@/assets/icons/more-paper.svg";
 import Link from "next/link";
 import ShowMoreText from "react-show-more-text";
+import Image from "@/lib/Image";
 
 const Container = styled.div`
   border-bottom: 1px solid #f5f5f5;
@@ -29,9 +29,7 @@ const MagazineCoverBackground = styled.div`
   border-radius: 8px;
   ${VerticalHorizontalCenterMixin}
 `;
-const MagazineCover = styled.img`
-  width: 60px;
-  height: 80px;
+const MagazineCover = styled(Image)`
   border-radius: 8px;
   ${VerticalHorizontalCenterMixin}
 `;
@@ -61,15 +59,12 @@ const PapersContainer = styled.div`
   margin-bottom: 20px;
   white-space: nowrap;
 `;
-const PaperItem = styled.div<{ cover: string }>`
+const PaperItem = styled.div`
   position: relative;
   display: inline-block;
   margin-right: 6px;
-  width: 120px;
-  height: 214px;
-  background-size: cover;
   border-radius: 4px;
-  background-image: url("${(props) => props.cover || DefaultPaperPoster.src}");
+  overflow: hidden;
 `;
 
 const PaperMore = styled.div`
@@ -104,7 +99,7 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
         <MagazineContainer>
           <MagazineCoverContainer>
             <MagazineCoverBackground />
-            <MagazineCover src={props.cover} />
+            <MagazineCover src={props.cover} width={60} height={80} />
           </MagazineCoverContainer>
           <MagazineInfoContainer>
             <MagazineTitle>{props.title}</MagazineTitle>
@@ -116,7 +111,8 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
       <PapersContainer>
         {props.papers?.map((paper) => (
           <Link href={`/feed?paper_id=${paper.id}&type=subscribe`} key={paper.id}>
-            <PaperItem cover={paper.poster}>
+            <PaperItem>
+              <Image src={paper.poster} width={120} height={214} loading />
               <PaperTitle width={110} anchorClass="anchor" lines={2} more={null} less={null}>
                 {paper.title}
               </PaperTitle>
