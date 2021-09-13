@@ -224,13 +224,13 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
               <Statistics>{digitalScale(profile.paperNum)}</Statistics>
               <TypeText>Papers</TypeText>
             </StatisticsItem>
-            <Link href={`/followers/${props.userId}`}>
+            <Link href={`/followers/${props.userId}?tabIndex=1`}>
               <StatisticsItem>
                 <Statistics>{digitalScale(profile.followerNum)}</Statistics>
                 <TypeText>Followers</TypeText>
               </StatisticsItem>
             </Link>
-            <Link href={`/followers/${props.userId}`}>
+            <Link href={`/followers/${props.userId}?tabIndex=2`}>
               <StatisticsItem>
                 <Statistics>{digitalScale(profile.followingNum)}</Statistics>
                 <TypeText>Follewing</TypeText>

@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import Button from "../../../lib/Button";
 import produce from "immer";
 import { useAppSelector } from "../../app/hook";
+import { useRouter } from "next/router";
 
 interface FollowersType {
   profileInfo: ProfileType;
@@ -63,8 +64,9 @@ const TabPanelStyle = styled(TabPanel)``;
 
 const Followers: NextPage<FollowersType> = ({ profileInfo }) => {
   const { withLogin } = useLogin();
+  const router = useRouter();
   const user = useAppSelector((state) => state.user);
-  const [type, setType] = useState<"1" | "2">("1");
+  const [type, setType] = useState<"1" | "2">(router.query.tabIndex === "1" ? "1" : "2");
   const [profile, setProfile] = useState<ProfileType>(profileInfo);
   const [followers, setFollowers] = useState<FollowersType[]>([]);
   const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
