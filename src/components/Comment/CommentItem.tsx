@@ -56,6 +56,7 @@ const UserInfo = styled.div`
   }
 `;
 const ContentText = styled.div`
+  word-break: break-all;
   margin-top: 4px;
   color: ${(props) => props.theme.palette.common?.white};
 `;

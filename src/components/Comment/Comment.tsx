@@ -143,7 +143,11 @@ const Comment: React.FC<CommentProps> = (props) => {
     })();
   }, [props.id, props.open, page, setFirstLoading, setHasMore, setLoading]);
   const handleComment = async () => {
-    if (!commentText) return;
+    if (!commentText.trim()) {
+      setCommentText(commentText.trim());
+      return;
+    }
+
     if (currentComment) {
       /**
        * 回复评论
@@ -254,7 +258,6 @@ const Comment: React.FC<CommentProps> = (props) => {
               <HeaderTitle>{`Comments·${commentList.length ? commentList.length : 0}`}</HeaderTitle>
               <CloseIcon onClick={props.onCommentClose} />
             </HeaderContent>
-
             {commentList.length === 0 && !firstLoading ? (
               <EmptyComment>
                 <span>No comments yet. Grab the couch</span>
@@ -283,6 +286,7 @@ const Comment: React.FC<CommentProps> = (props) => {
           <CommentHandle>
             <InputContent>
               <InputStyle
+                maxLength={255}
                 onChange={(e) => setCommentText(e.target.value)}
                 value={commentText}
                 placeholder="say something…"
