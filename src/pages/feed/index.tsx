@@ -6,8 +6,8 @@ import Paper from "../../components/feed/Paper";
 import { SwiperEvents } from "swiper/types";
 import produce from "immer";
 import VideoPlayer from "../../components/feed/VideoPlayer";
-import { VideoReadyState } from "../../constants";
-import { subscribeMagazine } from "../../apis";
+import { VideoReadyState } from "@/constants";
+import { subscribeMagazine } from "@/apis";
 import {
   deletePaper,
   getPaperList,
@@ -17,12 +17,12 @@ import {
   likePaper,
   PaperType,
   starPaper,
-} from "../../apis/paper";
-import { TextEllipsisMixin } from "../../../lib/mixins";
+} from "@/apis/paper";
+import { TextEllipsisMixin } from "@/lib/mixins";
 import { replaceToImgBaseUrl, useLogin } from "../../utils";
-import { useAppSelector } from "../../app/hook";
+import { useAppSelector } from "@/app/hook";
 import SubscribedIcon from "../../assets/icons/subscribed.svg";
-import { followUser } from "../../apis/profile";
+import { followUser } from "@/apis/profile";
 import Comments from "../../components/Comment/Comment";
 import SubscribeButtonIcon from "../../assets/icons/subscribe-button.svg";
 import FeedBackIcon from "../../assets/icons/feed-back.svg";
@@ -483,9 +483,7 @@ const Feed: NextPage<FeedProps> = (props) => {
                       <MagazineTitle>
                         {paper.magazine?.title}
                         {user.uid !== paper.magazine?.authorId && paper.magazine?.isSubscribe ? (
-                          <StyledSubscribedIcon
-                            onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
-                          />
+                          <StyledSubscribedIcon />
                         ) : null}
                       </MagazineTitle>
                       <MagazineNumber>{paper.magazine?.subscribeNum} subscribers</MagazineNumber>
@@ -507,9 +505,7 @@ const Feed: NextPage<FeedProps> = (props) => {
                 onFollow={() => handleFollow(paper)}
                 onLike={() => handleLikePaper(paper)}
                 onStar={() => handleStarPaper(paper)}
-                onMore={() => {
-                  handleMoreOperate(paper);
-                }}
+                onMore={() => handleMoreOperate(paper)}
                 onComment={() => handleCommentPaper(paper)}
               />
             </SwiperSlide>

@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import VideoPlayer from "./VideoPlayer";
 import ShowMoreText from "react-show-more-text";
-import { PaperType } from "../../apis/paper";
+import { PaperType } from "@/apis/paper";
 import UnFollowIcon from "../../assets/icons/unfollow.svg";
 import UnLikeIcon from "../../assets/icons/unlike.svg";
 import LikedIcon from "../../assets/icons/liked.svg";
@@ -12,9 +12,10 @@ import TopIcon from "../../assets/icons/top.svg";
 import FollowedIcon from "../../assets/icons/followed.svg";
 import CommentIcon from "../../assets/icons/comment.svg";
 import MoreIcon from "../../assets/icons/more.svg";
-import { useAppSelector } from "../../app/hook";
+import { useAppSelector } from "@/app/hook";
 import Link from "next/link";
-import { TextEllipsisMixin } from "../../../lib/mixins";
+import { TextEllipsisMixin } from "@/lib/mixins";
+import Image from "@/lib/Image";
 
 const Container = styled.div`
   position: relative;
@@ -39,7 +40,7 @@ const AuthorInfo = styled.div`
   margin-bottom: 10px;
 `;
 
-const Avatar = styled.img`
+const Avatar = styled(Image)`
   width: 30px;
   min-width: 30px;
   max-width: 30px;
@@ -152,7 +153,7 @@ const Paper: React.FC<PaperInterface> = (props) => {
         <BottomContainer>
           <AuthorInfo>
             <Link href={`/profile/${props.authorId}`}>
-              <Avatar src={props.avatar} alt="avatar" />
+              <Avatar src={props.avatar} width={30} height={30} alt="avatar" />
             </Link>
             <AuthorName>{props.author}</AuthorName>
             {showFollowIcon ? (

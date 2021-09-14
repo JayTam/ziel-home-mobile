@@ -10,9 +10,10 @@ import Tabs from "../../../lib/Tabs";
 import { getMagazinesForChoose, MagazineType } from "../../apis";
 import MagazinePreview from "./MagazinePreview";
 import { useUpdateEffect } from "ahooks";
-import { useInfiniteScroll } from "../../utils";
+import { useInfiniteScroll } from "@/utils";
 import Loading from "../../../lib/Loading";
 import Empty from "../../../lib/Empty";
+import Image from "@/lib//Image";
 
 const Container = styled.div`
   display: flex;
@@ -39,7 +40,7 @@ const MagazineCoverWrapper = styled.div`
   overflow: hidden;
 `;
 
-const MagazineCover = styled.img`
+const MagazineCover = styled(Image)`
   width: 100%;
   height: 100%;
 `;
@@ -163,7 +164,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
         <MagazineContainer>
           <MagazineCoverWrapper>
             {selectedMagazine ? (
-              <MagazineCover src={selectedMagazine.cover} alt="cover" />
+              <MagazineCover src={selectedMagazine.cover} width={60} height={80} alt="cover" />
             ) : (
               <UploadIcon />
             )}
