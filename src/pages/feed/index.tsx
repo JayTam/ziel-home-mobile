@@ -14,12 +14,14 @@ import {
   getStarPapers,
   getUserPapers,
   getUserSubscribePapers,
+  hiddenPaper,
   likePaper,
   PaperType,
   starPaper,
+  topPaper,
 } from "@/apis/paper";
 import { TextEllipsisMixin } from "@/lib/mixins";
-import { replaceToImgBaseUrl, useLogin } from "../../utils";
+import { replaceToImgBaseUrl, toastSNSAxiosError, useLogin } from "../../utils";
 import { useAppSelector } from "@/app/hook";
 import SubscribedIcon from "../../assets/icons/subscribed.svg";
 import { followUser } from "@/apis/profile";
@@ -116,7 +118,7 @@ const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
   //margin-right: 14px;
 `;
 
-type TType = "default" | "subscribe" | "user_paper" | "user_saved";
+export type TType = "default" | "subscribe" | "user_paper" | "user_saved";
 
 interface FeedProps {
   initialPapers: PaperType[];
@@ -137,12 +139,12 @@ const Feed: NextPage<FeedProps> = (props) => {
   const [swiperHeight, setSwiperHeight] = useState(0);
   const { withLogin } = useLogin();
   const [commentOpen, setCommentOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [openMore, setOpenMore] = useState(false);
 
   useEffect(() => {
+    setCurrentPaper(papers[activeIndex]);
     const player = videoPlayerRef.current;
     if (!player) return;
-
     const handleCloseLoading = () => {
       setVideoLoading(false);
     };
@@ -155,7 +157,7 @@ const Feed: NextPage<FeedProps> = (props) => {
     return () => {
       player.removeEventListener("loadeddata", handleCloseLoading);
     };
-  }, [activeIndex]);
+  }, [activeIndex, papers]);
 
   useUpdateEffect(() => {
     (async () => {
@@ -192,7 +194,6 @@ const Feed: NextPage<FeedProps> = (props) => {
             break;
         }
         const list = response.data.result.data;
-        // const  = Boolean(response.data.result.hasmore);
         setPapers((prev) => [...prev, ...list]);
       } finally {
         setLoading(false);
@@ -214,6 +215,7 @@ const Feed: NextPage<FeedProps> = (props) => {
       setActiveIndex(currentActiveIndex);
       setPapers((prev) =>
         produce(prev, (draft) => {
+          if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = false;
           draft[currentActiveIndex].isPlay = draft[prevActiveIndex]?.isPlay;
           draft[currentActiveIndex].currentTime = 0;
           draft[prevActiveIndex].isPlay = false;
@@ -221,14 +223,15 @@ const Feed: NextPage<FeedProps> = (props) => {
           return draft;
         })
       );
+    } else {
+      setPapers((prev) =>
+        produce(prev, (draft) => {
+          if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = false;
+          return draft;
+        })
+      );
     }
     setHiddenVideoPlayer(false);
-    setPapers((prev) =>
-      produce(prev, (draft) => {
-        if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = false;
-        return draft;
-      })
-    );
   };
 
   const handleTogglePlay = (paper: PaperType) => {
@@ -309,11 +312,6 @@ const Feed: NextPage<FeedProps> = (props) => {
           })
         );
       });
-  };
-
-  const handleMoreOperate = (paper: PaperType) => {
-    setCurrentPaper(paper);
-    setMoreOpen(true);
   };
 
   useEffect(() => {
@@ -419,33 +417,64 @@ const Feed: NextPage<FeedProps> = (props) => {
         return draft;
       })
     );
-    closeSharePopup();
+    closeMorePopup();
   });
 
   /**
-   * 评论内容
+   * 置顶paper
    */
-  const handleCommentPaper = withLogin<PaperType>((paper) => {
+  const handleTopPaper = withLogin<PaperType>(async (paper) => {
     if (!paper) return;
-    setCurrentPaper(paper);
-    setCommentOpen(true);
+    const isTop = !paper.isTop;
+    try {
+      await topPaper(paper.id, paper.magazineId, isTop);
+      // 只修改置顶状态，不修改顺序
+      setPapers((prev) =>
+        produce(prev, (draft) => {
+          const index = draft.findIndex(({ id }) => paper.id === id);
+          draft[index].isTop = isTop;
+          return draft;
+        })
+      );
+      closeMorePopup();
+    } catch (e) {
+      toastSNSAxiosError(e);
+    }
   });
 
   /**
-   * 关闭评论
+   * 隐藏paper
    */
-  const handleCommentClose = () => {
-    setCommentOpen(false);
-    setCurrentPaper(null);
-  };
+  const handleHiddenPaper = withLogin<PaperType>(async (paper) => {
+    if (!paper) return;
+    const isHidden = !paper.isHidden;
+    try {
+      await hiddenPaper(paper.magazineId, paper.id, isHidden);
+      // 只修改状态，不修改顺序
+      setPapers((prev) =>
+        produce(prev, (draft) => {
+          const index = draft.findIndex(({ id }) => paper.id === id);
+          draft[index].isHidden = isHidden;
+          return draft;
+        })
+      );
+      closeMorePopup();
+    } catch (e) {
+      toastSNSAxiosError(e);
+    }
+  });
 
-  /**
-   * 关闭更多
-   */
-  const closeSharePopup = () => {
-    setMoreOpen(false);
-    setCurrentPaper(null);
+  // 打开评论
+  const openCommentPopup = () => setCommentOpen(true);
+  // 关闭评论
+  const closeCommentPopup = () => setCommentOpen(false);
+  // 打开更多
+  const openMorePopup = () => {
+    console.log(currentPaper);
+    setOpenMore(true);
   };
+  // 关闭更多
+  const closeMorePopup = () => setOpenMore(false);
 
   return (
     <>
@@ -505,8 +534,8 @@ const Feed: NextPage<FeedProps> = (props) => {
                 onFollow={() => handleFollow(paper)}
                 onLike={() => handleLikePaper(paper)}
                 onStar={() => handleStarPaper(paper)}
-                onMore={() => handleMoreOperate(paper)}
-                onComment={() => handleCommentPaper(paper)}
+                onMore={openMorePopup}
+                onComment={openCommentPopup}
               />
             </SwiperSlide>
           ))}
@@ -519,23 +548,26 @@ const Feed: NextPage<FeedProps> = (props) => {
           onChangeCurrentTime={(time) => handleChangeCurrentTime(papers[activeIndex], time)}
         />
       </Container>
+      {/* 更多弹框 */}
+      {currentPaper ? (
+        <MorePopup
+          open={openMore}
+          moreType="paper"
+          paper={currentPaper}
+          onClose={closeMorePopup}
+          onDelete={() => handleDeletePaper(currentPaper)}
+          onTop={() => handleTopPaper(currentPaper)}
+          onHidden={() => handleHiddenPaper(currentPaper)}
+        />
+      ) : null}
       {/* 评论组件 */}
       {currentPaper ? (
-        <>
-          <MorePopup
-            open={moreOpen}
-            moreType="paper"
-            paper={currentPaper}
-            onClose={closeSharePopup}
-            onDelete={() => handleDeletePaper(currentPaper)}
-          />
-          <Comments
-            {...currentPaper}
-            open={commentOpen}
-            onCommentClose={() => handleCommentClose()}
-            onClickOverlay={() => handleCommentClose()}
-          />
-        </>
+        <Comments
+          {...currentPaper}
+          open={commentOpen}
+          onCommentClose={() => closeCommentPopup()}
+          onClickOverlay={() => closeCommentPopup()}
+        />
       ) : null}
     </>
   );

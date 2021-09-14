@@ -246,7 +246,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
             tab={`Paper ${digitalScale(props.usersPapers.count, "Int")}`}
             forceRender
           >
-            <PaperScrollList userId={props.userId} />
+            <PaperScrollList userId={props.userId} dataSource="user_paper" />
           </TabPanelStyle>
           <TabPanelStyle
             indexKey="2"
@@ -265,7 +265,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
           >
             <TabsStarStyle activeKey={starType} onChange={handleStarChange} tabStyle="contain">
               <TabPanelStyle indexKey="1" tab="Paper" forceRender>
-                <PaperScrollList isStarContent userId={props.userId} />
+                <PaperScrollList userId={props.userId} dataSource="user_saved" />
               </TabPanelStyle>
               <TabPanelStyle indexKey="2" tab="Magazine" forceRender>
                 <MagazineScrollList isStarContent userId={props.userId} />

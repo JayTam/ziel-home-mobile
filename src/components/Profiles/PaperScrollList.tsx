@@ -1,13 +1,13 @@
-import { useInfiniteScroll } from "../../utils";
+import { useInfiniteScroll } from "@/utils";
 import styled from "styled-components";
 import PaperPreview from "./PaperPreview";
 import React, { useEffect, useState } from "react";
-import { getStarPapers, getUserPapers, PaperType } from "../../apis/paper";
+import { getStarPapers, getUserPapers, PaperType } from "@/apis/paper";
+import { TType } from "@/pages/feed";
 
 interface PaperListProps {
   userId: string; // 用户Id
-  isStarContent?: boolean; // 是否为收藏内容
-  isShowTop?: boolean; // 是否显示置顶
+  dataSource: TType;
 }
 
 const PaperItem = styled.div`
@@ -28,9 +28,10 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
     (async () => {
       setLoading(true);
       try {
-        const response = props.isStarContent
-          ? await getStarPapers({ userId: props.userId, page })
-          : await getUserPapers({ userId: props.userId, page });
+        const response =
+          props.dataSource === "user_saved"
+            ? await getStarPapers({ userId: props.userId, page })
+            : await getUserPapers({ userId: props.userId, page });
         const list = response.data.result.data;
         const hasMore = Boolean(response.data.result.hasmore);
         setHasMore(hasMore);
@@ -39,12 +40,12 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
         setLoading(false);
       }
     })();
-  }, [page, props.isStarContent, props.userId, setHasMore, setLoading]);
+  }, [page, props.dataSource, props.userId, setHasMore, setLoading]);
   return (
     <>
       {papers.map((paper) => (
         <PaperItem key={paper.id}>
-          <PaperPreview isStarContent={props.isStarContent} key={paper.id} {...paper} />
+          <PaperPreview dataSource={props.dataSource} key={paper.id} {...paper} />
         </PaperItem>
       ))}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}

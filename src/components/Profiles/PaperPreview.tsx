@@ -1,16 +1,17 @@
 import styled from "styled-components";
 import PlayIcon from "../../assets/icons/play.svg";
-import { digitalScale } from "../../utils/";
-import { PaperType } from "../../apis/paper";
+import { digitalScale } from "@/utils";
+import { PaperType } from "@/apis/paper";
 import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
 import Image from "next/image";
-import { TextEllipsisMixin } from "../../../lib/mixins";
+import { TextEllipsisMixin } from "@/lib/mixins";
 import TopIcon from "../../assets/icons/top.svg";
 import React from "react";
 import Link from "next/link";
+import { TType } from "@/pages/feed";
 
 interface MagazinePagePropType extends PaperType {
-  isStarContent?: boolean;
+  dataSource: TType;
 }
 
 const Container = styled.div`
@@ -98,19 +99,22 @@ const PaperTopIcon = styled(TopIcon)`
 `;
 
 const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
+  let link;
+  if (props.dataSource === "default") {
+    link = `/feed?magazine_id=${props.magazine?.id}&paper_id=${props.id}`;
+  } else {
+    link = `/feed?user=${props.authorId}&type=${props.dataSource}`;
+  }
+
   return (
-    <Link
-      href={`/feed?user=${props.authorId}&type=${
-        props.isStarContent ? "user_saved" : "user_paper"
-      }`}
-    >
+    <Link href={link}>
       <Container>
         {props.poster ? (
           <PosterImage src={props.poster} />
         ) : (
           <PlaceholderImage src={VideoPlaceholderImage} />
         )}
-        {!props.isStarContent && props.status === 1 ? (
+        {props.dataSource === "user_paper" && props.status === 1 ? (
           <IsReviewing>Is reviewing</IsReviewing>
         ) : null}
         <BottomContent>

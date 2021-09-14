@@ -1,20 +1,14 @@
-import Popup from "../../../lib/Popup";
+import Popup from "@/lib/Popup";
 import styled from "styled-components";
-import CloseIcon from "../../assets/icons/btn_access_highlight.svg";
+import CloseIcon from "@/assets/icons/btn_access_highlight.svg";
 import CommentsItem from "./CommentItem";
-import { PaperType } from "../../apis/paper";
+import { PaperType } from "@/apis/paper";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  CommentType,
-  getCommentList,
-  likeComment,
-  replyComment,
-  replyPaper,
-} from "../../apis/comment";
-import Button from "../../../lib/Button";
+import { CommentType, getCommentList, likeComment, replyComment, replyPaper } from "@/apis/comment";
+import Button from "@/lib/Button";
 import produce from "immer";
-import { useInfiniteScroll, useLogin } from "../../utils";
-import Loading from "../../../lib/Loading";
+import { useInfiniteScroll, useLogin } from "@/utils";
+import Loading from "@/lib/Loading";
 
 interface CommentProps extends PaperType {
   open: boolean;
@@ -120,6 +114,7 @@ const Comment: React.FC<CommentProps> = (props) => {
       hasMore: false,
       initialPage: 1,
     });
+
   useEffect(() => {
     (async () => {
       if (props.open) {
@@ -142,12 +137,12 @@ const Comment: React.FC<CommentProps> = (props) => {
       }
     })();
   }, [props.id, props.open, page, setFirstLoading, setHasMore, setLoading]);
-  const handleComment = async () => {
-    if (!commentText.trim()) {
-      setCommentText(commentText.trim());
-      return;
-    }
 
+  /**
+   * 发送评论
+   */
+  const handleSendCommentWithLogin = withLogin(async () => {
+    if (!commentText) return;
     if (currentComment) {
       /**
        * 回复评论
@@ -214,8 +209,9 @@ const Comment: React.FC<CommentProps> = (props) => {
     setCommentText("");
     setCurrentReply(null);
     setCurrentComment(null);
-  };
-  const handleClickreplyComment = async (comment: CommentType, reply: CommentType) => {
+  });
+
+  const handleClickReplyComment = async (comment: CommentType, reply: CommentType) => {
     setCommentText(`Reply @${reply.author}: `);
     if (comment.id === reply.id) {
       // 点击的是CommentItem的 reply
@@ -227,10 +223,10 @@ const Comment: React.FC<CommentProps> = (props) => {
       setCurrentReply(reply);
     }
   };
+
   /**
    * 评论点赞
    */
-
   const handleLike = withLogin<CommentType>(async (comment) => {
     if (comment) {
       const isLike = !comment.isLike;
@@ -249,6 +245,7 @@ const Comment: React.FC<CommentProps> = (props) => {
       );
     }
   });
+
   return (
     <>
       <PopupContainer onClickOverlay={props.onClickOverlay} open={props.open} position="bottom">
@@ -258,6 +255,7 @@ const Comment: React.FC<CommentProps> = (props) => {
               <HeaderTitle>{`Comments·${commentList.length ? commentList.length : 0}`}</HeaderTitle>
               <CloseIcon onClick={props.onCommentClose} />
             </HeaderContent>
+
             {commentList.length === 0 && !firstLoading ? (
               <EmptyComment>
                 <span>No comments yet. Grab the couch</span>
@@ -269,7 +267,7 @@ const Comment: React.FC<CommentProps> = (props) => {
                 <div ref={scrollTopRef}>
                   {commentList.map((comment) => (
                     <CommentItemStyle
-                      onClickreply={(reply) => handleClickreplyComment(comment, reply)}
+                      onClickreply={(reply) => handleClickReplyComment(comment, reply)}
                       onClickLike={handleLike}
                       open={props.open}
                       key={comment.id}
@@ -287,11 +285,11 @@ const Comment: React.FC<CommentProps> = (props) => {
             <InputContent>
               <InputStyle
                 maxLength={255}
-                onChange={(e) => setCommentText(e.target.value)}
+                onChange={(e) => setCommentText(e.target.value.trim())}
                 value={commentText}
                 placeholder="say something…"
               />
-              <SendButton onClick={handleComment}>Send</SendButton>
+              <SendButton onClick={handleSendCommentWithLogin}>Send</SendButton>
             </InputContent>
           </CommentHandle>
         </CommentContainer>

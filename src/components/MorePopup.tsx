@@ -1,19 +1,19 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-// import RecommendIcon from "../assets/icons/recommend.svg";
-import DeleteIcon from "../assets/icons/more-operate-delete.svg";
-// import ReportIcon from "../assets/icons/report.svg";
-// import SaveIcon from "../assets/icons/save.svg";
-// import CollectionIcon from "../assets/icons/collection.svg";
+import RecommendIcon from "../assets/icons/recommend.svg";
+import UnRecommendIcon from "@/assets/icons/unrecommend.svg";
+import DeleteIcon from "@/assets/icons/more-operate-delete.svg";
 import SmsIcon from "../assets/icons/sms.svg";
 import PinterestIcon from "../assets/icons/Pinterest.svg";
 // import CopyIcon from "../assets/icons/copy.svg";
 import FacebookIcon from "../assets/icons/facebook.svg";
+import HiddenIcon from "@/assets/icons/hidden.svg";
+import ShowIcon from "@/assets/icons/show.svg";
 // import InsIcon from "../assets/icons/ins.svg";
-import { MagazineType } from "../apis";
-import { PaperType } from "../apis/paper";
-import Popup from "../../lib/Popup";
-import { useAppSelector } from "../app/hook";
+import { MagazineType } from "@/apis";
+import { PaperType } from "@/apis/paper";
+import Popup from "@/lib/Popup";
+import { useAppSelector } from "@/app/hook";
 
 interface MoreOperateType {
   open: boolean;
@@ -21,7 +21,9 @@ interface MoreOperateType {
   paper?: PaperType;
   moreType: "paper" | "magazine";
   onDelete?: () => void;
+  onTop?: () => void;
   onClose?: () => void;
+  onHidden?: () => void;
 }
 
 const StyledPopup = styled(Popup)`
@@ -30,13 +32,13 @@ const StyledPopup = styled(Popup)`
   border-radius: 20px 20px 0 0;
 `;
 const Container = styled.div`
-  padding: 30px 0 0 0;
+  padding: 30px 0 30px 0;
 `;
 const TopContainer = styled.div`
-  padding: 0 4px;
   width: 100%;
   display: flex;
   flex-flow: row wrap;
+  justify-content: flex-start;
 
   div:nth-of-type(n + 5) {
     margin-top: 20px;
@@ -50,7 +52,6 @@ const TopContainer = styled.div`
 const ItemStyle = styled.div`
   display: flex;
   flex: 0 0 25%;
-  width: 100%;
   flex-direction: column;
   align-items: center;
   margin-bottom: 30px;
@@ -85,8 +86,8 @@ const MorePopup: React.FC<MoreOperateType> = (props) => {
     [props.paper?.authorId, user.uid]
   );
   const isMyMagazine = useMemo(
-    () => user.uid === props.magazine?.id,
-    [props.magazine?.id, user.uid]
+    () => user.uid === props.paper?.magazine?.authorId,
+    [props.paper?.magazine?.authorId, user.uid]
   );
 
   /**
@@ -132,16 +133,27 @@ const MorePopup: React.FC<MoreOperateType> = (props) => {
           {/*  <ReportIcon />*/}
           {/*  <span>Report</span>*/}
           {/*</ItemStyle>*/}
+          {/* 内容创建者，才可以隐藏显示 */}
+          {isMyPaper ? (
+            <ItemStyle onClick={props.onHidden}>
+              {props.paper?.isHidden ? <ShowIcon /> : <HiddenIcon />}
+              <span> {props.paper?.isHidden ? "Public" : "Hidden"} </span>
+            </ItemStyle>
+          ) : null}
+          {/* 只有杂志拥有者，才能推荐/置顶 */}
+          {isMyMagazine ? (
+            <ItemStyle onClick={props.onTop}>
+              {props.paper?.isTop ? <UnRecommendIcon /> : <RecommendIcon />}
+              <span>{props.paper?.isTop ? "Unrecommend" : "Recommend"}</span>
+            </ItemStyle>
+          ) : null}
+          {/* 杂志拥有者和内容创建者，可以删除 */}
           {isMyMagazine || isMyPaper ? (
             <ItemStyle onClick={props.onDelete}>
               <DeleteIcon />
               <span>Delete</span>
             </ItemStyle>
           ) : null}
-          {/*<ItemStyle>*/}
-          {/*  <RecommendIcon />*/}
-          {/*  <span>Recommend</span>*/}
-          {/*</ItemStyle>*/}
         </TopContainer>
         <ShareTitle>Share to</ShareTitle>
         <BottomContainer>

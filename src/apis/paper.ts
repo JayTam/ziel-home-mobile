@@ -39,6 +39,8 @@ export type PaperType = {
   isFollow: boolean;
   // 是否喜欢
   isLike: boolean;
+  // 是否隐藏
+  isHidden: boolean;
   // 是否置顶
   isTop: boolean;
   // 是否收藏
@@ -81,6 +83,7 @@ export const mapPaperItem = (item: Record<string, any>) => {
     isFollow: Boolean(item.is_follow),
     isStar: Boolean(item.is_favorite),
     isTop: Boolean(item.is_top),
+    isHidden: Boolean(item.is_hide),
     isPlay: false,
     touching: false,
     currentTime: 0,
@@ -314,6 +317,24 @@ export const deletePaper = (magazineId: string, paperId: string) => {
     params: {
       magazine_id: magazineId,
       id: paperId,
+    },
+  });
+};
+
+/**
+ * 隐藏杂志中的某篇内容
+ * @param magazineId
+ * @param paperId 内容ID
+ * @param isHidden
+ */
+export const hiddenPaper = (magazineId: string, paperId: string, isHidden: boolean) => {
+  return snsRequest({
+    url: "/article/hide",
+    method: "POST",
+    params: {
+      magazine_id: magazineId,
+      article_id: paperId,
+      is_state: isHidden ? "1" : "0",
     },
   });
 };
