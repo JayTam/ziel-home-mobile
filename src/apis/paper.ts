@@ -57,7 +57,12 @@ export type PaperType = {
 };
 
 export const mapPaperItem = (item: Record<string, any>) => {
-  const spec = JSON.parse(item.spec || "{}");
+  let spec;
+  try {
+    spec = JSON.parse(item.spec || "{}");
+  } catch (e) {
+    spec = {};
+  }
   return {
     id: item.id ?? "",
     authorId: item.userinfo?.id ?? "",
