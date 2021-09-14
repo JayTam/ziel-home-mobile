@@ -58,6 +58,11 @@ svg {
   user-select: none;
 }
 
+span,
+div,
+p {
+  word-break: break-all;
+}
 .react-more-text .anchor {
   text-decoration: underline;
 }

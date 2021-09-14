@@ -38,7 +38,6 @@ const ContentContainer = styled.div`
   width: calc(100% - 22px);
   display: flex;
   flex-direction: column;
-  word-break: break-all;
 `;
 const UserInfo = styled.div`
   font-size: 14px;
