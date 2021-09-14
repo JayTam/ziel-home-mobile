@@ -84,7 +84,7 @@ const ImageComponent = React.forwardRef<HTMLImageElement, ImageProps>((props, re
     <Container className={props.className}>
       <StyledImage {...nativeProps} ref={ref} src={preview} />
       {!props.blur && props.loading && loading ? (
-        <PlaceholderImage className={props.className}>
+        <PlaceholderImage>
           <StyledLoading />
         </PlaceholderImage>
       ) : null}
