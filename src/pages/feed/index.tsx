@@ -6,7 +6,6 @@ import Paper from "@/components/feed/Paper";
 import { SwiperEvents } from "swiper/types";
 import produce from "immer";
 import VideoPlayer from "@/components/feed/VideoPlayer";
-import { VideoReadyState } from "@/constants";
 import { subscribeMagazine } from "@/apis";
 import {
   deletePaper,
@@ -143,20 +142,6 @@ const Feed: NextPage<FeedProps> = (props) => {
 
   useEffect(() => {
     setCurrentPaper(papers[activeIndex]);
-    const player = videoPlayerRef.current;
-    if (!player) return;
-    const handleCloseLoading = () => {
-      setVideoLoading(false);
-    };
-    if (player.readyState === VideoReadyState.HAVE_ENOUGH_DATA) {
-      setVideoLoading(false);
-    } else {
-      setVideoLoading(true);
-      player.addEventListener("loadeddata", handleCloseLoading);
-    }
-    return () => {
-      player.removeEventListener("loadeddata", handleCloseLoading);
-    };
   }, [activeIndex, papers]);
 
   useUpdateEffect(() => {
@@ -217,9 +202,7 @@ const Feed: NextPage<FeedProps> = (props) => {
         produce(prev, (draft) => {
           if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = false;
           draft[currentActiveIndex].isPlay = draft[prevActiveIndex]?.isPlay;
-          draft[currentActiveIndex].currentTime = 0;
           draft[prevActiveIndex].isPlay = false;
-          draft[prevActiveIndex].currentTime = 0;
           return draft;
         })
       );
@@ -240,18 +223,6 @@ const Feed: NextPage<FeedProps> = (props) => {
         draft.forEach((item) => {
           if (item.id === paper.id) item.isPlay = !item.isPlay;
           else item.isPlay = false;
-          return item;
-        });
-        return draft;
-      })
-    );
-  };
-
-  const handleChangeCurrentTime = (paper: PaperType, time: number) => {
-    setPapers((prev) =>
-      produce(prev, (draft) => {
-        draft.forEach((item) => {
-          if (item.id === paper.id) item.currentTime = time;
           return item;
         });
         return draft;
@@ -545,7 +516,7 @@ const Feed: NextPage<FeedProps> = (props) => {
           {...papers[activeIndex]}
           hidden={hiddenVideoPlayer}
           loading={videoLoading}
-          onChangeCurrentTime={(time) => handleChangeCurrentTime(papers[activeIndex], time)}
+          onChangeLoading={(status) => setVideoLoading(status)}
         />
       </Container>
       {/* 更多弹框 */}
