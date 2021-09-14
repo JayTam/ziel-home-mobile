@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import SwiperCore, { Virtual } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import Paper from "../../components/feed/Paper";
+import Paper from "@/components/feed/Paper";
 import { SwiperEvents } from "swiper/types";
 import produce from "immer";
-import VideoPlayer from "../../components/feed/VideoPlayer";
+import VideoPlayer from "@/components/feed/VideoPlayer";
 import { VideoReadyState } from "@/constants";
 import { subscribeMagazine } from "@/apis";
 import {
@@ -20,17 +20,17 @@ import {
   starPaper,
   topPaper,
 } from "@/apis/paper";
-import { TextEllipsisMixin } from "@/lib/mixins";
-import { replaceToImgBaseUrl, toastSNSAxiosError, useLogin } from "../../utils";
+import { TextEllipsisMixin } from "#/lib/mixins";
+import { replaceToImgBaseUrl, toastSNSAxiosError, useLogin } from "@/utils";
 import { useAppSelector } from "@/app/hook";
-import SubscribedIcon from "../../assets/icons/subscribed.svg";
+import SubscribedIcon from "@/assets/icons/subscribed.svg";
 import { followUser } from "@/apis/profile";
-import Comments from "../../components/Comment/Comment";
-import SubscribeButtonIcon from "../../assets/icons/subscribe-button.svg";
-import FeedBackIcon from "../../assets/icons/feed-back.svg";
+import Comments from "@/components/Comment/Comment";
+import SubscribeButtonIcon from "@/assets/icons/subscribe-button.svg";
+import FeedBackIcon from "@/assets/icons/feed-back.svg";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import MorePopup from "../../components/MorePopup";
+import MorePopup from "@/components/MorePopup";
 import Head from "next/head";
 import { GetServerSideProps, NextPage } from "next";
 import { useUpdateEffect } from "ahooks";

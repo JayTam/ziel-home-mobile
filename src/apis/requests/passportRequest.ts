@@ -1,9 +1,9 @@
 import axios from "axios";
 import JSONBigint from "json-bigint";
-import { composeAuthHeaders } from "../../utils";
-import { isServer } from "../../utils";
-import { store } from "../../app/store";
-import { logoutAsync } from "../../app/features/user/userSlice";
+import { composeAuthHeaders } from "@/utils";
+import { isServer } from "@/utils";
+import { store } from "@/app/store";
+import { logoutAsync } from "@/app/features/user/userSlice";
 
 const request = axios.create({
   baseURL: isServer() ? process.env.PAASPORT_BASE_URL : process.env.NEXT_PUBLIC_PAASPORT_BASE_URL,

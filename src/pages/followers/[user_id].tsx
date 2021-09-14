@@ -1,14 +1,14 @@
 import { GetServerSideProps, NextPage } from "next";
-import Header from "../../components/Header";
+import Header from "@/components/Header";
 import styled from "styled-components";
-import { composeAuthHeaders, digitalScale, useInfiniteScroll, useLogin } from "../../utils";
-import { followUser, getFollowers, getProfileInfo, ProfileType } from "../../apis/profile";
-import Tabs from "../../../lib/Tabs";
-import TabPanel from "../../../lib/Tabs/TabPanel";
+import { composeAuthHeaders, digitalScale, useInfiniteScroll, useLogin } from "@/utils";
+import { followUser, getFollowers, getProfileInfo, ProfileType } from "@/apis/profile";
+import Tabs from "#/lib/Tabs";
+import TabPanel from "#/lib/Tabs/TabPanel";
 import { useEffect, useMemo, useState } from "react";
-import Button from "../../../lib/Button";
+import Button from "#/lib/Button";
 import produce from "immer";
-import { useAppSelector } from "../../app/hook";
+import { useAppSelector } from "@/app/hook";
 import { useRouter } from "next/router";
 
 interface FollowersType {

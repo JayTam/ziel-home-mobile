@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getMagazineList, MagazineType, subscribeMagazine } from "../../apis";
+import { getMagazineList, MagazineType, subscribeMagazine } from "@/apis";
 import MagazineCard from "./MagazineCard";
 import produce from "immer";
-import { useInfiniteScroll, useLogin } from "../../utils";
+import { useInfiniteScroll, useLogin } from "@/utils";
 import { useRouter } from "next/router";
-import Loading from "../../../lib/Loading";
+import Loading from "#/lib/Loading";
 
 const ExploreContainer = styled.div`
   display: flex;

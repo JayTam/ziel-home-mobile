@@ -1,18 +1,20 @@
-import BottomTabBar from "../components/BottomTabBar";
-import Tabs from "../../lib/Tabs";
-import TabPanel from "../../lib/Tabs/TabPanel";
-import styled from "styled-components";
 import React, { useState } from "react";
-import { useLogin } from "../utils";
+import styled from "styled-components";
 import { withKeepAlive } from "react-next-keep-alive";
-import ExploreMagazineScrollList from "../components/home/ExploreMagazineScrollList";
-import SubscribeMagazineScrollList from "../components/home/SubscribeMagazineScrollList";
+import Tabs from "#/lib/Tabs";
+import TabPanel from "#/lib/Tabs/TabPanel";
+import { useLogin } from "@/utils";
+import BottomTabBar from "@/components/BottomTabBar";
+import ExploreMagazineScrollList from "@/components/home/ExploreMagazineScrollList";
+import SubscribeMagazineScrollList from "@/components/home/SubscribeMagazineScrollList";
+
 const HomeTabs = styled(Tabs)`
   height: 44px;
   font-size: 18px;
   line-height: 21px;
   margin: 0;
 `;
+
 // 下个版本会用到
 // const ExploreTabs = styled(Tabs)`
 //   font-size: 16px;

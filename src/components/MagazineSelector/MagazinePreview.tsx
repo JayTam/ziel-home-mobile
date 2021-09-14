@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { MagazineType } from "@/apis";
-import { TextEllipsisMixin } from "@/lib/mixins";
-import Image from "@/lib/Image";
+import { TextEllipsisMixin } from "#/lib/mixins";
+import Image from "#/lib/Image";
 
 interface MagazinePreviewProps extends MagazineType {
   className?: string;

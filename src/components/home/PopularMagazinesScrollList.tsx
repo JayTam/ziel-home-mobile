@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Tabs from "../../../lib/Tabs";
-import TabPanel from "../../../lib/Tabs/TabPanel";
+import Tabs from "#/lib/Tabs";
+import TabPanel from "#/lib/Tabs/TabPanel";
 import styled from "styled-components";
-import { getPopularMagazineList, MagazineType, subscribeMagazine } from "../../apis";
-import { useInfiniteScroll, useLogin } from "../../utils";
-import Loading from "../../../lib/Loading";
+import { getPopularMagazineList, MagazineType, subscribeMagazine } from "@/apis";
+import { useInfiniteScroll, useLogin } from "@/utils";
+import Loading from "#/lib/Loading";
 import PopularMagazinePreview from "./PopularMagazinePreview";
 import produce from "immer";
 

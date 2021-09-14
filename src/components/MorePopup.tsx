@@ -1,18 +1,18 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import RecommendIcon from "../assets/icons/recommend.svg";
+import RecommendIcon from "@/assets/icons/recommend.svg";
 import UnRecommendIcon from "@/assets/icons/unrecommend.svg";
 import DeleteIcon from "@/assets/icons/more-operate-delete.svg";
-import SmsIcon from "../assets/icons/sms.svg";
-import PinterestIcon from "../assets/icons/Pinterest.svg";
-// import CopyIcon from "../assets/icons/copy.svg";
-import FacebookIcon from "../assets/icons/facebook.svg";
+import SmsIcon from "@/assets/icons/sms.svg";
+import PinterestIcon from "@/assets/icons/Pinterest.svg";
+// import CopyIcon from "@/assets/icons/copy.svg";
+import FacebookIcon from "@/assets/icons/facebook.svg";
 import HiddenIcon from "@/assets/icons/hidden.svg";
 import ShowIcon from "@/assets/icons/show.svg";
-// import InsIcon from "../assets/icons/ins.svg";
+// import InsIcon from "@/assets/icons/ins.svg";
 import { MagazineType } from "@/apis";
 import { PaperType } from "@/apis/paper";
-import Popup from "@/lib/Popup";
+import Popup from "#/lib/Popup";
 import { useAppSelector } from "@/app/hook";
 
 interface MoreOperateType {

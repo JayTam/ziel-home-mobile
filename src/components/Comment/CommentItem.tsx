@@ -1,17 +1,17 @@
-import UnLikeIcon from "../../assets/icons/comment-unlike.svg";
-import LikedIcon from "../../assets/icons/comment-like.svg";
+import UnLikeIcon from "@/assets/icons/comment-unlike.svg";
+import LikedIcon from "@/assets/icons/comment-like.svg";
 import styled from "styled-components";
 import ReplyItem from "./ReplyItem";
-import { CommentType, getReplyList, likeComment } from "../../apis/comment";
-import { digitalScale, getCreateTime, useLogin } from "../../utils/";
+import { CommentType, getReplyList, likeComment } from "@/apis/comment";
+import { digitalScale, getCreateTime, useLogin } from "@/utils/";
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import Button from "../../../lib/Button";
-import { useAppSelector } from "../../app/hook";
+import Button from "#/lib/Button";
+import { useAppSelector } from "@/app/hook";
 import produce from "immer";
 import { useUpdateEffect } from "ahooks";
-import Loading from "../../../lib/Loading";
-import TriangleOpen from "../../assets/icons/triangle_open.svg";
-import TriangleHide from "../../assets/icons/triangle_hide.svg";
+import Loading from "#/lib/Loading";
+import TriangleOpen from "@/assets/icons/triangle_open.svg";
+import TriangleHide from "@/assets/icons/triangle_hide.svg";
 
 interface CommentItemType extends CommentType {
   authorId: string;

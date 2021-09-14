@@ -1,15 +1,15 @@
 import { NextPage } from "next";
 import styled from "styled-components";
-import Header from "../../components/Header";
-import LogoImage from "../../assets/imgs/logo2.png";
-import TopImage from "../../assets/imgs/banner2.png";
-import Image from "next/image";
-import ContentBg from "../../../public/mask_group.png";
-import SongmicsLogo from "../../assets/imgs/logo3.png";
-import VasagleLogo from "../../assets/imgs/logo4.png";
-import FeanareaLogo from "../../assets/imgs/logo5.png";
+import Header from "@/components/Header";
 import { Parallax } from "react-parallax";
-import BgGif from "../../../public/about_bg.gif";
+import Image from "next/image";
+import LogoImage from "@/assets/imgs/logo2.png";
+import TopImage from "@/assets/imgs/banner2.png";
+import SongmicsLogo from "@/assets/imgs/logo3.png";
+import VasagleLogo from "@/assets/imgs/logo4.png";
+import FeanareaLogo from "@/assets/imgs/logo5.png";
+import ContentBg from "#/publicpublic/mask_group.png";
+import BgGif from "#/publicpublic/about_bg.gif";
 
 interface AboutType {
   id: string;

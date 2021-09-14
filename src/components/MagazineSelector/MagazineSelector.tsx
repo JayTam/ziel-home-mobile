@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import UploadIcon from "../../assets/icons/upload_1.svg";
-import RightIcon from "../../assets/icons/right.svg";
-import Popup from "../../../lib/Popup";
+import UploadIcon from "@/assets/icons/upload_1.svg";
+import RightIcon from "@/assets/icons/right.svg";
+import Popup from "#/lib/Popup";
 import Header from "../Header";
-import TabPanel from "../../../lib/Tabs/TabPanel";
-import Tabs from "../../../lib/Tabs";
-import { getMagazinesForChoose, MagazineType } from "../../apis";
+import TabPanel from "#/lib/Tabs/TabPanel";
+import Tabs from "#/lib/Tabs";
+import { getMagazinesForChoose, MagazineType } from "@/apis";
 import MagazinePreview from "./MagazinePreview";
 import { useUpdateEffect } from "ahooks";
 import { useInfiniteScroll } from "@/utils";
-import Loading from "../../../lib/Loading";
-import Empty from "../../../lib/Empty";
-import Image from "@/lib//Image";
+import Loading from "#/lib/Loading";
+import Empty from "#/lib/Empty";
+import Image from "#/lib//Image";
 
 const Container = styled.div`
   display: flex;

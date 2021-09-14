@@ -1,9 +1,9 @@
 import React, { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import Play from "../../assets/play.svg";
-import { replaceToImgBaseUrl, useCombinedRefs } from "../../utils";
-import Loading from "../../../lib/Loading";
-import Image from "@/lib/Image";
+import Play from "@/assets/play.svg";
+import { replaceToImgBaseUrl, useCombinedRefs } from "@/utils";
+import Loading from "#/lib/Loading";
+import Image from "#/lib/Image";
 
 export type VideoPlayerProps = {
   className?: string;

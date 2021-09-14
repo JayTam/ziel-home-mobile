@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { getSubscribeMagazinePaperList, MagazineType } from "../../apis";
+import { getSubscribeMagazinePaperList, MagazineType } from "@/apis";
 import SubscribeMagazinePreview from "./SubscribeMagazinePreview";
 import styled from "styled-components";
-import { useInfiniteScroll } from "../../utils";
-import Loading from "../../../lib/Loading";
-import Empty from "../../../lib/Empty";
-import Button from "../../../lib/Button";
+import { useInfiniteScroll } from "@/utils";
+import Loading from "#/lib/Loading";
+import Empty from "#/lib/Empty";
+import Button from "#/lib/Button";
 import PopularMagazinesScrollList from "./PopularMagazinesScrollList";
 
 const SubscribeContainer = styled.div`

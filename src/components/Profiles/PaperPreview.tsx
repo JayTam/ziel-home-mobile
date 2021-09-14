@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import PlayIcon from "../../assets/icons/play.svg";
+import PlayIcon from "@/assets/icons/play.svg";
 import { digitalScale } from "@/utils";
 import { PaperType } from "@/apis/paper";
-import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
+import VideoPlaceholderImage from "#/publicpublic/video_placeholder.jpg";
 import Image from "next/image";
-import { TextEllipsisMixin } from "@/lib/mixins";
-import TopIcon from "../../assets/icons/top.svg";
+import { TextEllipsisMixin } from "#/lib/mixins";
+import TopIcon from "@/assets/icons/top.svg";
 import React from "react";
 import Link from "next/link";
 import { TType } from "@/pages/feed";

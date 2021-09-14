@@ -1,9 +1,9 @@
-import { MagazineType } from "../../apis";
+import { MagazineType } from "@/apis";
 import styled from "styled-components";
-import SubscribeIcon from "../../assets/icons/icon_subscribe.svg";
-import { digitalScale } from "../../utils";
+import SubscribeIcon from "@/assets/icons/icon_subscribe.svg";
+import { digitalScale } from "@/utils";
 import Image from "next/image";
-import VideoPlaceholderImage from "../../../public/video_placeholder.jpg";
+import VideoPlaceholderImage from "#/publicpublic/video_placeholder.jpg";
 
 const Container = styled.div`
   height: 100%;

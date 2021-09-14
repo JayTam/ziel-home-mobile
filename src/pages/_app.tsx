@@ -1,6 +1,8 @@
 import type { AppContext, AppProps } from "next/app";
+import Router, { useRouter } from "next/router";
+import { Provider } from "react-redux";
 import { ThemeProvider } from "styled-components";
-import { theme } from "../../lib";
+import { theme } from "#/lib/index";
 import "normalize.css";
 import "swiper/swiper.min.css";
 import React from "react";
@@ -12,16 +14,14 @@ import {
   LoginContext,
   LoginContextState,
   parsePassportRedirectURL,
-} from "../utils";
-import { initialiseStore, useStore } from "../app/store";
+} from "@/utils";
+import { initialiseStore, useStore } from "@/app/store";
 import QueryString from "querystring";
-import { fetchUserInfo } from "../apis";
-import { setUserInfo } from "../app/features/user/userSlice";
+import { fetchUserInfo } from "@/apis";
+import { setUserInfo } from "@/app/features/user/userSlice";
 import App from "next/app";
-import { PASSPORT_DEVICE_ID_KEY, PASSPORT_TENANT_NAME_KEY, PASSPORT_TOKEN_KEY } from "../constants";
-import { Provider } from "react-redux";
-import Router, { useRouter } from "next/router";
-import "../styles/globals.css";
+import { PASSPORT_DEVICE_ID_KEY, PASSPORT_TENANT_NAME_KEY, PASSPORT_TOKEN_KEY } from "@/constants";
+import "@/styles/globals.css";
 import { KeepAliveProvider } from "react-next-keep-alive";
 
 // 需要登陆的路由，未登陆态访问这些路由，重定向到首页

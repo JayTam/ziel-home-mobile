@@ -1,14 +1,14 @@
-import Popup from "@/lib/Popup";
+import Popup from "#/lib/Popup";
 import styled from "styled-components";
 import CloseIcon from "@/assets/icons/btn_access_highlight.svg";
 import CommentsItem from "./CommentItem";
 import { PaperType } from "@/apis/paper";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CommentType, getCommentList, likeComment, replyComment, replyPaper } from "@/apis/comment";
-import Button from "@/lib/Button";
+import Button from "#/lib/Button";
 import produce from "immer";
 import { useInfiniteScroll, useLogin } from "@/utils";
-import Loading from "@/lib/Loading";
+import Loading from "#/lib/Loading";
 
 interface CommentProps extends PaperType {
   open: boolean;

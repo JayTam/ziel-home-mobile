@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { VerticalCenterMixin, VerticalHorizontalCenterMixin } from "../../lib/mixins";
-import BackIcon from "../assets/icons/back.svg";
+import { VerticalCenterMixin, VerticalHorizontalCenterMixin } from "#/lib/mixins";
+import BackIcon from "@/assets/icons/back.svg";
 import { useRouter } from "next/router";
 
 const Container = styled.div<HeaderProps>`

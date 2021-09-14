@@ -1,10 +1,10 @@
-import UnLikeIcon from "../../assets/icons/comment-unlike.svg";
-import LikedIcon from "../../assets/icons/comment-like.svg";
+import UnLikeIcon from "@/assets/icons/comment-unlike.svg";
+import LikedIcon from "@/assets/icons/comment-like.svg";
 import styled from "styled-components";
-import Button from "../../../lib/Button";
-import { CommentType } from "../../apis/comment";
-import { digitalScale, getCreateTime } from "../../utils";
-import { useAppSelector } from "../../app/hook";
+import Button from "#/lib/Button";
+import { CommentType } from "@/apis/comment";
+import { digitalScale, getCreateTime } from "@/utils";
+import { useAppSelector } from "@/app/hook";
 import React from "react";
 interface ReplyItemType extends CommentType {
   onClickreply?: (comment: CommentType) => void;

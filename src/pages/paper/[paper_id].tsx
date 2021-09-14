@@ -1,18 +1,18 @@
 import { NextPage } from "next";
-import { composeAuthHeaders } from "../../utils";
+import { composeAuthHeaders } from "@/utils";
 import { useForm } from "react-hook-form";
-import { createPaper, CreatePaperParams, updatePaper, UpdatePaperParams } from "../../apis/paper";
-import Header from "../../components/Header";
-import MagazineSelector from "../../components/MagazineSelector/MagazineSelector";
+import { createPaper, CreatePaperParams, updatePaper, UpdatePaperParams } from "@/apis/paper";
+import Header from "@/components/Header";
+import MagazineSelector from "@/components/MagazineSelector/MagazineSelector";
 import React from "react";
 import styled from "styled-components";
-import UploadFile from "../../../lib/UploadFile";
-import Button from "../../../lib/Button";
+import UploadFile from "#/lib/UploadFile";
+import Button from "#/lib/Button";
 import { useRouter } from "next/router";
-import { useAppSelector } from "../../app/hook";
+import { useAppSelector } from "@/app/hook";
 import { AxiosError } from "axios";
-import { store } from "../../app/store";
-import { logoutAsync } from "../../app/features/user/userSlice";
+import { store } from "@/app/store";
+import { logoutAsync } from "@/app/features/user/userSlice";
 
 const PageContainer = styled.div`
   padding: 20px 14px;

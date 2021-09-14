@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import { isIPV4, isServer } from "./base";
-import { PASSPORT_SUB_APP_ID_KEY } from "../constants";
+import { PASSPORT_SUB_APP_ID_KEY } from "@/constants";
 import { AppContext } from "next/app";
 
 export interface LoginContextState {

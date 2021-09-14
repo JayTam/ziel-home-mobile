@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { MagazineType } from "../../apis";
-import SubscribeIcon from "../../assets/icons/popular-subscribed.svg";
-import SubscribedIcon from "../../assets/icons/popular-subscribe.svg";
+import { MagazineType } from "@/apis";
+import SubscribeIcon from "@/assets/icons/popular-subscribed.svg";
+import SubscribedIcon from "@/assets/icons/popular-subscribe.svg";
 
 const Container = styled.div`
   display: flex;

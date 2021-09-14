@@ -1,24 +1,19 @@
 import { GetServerSideProps, NextPage } from "next";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { MagazineType, getMagazineById, subscribeMagazine } from "../../apis";
-import Header from "../../components/Header";
-import {
-  composeAuthHeaders,
-  digitalScale,
-  replaceToImgBaseUrl,
-  useInfiniteScroll,
-} from "../../utils";
-import BtnShare from "../../assets/icons/btn_share.svg";
+import { MagazineType, getMagazineById, subscribeMagazine } from "@/apis";
+import Header from "@/components/Header";
+import { composeAuthHeaders, digitalScale, replaceToImgBaseUrl, useInfiniteScroll } from "@/utils";
+import BtnShare from "@/assets/icons/btn_share.svg";
 import ShowMoreText from "react-show-more-text";
 import produce from "immer";
-import PaperPreview from "../../components/Profiles/PaperPreview";
+import PaperPreview from "@/components/Profiles/PaperPreview";
 import { getPaperList, PaperType } from "@/apis/paper";
-import SubscribeBtn from "../../assets/icons/subscribe.svg";
-import UnSubscribeBtn from "../../assets/icons/unSubscribe.svg";
-import { TextEllipsisMixin } from "@/lib/mixins";
+import SubscribeBtn from "@/assets/icons/subscribe.svg";
+import UnSubscribeBtn from "@/assets/icons/unSubscribe.svg";
+import { TextEllipsisMixin } from "#/lib/mixins";
 import Head from "next/head";
-import MorePopup from "../../components/MorePopup";
+import MorePopup from "@/components/MorePopup";
 
 interface MagazineProps {
   magazine: MagazineType;

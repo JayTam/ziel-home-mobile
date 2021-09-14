@@ -1,15 +1,15 @@
 import React, { useMemo } from "react";
-import TabBarItem from "../../lib/TabBarItem";
-import HomeDarkActiveIcon from "../assets/icons/home-dark-active.svg";
-import HomeDarkIcon from "../assets/icons/home-dark.svg";
-import CreateIcon from "../assets/icons/create.svg";
-import PersonalDark from "../assets/icons/personal-dark.svg";
-import PersonalDarkActive from "../assets/icons/personal-dark-active.svg";
-import HomeIcon from "../assets/icons/home.svg";
-import HomeActiveIcon from "../assets/icons/home-active.svg";
-import PersonalActive from "../assets/icons/personal-active.svg";
-import Personal from "../assets/icons/personal.svg";
-import TabBar from "../../lib/TabBar";
+import TabBarItem from "#/lib/TabBarItem";
+import HomeDarkActiveIcon from "@/assets/icons/home-dark-active.svg";
+import HomeDarkIcon from "@/assets/icons/home-dark.svg";
+import CreateIcon from "@/assets/icons/create.svg";
+import PersonalDark from "@/assets/icons/personal-dark.svg";
+import PersonalDarkActive from "@/assets/icons/personal-dark-active.svg";
+import HomeIcon from "@/assets/icons/home.svg";
+import HomeActiveIcon from "@/assets/icons/home-active.svg";
+import PersonalActive from "@/assets/icons/personal-active.svg";
+import Personal from "@/assets/icons/personal.svg";
+import TabBar from "#/lib/TabBar";
 import { useRouter } from "next/router";
 import { useLogin } from "../utils";
 

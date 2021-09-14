@@ -1,14 +1,14 @@
+import { useState } from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 import styled from "styled-components";
-import Button from "../../../lib/Button";
-import { ClickableMixin } from "../../../lib/mixins";
-import { logoutAsync } from "../../app/features/user/userSlice";
-import { useAppDispatch } from "../../app/hook";
-import Right from "../../assets/icons/right.svg";
-import Hearder from "../../components/Header";
-import Popup from "../../../lib/Popup";
-import { useState } from "react";
+import Button from "#/lib/Button";
+import { ClickableMixin } from "#/lib/mixins";
+import Popup from "#/lib/Popup";
+import { logoutAsync } from "@/app/features/user/userSlice";
+import { useAppDispatch } from "@/app/hook";
+import Header from "@/components/Header";
+import Right from "@/assets/icons/right.svg";
 
 interface SettingType {
   userId: string;
@@ -112,7 +112,7 @@ const UserSetting: NextPage<SettingType> = () => {
     <>
       <Container>
         <TopContainer>
-          <Hearder>Account</Hearder>
+          <Header>Account</Header>
           <SettingItem
             onClick={() => {
               window.location.href = `${process.env.NEXT_PUBLIC_PAASPORT_URL}/profiles`;

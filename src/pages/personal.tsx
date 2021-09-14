@@ -1,16 +1,16 @@
 import { NextPage } from "next";
 import Image from "next/image";
-import styled from "styled-components";
-import BgImg from "../assets/imgs/Mask Group.png";
-import AleftIcon from "../assets/icons/aleft.svg";
-import FreeTrialIcon from "../assets/imgs/free trial.png";
-import AddressIcon from "../assets/icons/your address.svg";
-import HelpIcon from "../assets/icons/help & support.svg";
-import SettingIcon from "../assets/icons/setting.svg";
-import { useAppSelector } from "../app/hook";
-import { ClickableMixin } from "../../lib/mixins";
-import BottomTabBar from "../components/BottomTabBar";
 import Link from "next/link";
+import styled from "styled-components";
+import { useAppSelector } from "@/app/hook";
+import { ClickableMixin } from "#/lib/mixins";
+import BottomTabBar from "@/components/BottomTabBar";
+import BgImg from "@/assets/imgs/Mask Group.png";
+import AleftIcon from "@/assets/icons/aleft.svg";
+import FreeTrialIcon from "@/assets/imgs/free trial.png";
+import AddressIcon from "@/assets/icons/your address.svg";
+import HelpIcon from "@/assets/icons/help & support.svg";
+import SettingIcon from "@/assets/icons/setting.svg";
 
 interface UserProps {
   name: string;

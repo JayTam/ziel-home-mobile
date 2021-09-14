@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { MagazineType } from "@/apis";
-import { VerticalHorizontalCenterMixin } from "@/lib/mixins";
+import { VerticalHorizontalCenterMixin } from "#/lib/mixins";
 import MorePaperIcon from "@/assets/icons/more-paper.svg";
 import Link from "next/link";
 import ShowMoreText from "react-show-more-text";
-import Image from "@/lib/Image";
+import Image from "#/lib/Image";
 
 const Container = styled.div`
   border-bottom: 1px solid #f5f5f5;

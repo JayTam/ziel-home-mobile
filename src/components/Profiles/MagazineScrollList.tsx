@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getStarMagazines, getUserMagazines, MagazineType } from "../../apis";
-import { useInfiniteScroll } from "../../utils";
+import { getStarMagazines, getUserMagazines, MagazineType } from "@/apis";
+import { useInfiniteScroll } from "@/utils";
 import MagazinePreview from "./MagazinePreview";
 import styled from "styled-components";
 import Link from "next/link";
