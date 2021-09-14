@@ -233,7 +233,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
             <Link href={`/followers/${props.userId}?tabIndex=2`}>
               <StatisticsItem>
                 <Statistics>{digitalScale(profile.followingNum)}</Statistics>
-                <TypeText>Follewing</TypeText>
+                <TypeText>Following</TypeText>
               </StatisticsItem>
             </Link>
           </StatisticsLayout>
