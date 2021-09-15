@@ -9,6 +9,7 @@ import { logoutAsync } from "@/app/features/user/userSlice";
 import { useAppDispatch } from "@/app/hook";
 import Header from "@/components/Header";
 import Right from "@/assets/icons/right.svg";
+import { PASSPORT_SUB_APP_ID_KEY } from "@/constants";
 
 interface SettingType {
   userId: string;
@@ -123,7 +124,11 @@ const UserSetting: NextPage<SettingType> = () => {
           </SettingItem>
           <SettingItem
             onClick={() => {
-              window.location.href = `${process.env.NEXT_PUBLIC_PAASPORT_URL}/account_security`;
+              window.location.href = `${
+                process.env.NEXT_PUBLIC_PAASPORT_URL
+              }account_security?${PASSPORT_SUB_APP_ID_KEY}=${
+                process.env.NEXT_PUBLIC_PAASPORT_APP_ID
+              }&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_WEB_BASE_URL ?? "")}`;
             }}
           >
             <ItemTitle>Account Security</ItemTitle>
