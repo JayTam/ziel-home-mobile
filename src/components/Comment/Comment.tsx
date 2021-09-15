@@ -103,6 +103,7 @@ const Comment: React.FC<CommentProps> = (props) => {
   const [currentComment, setCurrentComment] = useState<CommentType | null>(null);
   const [currentReply, setCurrentReply] = useState<CommentType | null>(null);
   const currentCommentRef = useRef<CommentItemHandle>(null);
+  const [count, setCount] = useState(0);
   const { withLogin } = useLogin();
   // const commentCount = useMemo(()=> )
   const commentTextContent = useMemo(() => {
@@ -123,6 +124,7 @@ const Comment: React.FC<CommentProps> = (props) => {
           const response = await getCommentList(props.id, { page });
           const list = response.data.result.data;
           const hasMore = Boolean(response.data.result.hasmore);
+          setCount(response.data.result.count);
           setHasMore(hasMore);
           setCommentList((prev) => [...prev, ...list]);
         } catch {
@@ -255,7 +257,7 @@ const Comment: React.FC<CommentProps> = (props) => {
         <CommentContainer>
           <CommentStyle>
             <HeaderContent>
-              <HeaderTitle>{`Comments·${commentList.length ? commentList.length : 0}`}</HeaderTitle>
+              <HeaderTitle>{`Comments·${count ? count : 0}`}</HeaderTitle>
               <CloseIcon onClick={props.onCommentClose} />
             </HeaderContent>
 
