@@ -8,8 +8,8 @@ import TopImage from "@/assets/imgs/banner2.png";
 import SongmicsLogo from "@/assets/imgs/logo3.png";
 import VasagleLogo from "@/assets/imgs/logo4.png";
 import FeanareaLogo from "@/assets/imgs/logo5.png";
-import ContentBg from "#/publicpublic/mask_group.png";
-import BgGif from "#/publicpublic/about_bg.gif";
+import ContentBg from "#/public/mask_group.png";
+import BgGif from "#/public/about_bg.gif";
 
 interface AboutType {
   id: string;

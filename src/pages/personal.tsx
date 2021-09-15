@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import styled from "styled-components";
 import { useAppSelector } from "@/app/hook";
-import { ClickableMixin } from "#/lib/mixins";
+import { ClickableMixin, TextEllipsisMixin } from "#/lib/mixins";
 import BottomTabBar from "@/components/BottomTabBar";
 import BgImg from "@/assets/imgs/Mask Group.png";
 import AleftIcon from "@/assets/icons/aleft.svg";
@@ -26,14 +26,17 @@ const Container = styled.div`
 const HeaderLayout = styled.div`
   position: relative;
   width: 100%;
+  height: 156px;
+  background-size: 100% 100%;
+  background-image: url("${BgImg.src}");
 `;
-const HeaderBg = styled(Image)`
-  width: 100vw;
-`;
+// const HeaderBg = styled(Image)`
+//   width: 100vw;
+// `;
 const HeaderContent = styled.div`
   position: absolute;
   left: 0;
-  bottom: 4px;
+  bottom: 0;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -41,26 +44,26 @@ const HeaderContent = styled.div`
 `;
 
 const PersonalContent = styled.div`
+  width: 100%;
   display: flex;
+  justify-content: flex-start;
   align-items: center;
   margin-top: 30px;
-  justify-content: space-between;
   padding: 0px 14px 14px 14px;
 `;
-const UserContent = styled.div`
-  display: flex;
-  align-items: center;
-`;
 const UserInfo = styled.div`
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 10px;
+  padding: 0 10px;
+  ${TextEllipsisMixin}
 `;
 const UserName = styled.div`
   font-weight: 500;
   font-size: 18px;
   line-height: 16px;
   color: ${(props) => props.theme.palette.text?.primary};
+  ${TextEllipsisMixin}
 `;
 const RegisterTime = styled.div`
   font-size: 14px;
@@ -71,6 +74,9 @@ const RegisterTime = styled.div`
 const ProfileEntry = styled.div`
   display: flex;
   align-items: center;
+  width: 88px;
+  max-width: 88px;
+  min-width: 88px;
 `;
 const ProfileText = styled.div`
   color: #666666;
@@ -99,6 +105,8 @@ const ItemText = styled.div`
 `;
 const UserAvatar = styled.img`
   width: 80px;
+  min-width: 80px;
+  max-width: 80px;
   height: 80px;
   border-radius: 50%;
 `;
@@ -125,16 +133,14 @@ const Personal: NextPage<UserProps> = () => {
     <>
       <Container>
         <HeaderLayout>
-          <HeaderBg src={BgImg} />
+          {/* <HeaderBg src={BgImg} /> */}
           <HeaderContent>
             <PersonalContent>
-              <UserContent>
-                <UserAvatar src={user.avatar} />
-                <UserInfo>
-                  <UserName>{user.name}</UserName>
-                  <RegisterTime>{getRegistTime(user.created_at)} day in ziel home</RegisterTime>
-                </UserInfo>
-              </UserContent>
+              <UserAvatar src={user.avatar} />
+              <UserInfo>
+                <UserName>{user.name}</UserName>
+                <RegisterTime>{getRegistTime(user.created_at)} day in ziel home</RegisterTime>
+              </UserInfo>
               <ProfileEntry>
                 <Link href={PAPER_PROFILE_ROUTE}>
                   <ProfileText>Your profile</ProfileText>

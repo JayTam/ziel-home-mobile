@@ -142,7 +142,10 @@ const Comment: React.FC<CommentProps> = (props) => {
    * 发送评论
    */
   const handleSendCommentWithLogin = withLogin(async () => {
-    if (!commentText) return;
+    if (!commentText.trim()) {
+      setCommentText(commentText.trim());
+      return;
+    }
     if (currentComment) {
       /**
        * 回复评论
@@ -285,7 +288,7 @@ const Comment: React.FC<CommentProps> = (props) => {
             <InputContent>
               <InputStyle
                 maxLength={255}
-                onChange={(e) => setCommentText(e.target.value.trim())}
+                onChange={(e) => setCommentText(e.target.value)}
                 value={commentText}
                 placeholder="say something…"
               />

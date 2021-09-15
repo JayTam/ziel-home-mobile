@@ -68,7 +68,6 @@ const PaperInfo = styled.div`
   font-size: 12px;
   line-height: 16px;
   margin-bottom: 10px;
-  word-break: break-word;
 `;
 
 const PaperTag = styled.span`
@@ -88,7 +87,6 @@ const PaperTopIcon = styled(TopIcon)`
 `;
 
 const PaperTitle = styled.div`
-  word-break: break-word;
   display: inline-block;
   margin-right: 10px;
   color: ${(props) => props.theme.palette.common?.white};
