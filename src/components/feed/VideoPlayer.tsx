@@ -62,7 +62,6 @@ const Poster = styled(Image)`
   top: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
 `;
 
 const VideoLoading = styled(Loading)`
@@ -133,7 +132,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       props.onChangeLoading?.(false);
     } else {
       props.onChangeLoading?.(true);
-      player.addEventListener("canplaythrough", handleCloseLoading);
+      player.addEventListener("canplay", handleCloseLoading);
     }
     /**
      * 获取视频总时长
@@ -153,7 +152,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
     };
     player.addEventListener("timeupdate", handleTimeUpdate);
     return () => {
-      player.removeEventListener("canplaythrough", handleCloseLoading);
+      player.removeEventListener("canplay", handleCloseLoading);
       player.removeEventListener("loadedmetadata", handleGetDuration);
       player.removeEventListener("timeupdate", handleTimeUpdate);
     };
@@ -256,6 +255,8 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
           height="100%"
           src={replaceToImgBaseUrl(props.poster)}
           alt="poster"
+          fit="contain"
+          resizeOptions={{ w: 375 }}
         />
       ) : null}
       {/* 视频 */}
