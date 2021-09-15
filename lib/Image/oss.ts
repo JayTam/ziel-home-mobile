@@ -1,6 +1,6 @@
 import { isDef } from "@/utils";
 
-type TResizeOptions = {
+export type TResizeOptions = {
   [key: string]: unknown;
   m?: "lfit" | "mfit" | "fill" | "pad" | "fixed";
   w?: number | string;
@@ -40,6 +40,8 @@ export const resizeImage = (originImage?: string, options?: TResizeOptions) => {
       if (key === "w" || key === "h") {
         if (!isPercentNum(value)) {
           query += `,${key}_${parseInt(value) * 2}`;
+        } else {
+          return originImage;
         }
       } else {
         query += `,${key}_${value}`;
