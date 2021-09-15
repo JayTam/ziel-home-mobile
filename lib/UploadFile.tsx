@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import axios, { AxiosError, CancelTokenSource } from "axios";
-import UploadIcon from "../src/assets/icons/upload.svg";
-import DeleteIcon from "../src/assets/icons/delete.svg";
-import Button from "./Button";
 import Progress from "./Progress";
 import { calcMD5, composeAuthHeaders } from "../src/utils";
+import UploadIcon from "../src/assets/icons/upload.svg";
+import DeleteIcon from "../src/assets/icons/delete.svg";
+import Loading from "#/lib/Loading";
+import { snapshotVideo } from "#/lib/Image/oss";
 
 interface UploadFileProps {
   className?: string;
@@ -25,8 +26,9 @@ interface UploadFileProps {
 
 const Container = styled.div`
   position: relative;
-  width: 120px;
-  height: 160px;
+  width: 180px;
+  height: 240px;
+  border-radius: 14px;
 `;
 
 const UploadPlaceholder = styled.div`
@@ -34,7 +36,7 @@ const UploadPlaceholder = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
-  border: 1px solid #f5f5f5;
+  border: 2px solid #f5f5f5;
   border-radius: 14px;
   align-items: center;
 `;
@@ -66,36 +68,49 @@ const UploadDeleteIcon = styled(DeleteIcon)`
 `;
 
 const LoadingMask = styled.div`
+  position: absolute;
   width: 100%;
   height: 100%;
-  position: fixed;
   left: 0;
   top: 0;
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  border-radius: 14px;
 `;
 
-const LoadingContainer = styled.div`
-  width: 90%;
-  background-color: #fff;
-  border-radius: 14px;
-  padding: 14px 40px;
+const UploadingContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
 `;
 
-const LoadingTitle = styled.p`
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 22px;
+const UploadingProgress = styled(Progress)`
+  height: 100%;
 `;
 
-const LoadingProgress = styled(Progress)`
-  margin: 14px 0;
+const TransformLoadingContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TransformLoadingProgress = styled(Loading)`
+  margin: 0;
+`;
+const TransformLoadingText = styled.p`
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 20px;
+  color: ${(props) => props.theme.palette.common?.white};
 `;
 
 // 分片，每一片的大小为1M，单位是 bytes
@@ -142,10 +157,15 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
   const innerRef = useRef<HTMLInputElement>(null);
   const cancelTokenSource = useRef<CancelTokenSource>(axios.CancelToken.source());
   const [preview, setPreview] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  // 资源上传loading
+  const [uploading, setUploading] = useState(false);
+  // 视频转码loading
+  const [transformLoading, setTransformLoading] = useState(false);
   const [uploadingProgress, setUploadingProgress] = useState(0);
   // 分片上传upload id
   const uploadId = useRef<string | null>(null);
+  // 文件名称
+  const [fileName, setFileName] = useState("");
 
   /**
    * 初始化文件上传
@@ -181,8 +201,12 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
       formData.append("chunk_num", index.toString());
       return { formData, index, fileName: file.name, isUpload: false, retryNum: 0 };
     });
+    setUploading(true);
     await sendUploadRequest(chunkFormDataList);
+    setUploading(false);
+    setTransformLoading(true);
     const videoUrl = await mergeRequest();
+    setTransformLoading(false);
     setPreview(videoUrl);
     props.onChange?.(videoUrl);
   };
@@ -194,7 +218,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
   const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append(uploadName ?? "file", file);
-    setLoading(true);
+    setUploading(true);
     cancelTokenSource.current = axios.CancelToken.source();
     request({
       method: "POST",
@@ -222,7 +246,7 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
         onError?.(error);
       })
       .finally(() => {
-        setLoading(false);
+        setUploading(false);
       });
   };
 
@@ -378,38 +402,52 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    setFileName(file.name);
     if (type === "image") {
       // 普通上传
       await uploadFile(file);
     } else {
       // 分片上传
       // 是否上传过
-      setLoading(true);
+      setUploading(true);
       const downloadPath = await uploadInitial(file);
       if (downloadPath) {
         setUploadingProgress(1);
+        setUploading(false);
+        setTransformLoading(true);
         await askCompleteTranscoding(downloadPath);
+        setTransformLoading(false);
         setPreview(downloadPath);
         props.onChange?.(downloadPath);
       } else {
         await uploadChunks(file);
       }
-      setLoading(false);
     }
   };
 
   return (
     <Container className={className} ref={ref}>
-      {loading ? (
+      {uploading ? (
         <LoadingMask>
-          <LoadingContainer>
-            <LoadingTitle>Upload the original file</LoadingTitle>
-            <LoadingProgress percentage={uploadingProgress} />
-            <Button>cancel</Button>
-          </LoadingContainer>
+          <UploadingContainer>
+            <UploadingProgress
+              size={100}
+              percentage={uploadingProgress}
+              initialText="Initial upload ...."
+              progressText={fileName}
+            />
+          </UploadingContainer>
         </LoadingMask>
       ) : null}
-      {!preview ? (
+      {transformLoading ? (
+        <LoadingMask>
+          <TransformLoadingContainer>
+            <TransformLoadingProgress size={40} />
+            <TransformLoadingText>Preparing...</TransformLoadingText>
+          </TransformLoadingContainer>
+        </LoadingMask>
+      ) : null}
+      {!preview && !uploading && !transformLoading ? (
         <UploadPlaceholder onClick={handleOpen}>
           <UploadIcon />
         </UploadPlaceholder>
@@ -419,7 +457,14 @@ const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>((props, r
           {type === "image" ? (
             <ImagePreview src={preview} />
           ) : (
-            <VideoPreview src={preview} controls={false} autoPlay muted loop />
+            <VideoPreview
+              src={preview}
+              poster={snapshotVideo(preview)}
+              controls={false}
+              autoPlay
+              muted
+              loop
+            />
           )}
         </ImagePreviewWrapper>
       ) : null}

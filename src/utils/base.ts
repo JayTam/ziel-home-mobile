@@ -8,6 +8,10 @@ export function isIOS() {
   );
 }
 
+export function isDef<T>(val: T) {
+  return val !== undefined && val !== null;
+}
+
 export function isClient() {
   return typeof window !== "undefined";
 }

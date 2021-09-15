@@ -4,6 +4,7 @@ import Play from "@/assets/play.svg";
 import { replaceToImgBaseUrl, useCombinedRefs } from "@/utils";
 import Loading from "#/lib/Loading";
 import Image from "#/lib/Image";
+import { VideoReadyState } from "@/constants";
 
 export type VideoPlayerProps = {
   className?: string;
@@ -33,6 +34,7 @@ export type VideoPlayerProps = {
   isPlay?: boolean;
   onTogglePlay?: (isPlay: boolean) => void;
   onChangeCurrentTime?: (time: number) => void;
+  onChangeLoading?: (loading: boolean) => void;
   // 第一次播放，兼容iOS video play 必需在 eventHandler 中
   onFirstPlay?: () => void;
 };
@@ -79,6 +81,21 @@ const PlayIcon = styled(Play)`
   z-index: 3;
 `;
 
+const ProgressContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #000;
+  height: 1px;
+  width: 100%;
+  z-index: 1000;
+`;
+
+const Progress = styled.div`
+  height: 100%;
+  background-color: #666;
+`;
+
 const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props, ref) => {
   // 是否第一次播放过
   const [isFirstPlayed, setIsFirstPlayed] = useState(false);
@@ -88,6 +105,59 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
 
   const [loadingIcon, setLoadingIcon] = useState(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
+  // 播放总时长，单位=秒
+  const [duration, setDuration] = useState(0);
+  // 已播放时长，单位=秒
+  const [currentTime, setCurrentTime] = useState(0);
+  // 视频播放进度，单位=百分比
+  const playProgressStyles = useMemo(() => {
+    const percent = duration > 0 ? currentTime / duration : 0;
+    return {
+      width: `${percent * 100}%`,
+      transition: percent > 0.01 ? "width .3s ease" : undefined,
+    };
+  }, [currentTime, duration]);
+
+  useEffect(() => {
+    const player = videoPlayerRef.current;
+    if (!player) return;
+    // 切换video之后，重新加载video
+    player.load();
+    /**
+     * 获取加载状态
+     */
+    const handleCloseLoading = () => {
+      props.onChangeLoading?.(false);
+    };
+    if (player.readyState === VideoReadyState.HAVE_ENOUGH_DATA) {
+      props.onChangeLoading?.(false);
+    } else {
+      props.onChangeLoading?.(true);
+      player.addEventListener("canplaythrough", handleCloseLoading);
+    }
+    /**
+     * 获取视频总时长
+     */
+    function handleGetDuration(this: any) {
+      setDuration(this.duration);
+    }
+    player.addEventListener("loadedmetadata", handleGetDuration);
+    /**
+     * 获取视频已播放时长
+     */
+    const handleTimeUpdate = () => {
+      setCurrentTime(player.currentTime);
+      if (player.currentTime !== 0) {
+        setIsFirstPlayed(true);
+      }
+    };
+    player.addEventListener("timeupdate", handleTimeUpdate);
+    return () => {
+      player.removeEventListener("canplaythrough", handleCloseLoading);
+      player.removeEventListener("loadedmetadata", handleGetDuration);
+      player.removeEventListener("timeupdate", handleTimeUpdate);
+    };
+  }, [props.video]);
 
   useEffect(() => {
     if (props.loading) {
@@ -108,24 +178,6 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
   }, [props.loading]);
 
   useEffect(() => {
-    const player = videoPlayerRef.current;
-    if (!player) return;
-    /**
-     * 视频当前播放时间更新
-     */
-    const handleTimeUpdate = () => {
-      props.onChangeCurrentTime?.(player.currentTime);
-      if (player.currentTime !== 0) {
-        setIsFirstPlayed(true);
-      }
-    };
-    player.addEventListener("timeupdate", handleTimeUpdate);
-    return () => {
-      player.removeEventListener("timeupdate", handleTimeUpdate);
-    };
-  }, [props.video]);
-
-  useEffect(() => {
     // slider 模式下，没有 video 元素，没有相应的ref
     if (props.isPlay && !isFirstPlayed) {
       setIsFirstPlayed(true);
@@ -133,7 +185,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
     const player = videoPlayerRef.current;
     if (!player) return;
     if (props.isPlay) {
-      if (props.currentTime === 0) player.currentTime = 0;
+      // if (props.currentTime === 0) player.currentTime = 0;
       player
         .play()
         .then(() => {
@@ -159,11 +211,6 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       props.onTogglePlay?.(props.isPlay ?? false);
     }
   };
-
-  useEffect(() => {
-    const player = videoPlayerRef.current;
-    if (player) player.load();
-  }, [props.video]);
 
   /**
    * 显示视频封面
@@ -228,6 +275,12 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       ) : null}
       {/* 播放按钮 */}
       {props.type === "poster" ? <PlayIcon hidden={hiddenPlayIcon} /> : null}
+      {/* 进度条 */}
+      {props.type === "video" ? (
+        <ProgressContainer hidden={hiddenVideo}>
+          <Progress style={playProgressStyles} />
+        </ProgressContainer>
+      ) : null}
     </Container>
   );
 });

@@ -1,3 +1,5 @@
+import { isDef } from "@/utils";
+
 type TResizeOptions = {
   [key: string]: unknown;
   m?: "lfit" | "mfit" | "fill" | "pad" | "fixed";
@@ -9,6 +11,15 @@ type TBlurOptions = {
   [key: string]: unknown;
   r?: number | string;
   s?: number | string;
+};
+
+type TSnapshotOptions = {
+  [key: string]: unknown;
+  t?: number | string;
+  w?: number | string;
+  h?: number | string;
+  f?: "jpg" | "png";
+  m?: "fast";
 };
 
 /**
@@ -25,7 +36,7 @@ export const resizeImage = (originImage?: string, options?: TResizeOptions) => {
   let query = `x-oss-process=image/resize`;
   for (const key in options) {
     const value = (options[key] as string).toString();
-    if (value) {
+    if (isDef(value)) {
       if (key === "w" || key === "h") {
         if (!isPercentNum(value)) {
           query += `,${key}_${parseInt(value) * 2}`;
@@ -43,10 +54,25 @@ export const blurImage = (originImage?: string, options: TBlurOptions = { r: 50,
   if (!originImage) return "";
   let query = `x-oss-process=image/blur`;
   for (const key in options) {
-    if (options[key]) {
+    if (isDef(options[key])) {
       query += `,${key}_${options[key]}`;
     }
   }
   const hasFirstQuery = originImage.indexOf("?") > -1;
   return originImage + (hasFirstQuery ? "&" : "?") + query;
+};
+
+export const snapshotVideo = (
+  originVideo?: string,
+  options: TSnapshotOptions = { t: 0, w: 0, h: 0, m: "fast", f: "jpg" }
+) => {
+  if (!originVideo) return "";
+  let query = `x-oss-process=video/snapshot`;
+  for (const key in options) {
+    if (isDef(options[key])) {
+      query += `,${key}_${options[key]}`;
+    }
+  }
+  const hasFirstQuery = originVideo.indexOf("?") > -1;
+  return originVideo + (hasFirstQuery ? "&" : "?") + query;
 };
