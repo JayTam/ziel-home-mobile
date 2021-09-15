@@ -121,7 +121,8 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
   useEffect(() => {
     const player = videoPlayerRef.current;
     if (!player) return;
-    console.log("update");
+    // 切换video之后，重新加载video
+    player.load();
     /**
      * 获取加载状态
      */
@@ -132,7 +133,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       props.onChangeLoading?.(false);
     } else {
       props.onChangeLoading?.(true);
-      player.addEventListener("loadeddata", handleCloseLoading);
+      player.addEventListener("canplaythrough", handleCloseLoading);
     }
     /**
      * 获取视频总时长
@@ -145,7 +146,6 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
      * 获取视频已播放时长
      */
     const handleTimeUpdate = () => {
-      // props.onChangeCurrentTime?.(player.currentTime);
       setCurrentTime(player.currentTime);
       if (player.currentTime !== 0) {
         setIsFirstPlayed(true);
@@ -153,7 +153,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
     };
     player.addEventListener("timeupdate", handleTimeUpdate);
     return () => {
-      player.removeEventListener("loadeddata", handleCloseLoading);
+      player.removeEventListener("canplaythrough", handleCloseLoading);
       player.removeEventListener("loadedmetadata", handleGetDuration);
       player.removeEventListener("timeupdate", handleTimeUpdate);
     };
@@ -211,11 +211,6 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       props.onTogglePlay?.(props.isPlay ?? false);
     }
   };
-
-  useEffect(() => {
-    const player = videoPlayerRef.current;
-    if (player) player.load();
-  }, [props.video]);
 
   /**
    * 显示视频封面
