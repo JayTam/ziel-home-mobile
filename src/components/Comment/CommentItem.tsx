@@ -12,6 +12,7 @@ import { useUpdateEffect } from "ahooks";
 import Loading from "#/lib/Loading";
 import TriangleOpen from "@/assets/icons/triangle_open.svg";
 import TriangleHide from "@/assets/icons/triangle_hide.svg";
+import Image from "#/lib/Image";
 
 interface CommentItemType extends CommentType {
   authorId: string;
@@ -34,11 +35,13 @@ const CommentContentTop = styled.div`
   align-items: center;
 `;
 
-const AvatarLevel1 = styled.img`
+const AvatarLevel1 = styled(Image)`
   align-self: flex-start;
   margin-top: 2px;
   height: 34px;
   width: 34px;
+  min-width: 34px;
+  max-width: 34px;
   border-radius: 50%;
 `;
 const ContentContainer = styled.div`
@@ -213,7 +216,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
     <div ref={commentRef}>
       <CommentContent>
         <CommentContentTop>
-          <AvatarLevel1 src={props.avatar} />
+          <AvatarLevel1 width={34} height={34} blur src={props.avatar} />
           <ContentContainer>
             <UserInfo>
               {props.author} {props.authorId === props.userId ? <span>·originator</span> : ""}

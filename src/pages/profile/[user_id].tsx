@@ -18,6 +18,7 @@ import FollowedIcon from "@/assets/icons/Followed_profile.svg";
 import UnFollowedIcon from "@/assets/icons/unFollowed_profile.svg";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Image from "#/lib/Image";
 
 interface ProfilePageProps {
   profile: ProfileType;
@@ -42,12 +43,9 @@ interface ProfilePageProps {
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 `;
 const TopLayout = styled.div`
-  margin-top: 64px;
+  margin-top: px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -59,7 +57,7 @@ const TopContent = styled.div`
 const UserLayout = styled.div`
   display: flex;
 `;
-const UserIcon = styled.img`
+const UserIcon = styled(Image)`
   width: 80px;
   height: 80px;
   min-width: 80px;
@@ -77,7 +75,7 @@ const UserName = styled.div`
   font-weight: 500;
   font-size: 18px;
   line-height: 16px;
-  max-width: calc(100% - 32px);
+  padding-right: 10px;
 `;
 const UserDecription = styled.div`
   margin-top: 20px;
@@ -191,13 +189,11 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
 
   return (
     <Container>
-      <Header fixed onBack={handleBack}>
-        Profile
-      </Header>
+      <Header onBack={handleBack}>Profile</Header>
       <TopLayout>
         <TopContent>
           <UserLayout>
-            <UserIcon src={profile.avatar} />
+            <UserIcon width={80} height={80} src={profile.avatar} />
             <UserRight>
               <UserName>{profile.nickname}</UserName>
               {isMyProfile ? (
@@ -238,7 +234,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
         </TopContent>
       </TopLayout>
       <BottomLayout>
-        <TabsStyle activeKey={type} onChange={handleChange}>
+        <TabsStyle tabStyle="dot" activeKey={type} onChange={handleChange}>
           <TabPanelStyle
             indexKey="1"
             tab={`Paper ${digitalScale(props.usersPapers.count, "Int")}`}
@@ -281,6 +277,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
   // 用户简介信息
   const profileInfoResponse = await getProfileInfo(userId, { headers });
+  console.log(profileInfoResponse);
   const papersResponse = await getUserPapers({ userId, page: 1 }, { headers });
   const magazineResponse = await getUserMagazines({ userId, limit: 1, page: 1 }, { headers });
   const userPaperResponse = await getStarPapers({ userId, limit: 1, page: 1 }, { headers });

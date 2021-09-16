@@ -4,6 +4,7 @@ import SubscribeIcon from "@/assets/icons/icon_subscribe.svg";
 import { digitalScale } from "@/utils";
 import Image from "next/image";
 import VideoPlaceholderImage from "#/public/video_placeholder.jpg";
+import OssImage from "#/lib/Image";
 
 const Container = styled.div`
   height: 100%;
@@ -15,7 +16,7 @@ const MagazineContent = styled.div`
   height: 100%;
   width: 100%;
 `;
-const MagazinePoster = styled.img`
+const MagazinePoster = styled(OssImage)`
   height: 227px;
   width: 100%;
   border-radius: 14px;
@@ -62,7 +63,13 @@ const MagazinePreview: React.FC<MagazineType> = (props) => {
     <Container>
       <MagazineContent>
         {props.cover ? (
-          <MagazinePoster src={props.cover} />
+          <MagazinePoster
+            height={227}
+            width="100%"
+            blur
+            resizeOptions={{ w: 170, h: 227 }}
+            src={props.cover}
+          />
         ) : (
           <PlacehoderImage src={VideoPlaceholderImage} />
         )}

@@ -21,7 +21,7 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
   const [papers, setPapers] = useState<PaperType[]>([]);
   const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
     hasMore: false,
-    initialPage: 0,
+    initialPage: 1,
   });
 
   useEffect(() => {

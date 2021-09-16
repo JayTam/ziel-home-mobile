@@ -6,6 +6,7 @@ import { CommentType } from "@/apis/comment";
 import { digitalScale, getCreateTime } from "@/utils";
 import { useAppSelector } from "@/app/hook";
 import React from "react";
+import Image from "#/lib/Image";
 interface ReplyItemType extends CommentType {
   onClickreply?: (comment: CommentType) => void;
   onClickLike?: (comment: CommentType) => void;
@@ -17,9 +18,11 @@ const MoreContents = styled.div`
   padding-top: 14px;
 `;
 const MoreContentItem = styled.div``;
-const AvatarLevel2 = styled.img`
+const AvatarLevel2 = styled(Image)`
   height: 24px;
   width: 24px;
+  min-width: 24px;
+  max-width: 24px;
   border-radius: 50%;
   align-self: flex-start;
   margin-top: 2px;
@@ -87,7 +90,7 @@ const ReplyItem = React.forwardRef<HTMLDivElement, ReplyItemType>((props, ref) =
     <MoreContents ref={ref}>
       <MoreContentItem>
         <CommentContentTop>
-          <AvatarLevel2 src={props.avatar} />
+          <AvatarLevel2 height={24} width={24} blur src={props.avatar} />
           <ContentContainer>
             <UserInfo>
               {props.author} {props.authorId === props.userId ? <span>·originator</span> : ""}

@@ -9,6 +9,7 @@ import TopIcon from "@/assets/icons/top.svg";
 import React from "react";
 import Link from "next/link";
 import { TType } from "@/pages/feed";
+import OssImage from "#/lib/Image";
 
 interface MagazinePagePropType extends PaperType {
   dataSource: TType;
@@ -20,9 +21,7 @@ const Container = styled.div`
   width: 100%;
   border-radius: 14px;
 `;
-const PosterImage = styled.img`
-  height: 302px;
-  width: 100%;
+const PosterImage = styled(OssImage)`
   border-radius: 14px;
 `;
 const PlaceholderImage = styled(Image)`
@@ -87,7 +86,13 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
     <Link href={link}>
       <Container>
         {props.poster ? (
-          <PosterImage src={props.poster} />
+          <PosterImage
+            width="100%"
+            height={302}
+            src={props.poster}
+            blur
+            resizeOptions={{ w: 170, h: 302 }}
+          />
         ) : (
           <PlaceholderImage src={VideoPlaceholderImage} />
         )}
