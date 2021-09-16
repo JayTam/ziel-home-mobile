@@ -20,7 +20,7 @@ import {
   topPaper,
 } from "@/apis/paper";
 import { TextEllipsisMixin } from "#/lib/mixins";
-import { replaceToImgBaseUrl, toastSNSAxiosError, useLogin } from "@/utils";
+import { composeAuthHeaders, replaceToImgBaseUrl, toastSNSAxiosError, useLogin } from "@/utils";
 import { useAppSelector } from "@/app/hook";
 import SubscribedIcon from "@/assets/icons/subscribed.svg";
 import { followUser } from "@/apis/profile";
@@ -306,7 +306,7 @@ const Feed: NextPage<FeedProps> = (props) => {
     setPapers((prev) =>
       produce(prev, (draft) => {
         draft.forEach((item) => {
-          if (item.id === paper.id && item.magazine) {
+          if (item.magazineId === paper.magazineId && item.magazine) {
             item.magazine.isSubscribe = isSubscribe;
             if (isSubscribe) {
               item.magazine.subscribeNum = magazine.subscribeNum + 1;
@@ -545,15 +545,21 @@ const Feed: NextPage<FeedProps> = (props) => {
     </>
   );
 };
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
   const type: TType = (query.type as TType) ?? "default";
+  const headers = composeAuthHeaders(req.headers.cookie);
   let list = [];
   if (!type || type === "default") {
-    const response = await getPaperList({
-      magazineId: query["magazine_id"] as string,
-      paperId: query["paper_id"] as string,
-      page: 1,
-    });
+    const response = await getPaperList(
+      {
+        magazineId: query["magazine_id"] as string,
+        paperId: query["paper_id"] as string,
+        page: 1,
+      },
+      {
+        headers,
+      }
+    );
     list = response.data?.result?.data ?? [];
   }
   return {
