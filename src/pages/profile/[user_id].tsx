@@ -3,7 +3,6 @@ import { getStarPapers, PaperType } from "@/apis/paper";
 import { followUser, getProfileInfo, ProfileType } from "@/apis/profile";
 import { getUserPapers } from "@/apis/paper";
 import styled from "styled-components";
-import Button from "#/lib/Button";
 import { composeAuthHeaders, digitalScale, useLogin } from "@/utils";
 import Header from "@/components/Header";
 import TabPanel from "#/lib/Tabs/TabPanel";
@@ -15,6 +14,8 @@ import PaperScrollList from "@/components/Profiles/PaperScrollList";
 import MagazineScrollList from "@/components/Profiles/MagazineScrollList";
 import { useAppSelector } from "@/app/hook";
 import Edit from "@/assets/icons/edit.svg";
+import FollowedIcon from "@/assets/icons/Followed_profile.svg";
+import UnFollowedIcon from "@/assets/icons/unFollowed_profile.svg";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -61,6 +62,8 @@ const UserLayout = styled.div`
 const UserIcon = styled.img`
   width: 80px;
   height: 80px;
+  min-width: 80px;
+  max-width: 80px;
   border-radius: 50%;
 `;
 const UserRight = styled.div`
@@ -76,9 +79,6 @@ const UserName = styled.div`
   line-height: 16px;
   max-width: calc(100% - 32px);
 `;
-const FollowBtn = styled(Button)`
-  height: 30px;
-`;
 const UserDecription = styled.div`
   margin-top: 20px;
   font-size: 14px;
@@ -91,25 +91,35 @@ const StatisticsLayout = styled.div`
   justify-content: space-between;
   background-color: ${(props) => props.theme.palette.background?.paper};
   border-radius: 14px;
-  height: 60px;
+  height: 81px;
   width: 100%;
   margin-top: 30px;
+  align-items: center;
 `;
 const StatisticsItem = styled.div`
+  text-align: center;
   display: flex;
+  flex-grow: 0.5;
   flex-direction: column;
   justify-content: center;
   padding: 13px 26px 14px 26px;
 `;
 const Statistics = styled.div`
+  font-family: "DidotBold", serif;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 26px;
   text-align: center;
-  font-size: 16px;
-  line-height: 19px;
   color: ${(props) => props.theme.palette.text?.primary};
 `;
+const StatisticsSplit = styled.div`
+  width: 1px;
+  height: 30px;
+  background-color: ${(props) => props.theme.palette.common?.white}; ;
+`;
 const TypeText = styled.div`
-  font-size: 12px;
-  line-height: 14px;
+  font-size: 14px;
+  line-height: 16px;
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
 const BottomLayout = styled.div`
@@ -197,29 +207,27 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
                   }}
                 />
               ) : (
-                <FollowBtn
+                <div
                   onClick={() => {
                     handleFollow(profile);
                   }}
-                  color={profile.isFollow ? "default" : "primary"}
                 >
-                  {profile.isFollow ? "unFollow" : "Follow"}
-                </FollowBtn>
+                  {profile.isFollow ? <FollowedIcon /> : <UnFollowedIcon />}
+                </div>
               )}
             </UserRight>
           </UserLayout>
-          <UserDecription>{profile.signature}</UserDecription>
+          <UserDecription>
+            Difficult circumstances serve as a textbook of life for people.
+          </UserDecription>
           <StatisticsLayout>
-            <StatisticsItem>
-              <Statistics>{digitalScale(profile.paperNum)}</Statistics>
-              <TypeText>Papers</TypeText>
-            </StatisticsItem>
             <Link href={`/followers/${props.userId}?tabIndex=1`}>
               <StatisticsItem>
                 <Statistics>{digitalScale(profile.followerNum)}</Statistics>
                 <TypeText>Followers</TypeText>
               </StatisticsItem>
             </Link>
+            <StatisticsSplit />
             <Link href={`/followers/${props.userId}?tabIndex=2`}>
               <StatisticsItem>
                 <Statistics>{digitalScale(profile.followingNum)}</Statistics>
