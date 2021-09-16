@@ -108,11 +108,19 @@ const Comment: React.FC<CommentProps> = (props) => {
     return commentText.replace(/Reply @(.+?):/, "").trim();
   }, [commentText]);
   const scrollTopRef = useRef<HTMLDivElement | null>(null);
-  const { loaderRef, hasMore, page, setHasMore, setLoading, firstLoading, setFirstLoading } =
-    useInfiniteScroll<HTMLDivElement>({
-      hasMore: false,
-      initialPage: 1,
-    });
+  const {
+    loaderRef,
+    hasMore,
+    page,
+    setHasMore,
+    setLoading,
+    firstLoading,
+    setFirstLoading,
+    setPage,
+  } = useInfiniteScroll<HTMLDivElement>({
+    hasMore: false,
+    initialPage: 1,
+  });
 
   useEffect(() => {
     (async () => {
@@ -131,6 +139,7 @@ const Comment: React.FC<CommentProps> = (props) => {
           setFirstLoading(false);
         }
       } else {
+        setPage(1);
         setFirstLoading(true);
         setCommentList([]);
       }
