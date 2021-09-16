@@ -36,40 +36,17 @@ const BottomContent = styled.div`
   left: 0;
   width: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 0 7px 11px;
-`;
-const TitleStyle = styled.div`
-  display: flex;
-  align-items: flex-start;
+  padding: 0 10px 11px 7px;
 `;
 const Title = styled.div`
+  width: 100%;
   font-size: 12px;
   line-height: 14px;
   margin-bottom: 4px;
   color: ${(props) => props.theme.palette.common?.white};
-`;
-const AuthorLayout = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const Avatar = styled.img`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-`;
-const Name = styled.div`
-  flex: 1;
-  margin-left: 4px;
-  font-size: 12px;
-  line-height: 14px;
-  color: ${(props) => props.theme.palette.text?.secondary};
   ${TextEllipsisMixin}
 `;
+
 const PlayContent = styled.div`
   display: flex;
   align-items: center;
@@ -118,20 +95,14 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
           <IsReviewing>Is reviewing</IsReviewing>
         ) : null}
         <BottomContent>
-          <TitleStyle>
-            <Title>
-              {props.isTop ? <PaperTopIcon /> : null}
-              {props.title} {props.title}
-            </Title>
-          </TitleStyle>
-          <AuthorLayout>
-            <Avatar src={props.avatar} />
-            <Name>{props.author}</Name>
-            <PlayContent>
-              <PlayIcon />
-              <PlayCount>{digitalScale(props.playNum)}</PlayCount>
-            </PlayContent>
-          </AuthorLayout>
+          <Title>
+            {props.isTop ? <PaperTopIcon /> : null}
+            {props.title} {props.title}
+          </Title>
+          <PlayContent>
+            <PlayIcon />
+            <PlayCount>{digitalScale(props.playNum)}</PlayCount>
+          </PlayContent>
         </BottomContent>
       </Container>
     </Link>

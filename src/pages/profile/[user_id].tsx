@@ -3,8 +3,6 @@ import { getStarPapers, PaperType } from "@/apis/paper";
 import { followUser, getProfileInfo, ProfileType } from "@/apis/profile";
 import { getUserPapers } from "@/apis/paper";
 import styled from "styled-components";
-import TitleImg from "@/assets/imgs/profileBg.png";
-import Image from "next/image";
 import Button from "#/lib/Button";
 import { composeAuthHeaders, digitalScale, useLogin } from "@/utils";
 import Header from "@/components/Header";
@@ -48,20 +46,14 @@ const Container = styled.div`
   align-items: center;
 `;
 const TopLayout = styled.div`
+  margin-top: 64px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  top: 0;
-  left: 0;
-`;
-const TitleBg = styled(Image)`
-  height: 160px;
-  width: 100vw;
 `;
 const TopContent = styled.div`
   padding: 0 14px;
   z-index: 2;
-  margin-top: -32px;
 `;
 const UserLayout = styled.div`
   display: flex;
@@ -76,7 +68,6 @@ const UserRight = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 36px;
   margin-left: 10px;
 `;
 const UserName = styled.div`
@@ -194,7 +185,6 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
         Profile
       </Header>
       <TopLayout>
-        <TitleBg src={TitleImg} />
         <TopContent>
           <UserLayout>
             <UserIcon src={profile.avatar} />
