@@ -32,7 +32,7 @@ export type VideoPlayerProps = {
   currentTime?: number;
   // 播放中
   isPlay?: boolean;
-  onTogglePlay?: (isPlay: boolean) => void;
+  onTogglePlay?: () => void;
   onChangeCurrentTime?: (time: number) => void;
   onChangeLoading?: (loading: boolean) => void;
   // 第一次播放，兼容iOS video play 必需在 eventHandler 中
@@ -62,7 +62,6 @@ const Poster = styled(Image)`
   top: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
 `;
 
 const VideoLoading = styled(Loading)`
@@ -133,7 +132,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       props.onChangeLoading?.(false);
     } else {
       props.onChangeLoading?.(true);
-      player.addEventListener("canplaythrough", handleCloseLoading);
+      player.addEventListener("canplay", handleCloseLoading);
     }
     /**
      * 获取视频总时长
@@ -153,7 +152,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
     };
     player.addEventListener("timeupdate", handleTimeUpdate);
     return () => {
-      player.removeEventListener("canplaythrough", handleCloseLoading);
+      player.removeEventListener("canplay", handleCloseLoading);
       player.removeEventListener("loadedmetadata", handleGetDuration);
       player.removeEventListener("timeupdate", handleTimeUpdate);
     };
@@ -194,7 +193,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
         .catch(() => {
           // play 异步还未执行完，就执行了 pause 会抛出 error
           // 如果当前还是播放状态，修改为暂停状态
-          if (props.isPlay) props.onTogglePlay?.(false);
+          if (props.isPlay) props.onTogglePlay?.();
         });
     } else {
       player.pause();
@@ -206,9 +205,10 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
     // safari video play 需在 event handler 中，不然会被拒绝
     if (!isFirstPlayed) {
       props.onFirstPlay?.();
-      setIsFirstPlayed(true);
+      setIsFirstPlayed(false);
+      props.onTogglePlay?.();
     } else {
-      props.onTogglePlay?.(props.isPlay ?? false);
+      props.onTogglePlay?.();
     }
   };
 
@@ -256,6 +256,8 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
           height="100%"
           src={replaceToImgBaseUrl(props.poster)}
           alt="poster"
+          fit="contain"
+          resizeOptions={{ w: 375 }}
         />
       ) : null}
       {/* 视频 */}

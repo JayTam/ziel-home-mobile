@@ -124,7 +124,7 @@ const PaperActionNum = styled.span`
 interface PaperInterface extends PaperType {
   loading?: boolean;
   active?: boolean;
-  onTogglePlay?: (isPlay: boolean) => void;
+  onTogglePlay?: () => void;
   onChangeCurrentTime?: (time: number) => void;
   // 第一次播放，兼容iOS video play 必需在 eventHandler 中
   onFirstPlay?: () => void;

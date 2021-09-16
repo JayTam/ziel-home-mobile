@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { resizeImage } from "./oss";
+import { resizeImage, TResizeOptions } from "./oss";
 import Loading from "../Loading";
 import _ from "lodash-es";
 import { Property } from "csstype";
@@ -9,6 +9,7 @@ interface Props {
   blur?: boolean;
   loading?: boolean;
   fit?: Property.ObjectFit;
+  resizeOptions?: TResizeOptions;
 }
 
 type NativeAttrs = Omit<React.ImgHTMLAttributes<any>, keyof Props>;
@@ -56,11 +57,14 @@ const ImageComponent = React.forwardRef<HTMLImageElement, ImageProps>((props, re
   // 压缩之后的图片地址
   const resizeImageSrc = useMemo(
     () =>
-      resizeImage(props.src, {
-        w: parseInt(props.width as string) * 2,
-        h: parseInt(props.height as string) * 2,
-      }),
-    [props.height, props.src, props.width]
+      resizeImage(
+        props.src,
+        props.resizeOptions ?? {
+          w: props.width,
+          h: props.height,
+        }
+      ),
+    [props.height, props.resizeOptions, props.src, props.width]
   );
   // 显示到界面的图片
   const [preview, setPreview] = useState<string>(props.blur ? blurImageSrc : resizeImageSrc);
