@@ -27,7 +27,11 @@ const StyledButton = styled(Button)`
   color: ${(props) => props.theme.palette.text?.primary};
 `;
 
-const SubscribeMagazineScrollList: React.FC = () => {
+interface SubscribeMagazineScrollListProps {
+  onExploreMoreZines?: () => void;
+}
+
+const SubscribeMagazineScrollList: React.FC<SubscribeMagazineScrollListProps> = (props) => {
   const [magazines, setMagazines] = useState<MagazineType[]>([]);
   const { loaderRef, hasMore, page, setHasMore, setLoading, firstLoading, setFirstLoading } =
     useInfiniteScroll<HTMLDivElement>({
@@ -61,7 +65,9 @@ const SubscribeMagazineScrollList: React.FC = () => {
                 description="Subscribe to get latest stories from zines you love."
                 type="magazine"
               >
-                <StyledButton size={"medium"}>Explore more zines</StyledButton>
+                <StyledButton size={"medium"} onClick={props.onExploreMoreZines}>
+                  Explore more zines
+                </StyledButton>
               </StyledEmpty>
               <PopularMagazinesScrollList />
             </>

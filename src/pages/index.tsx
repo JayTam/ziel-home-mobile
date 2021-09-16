@@ -39,7 +39,7 @@ const Home = () => {
           <ExploreMagazineScrollList />
         </TabPanel>
         <TabPanel tab="Subscribed" indexKey="2" forceRender>
-          <SubscribeMagazineScrollList />
+          <SubscribeMagazineScrollList onExploreMoreZines={() => handleChangeHomeTab("1")} />
         </TabPanel>
       </HomeTabs>
       <BottomTabBar />
