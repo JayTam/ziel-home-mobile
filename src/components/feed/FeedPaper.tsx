@@ -61,7 +61,9 @@ const StyledFollowedIcon = styled(FollowedIcon)`
   width: 20px;
 `;
 const StyledUnFollowIcon = styled(UnFollowIcon)`
-  width: 20px;
+  width: 18px;
+  max-width: 18px;
+  min-width: 18px;
 `;
 
 const PaperInfo = styled.div`
@@ -137,7 +139,7 @@ interface PaperInterface extends PaperType {
   onMore?: () => void;
 }
 
-const Paper: React.FC<PaperInterface> = (props) => {
+const FeedPaper: React.FC<PaperInterface> = (props) => {
   const user = useAppSelector((state) => state.user);
   const showFollowIcon = useMemo(
     () => user.uid === "" || props.authorId !== user.uid,
@@ -217,4 +219,4 @@ const Paper: React.FC<PaperInterface> = (props) => {
   );
 };
 
-export default Paper;
+export default FeedPaper;

@@ -85,7 +85,7 @@ const ProgressContainer = styled.div`
   bottom: 0;
   left: 0;
   background-color: #000;
-  height: 1px;
+  height: 2px;
   width: 100%;
   z-index: 1000;
 `;
