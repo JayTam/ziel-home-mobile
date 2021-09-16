@@ -1,13 +1,15 @@
-import React, { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
+import React, { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import Play from "@/assets/play.svg";
 import { replaceToImgBaseUrl, useCombinedRefs } from "@/utils";
 import Loading from "#/lib/Loading";
 import Image from "#/lib/Image";
 import { VideoReadyState } from "@/constants";
+import { addPaperVideoPlayTimes, PaperType } from "@/apis/paper";
 
-export type VideoPlayerProps = {
+export type VideoPlayerProps = PaperType & {
   className?: string;
+  // 作为封面显示，还是视频显示
   type?: "poster" | "video";
   hidden?: boolean;
   // 激活状态
@@ -33,13 +35,12 @@ export type VideoPlayerProps = {
   // 播放中
   isPlay?: boolean;
   onTogglePlay?: () => void;
-  onChangeCurrentTime?: (time: number) => void;
   onChangeLoading?: (loading: boolean) => void;
   // 第一次播放，兼容iOS video play 必需在 eventHandler 中
   onFirstPlay?: () => void;
 };
 
-const Container = styled.div<VideoPlayerProps>`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   font-size: 0;
@@ -95,6 +96,9 @@ const Progress = styled.div`
   background-color: #666;
 `;
 
+// 通知播放新增播放次数，当视频播放到一定百分比时，下面就是这个阀值
+const PLAY_PROGRESS_FOR_ADD_PLAY_TIMES = 0.2;
+
 const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props, ref) => {
   // 是否第一次播放过
   const [isFirstPlayed, setIsFirstPlayed] = useState(false);
@@ -108,7 +112,8 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
   const [duration, setDuration] = useState(0);
   // 已播放时长，单位=秒
   const [currentTime, setCurrentTime] = useState(0);
-  // 视频播放进度，单位=百分比
+
+  // 视频播放进度样式
   const playProgressStyles = useMemo(() => {
     const percent = duration > 0 ? currentTime / duration : 0;
     return {
@@ -117,11 +122,27 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
     };
   }, [currentTime, duration]);
 
+  // 是否通知过新增播放次数
+  const hasNotifyAddPlayTimes = useRef(false);
+  // 通知新增播放次数
+  const notifyAddPlayTimes = useCallback(() => {
+    if (currentTime / duration > PLAY_PROGRESS_FOR_ADD_PLAY_TIMES) {
+      if (!hasNotifyAddPlayTimes.current) {
+        hasNotifyAddPlayTimes.current = true;
+        addPaperVideoPlayTimes(props.id);
+      }
+    }
+  }, [currentTime, duration, props.id]);
+
   useEffect(() => {
     const player = videoPlayerRef.current;
     if (!player) return;
     // 切换video之后，重新加载video
     player.load();
+    // 重置状态
+    setDuration(0);
+    setCurrentTime(0);
+    hasNotifyAddPlayTimes.current = false;
     /**
      * 获取加载状态
      */
@@ -141,22 +162,29 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
       setDuration(this.duration);
     }
     player.addEventListener("loadedmetadata", handleGetDuration);
+    return () => {
+      player.removeEventListener("canplay", handleCloseLoading);
+      player.removeEventListener("loadedmetadata", handleGetDuration);
+    };
+  }, [props.id]);
+
+  useEffect(() => {
+    const player = videoPlayerRef.current;
+    if (!player) return;
     /**
      * 获取视频已播放时长
      */
     const handleTimeUpdate = () => {
       setCurrentTime(player.currentTime);
-      if (player.currentTime !== 0) {
-        setIsFirstPlayed(true);
-      }
+      if (player.currentTime !== 0) setIsFirstPlayed(true);
+      // 视频播放 20% 通知 server 记录一次播放
+      notifyAddPlayTimes();
     };
     player.addEventListener("timeupdate", handleTimeUpdate);
     return () => {
-      player.removeEventListener("canplay", handleCloseLoading);
-      player.removeEventListener("loadedmetadata", handleGetDuration);
       player.removeEventListener("timeupdate", handleTimeUpdate);
     };
-  }, [props.video]);
+  }, [props.id, notifyAddPlayTimes]);
 
   useEffect(() => {
     if (props.loading) {

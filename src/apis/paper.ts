@@ -338,3 +338,17 @@ export const hiddenPaper = (magazineId: string, paperId: string, isHidden: boole
     },
   });
 };
+
+/**
+ * 内容中视频播放量+1
+ * @param paperId
+ */
+export function addPaperVideoPlayTimes(paperId?: string) {
+  return snsRequest({
+    method: "POST",
+    url: "/article/play_num",
+    params: {
+      article_id: paperId,
+    },
+  });
+}
