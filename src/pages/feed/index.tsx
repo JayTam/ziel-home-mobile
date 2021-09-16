@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import SwiperCore, { Virtual } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import Paper from "@/components/feed/Paper";
+import FeedPaper from "@/components/feed/FeedPaper";
 import { SwiperEvents } from "swiper/types";
 import produce from "immer";
 import VideoPlayer from "@/components/feed/VideoPlayer";
@@ -329,7 +329,7 @@ const Feed: NextPage<FeedProps> = (props) => {
     setPapers((prev) =>
       produce(prev, (draft) => {
         draft.forEach((item) => {
-          if (item.authorId === paper.authorId) item.isFollow = isFollow;
+          if (item.id === paper.id) item.isFollow = isFollow;
         });
         return draft;
       })
@@ -346,9 +346,11 @@ const Feed: NextPage<FeedProps> = (props) => {
     setPapers((prev) =>
       produce(prev, (draft) => {
         draft.forEach((item) => {
-          if (item.authorId === paper.authorId) item.isLike = isLike;
-          if (isLike) item.likeNum = paper.likeNum + 1;
-          else item.likeNum = paper.likeNum - 1;
+          if (item.id === paper.id) {
+            item.isLike = isLike;
+            if (isLike) item.likeNum = paper.likeNum + 1;
+            else item.likeNum = paper.likeNum - 1;
+          }
         });
         return draft;
       })
@@ -460,7 +462,7 @@ const Feed: NextPage<FeedProps> = (props) => {
           content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${currentPaper?.magazineId}&paper_id=${currentPaper?.id}`}
         />
       </Head>
-      <Container>
+      <Container style={{ height: swiperHeight }}>
         <StyledSwiper
           direction="vertical"
           virtual
@@ -496,7 +498,7 @@ const Feed: NextPage<FeedProps> = (props) => {
                   ) : null}
                 </MagazineContainer>
               </HeaderContainer>
-              <Paper
+              <FeedPaper
                 {...paper}
                 loading={videoLoading}
                 active={activeIndex === index}
