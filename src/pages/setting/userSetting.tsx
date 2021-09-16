@@ -126,7 +126,7 @@ const UserSetting: NextPage<SettingType> = () => {
             onClick={() => {
               window.location.href = `${
                 process.env.NEXT_PUBLIC_PAASPORT_URL
-              }account_security?${PASSPORT_SUB_APP_ID_KEY}=${
+              }/account_security?${PASSPORT_SUB_APP_ID_KEY}=${
                 process.env.NEXT_PUBLIC_PAASPORT_APP_ID
               }&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_WEB_BASE_URL ?? "")}`;
             }}
