@@ -11,6 +11,7 @@ import FreeTrialIcon from "@/assets/imgs/free trial.png";
 import AddressIcon from "@/assets/icons/your address.svg";
 import HelpIcon from "@/assets/icons/help & support.svg";
 import SettingIcon from "@/assets/icons/setting.svg";
+import OssImage from "#/lib/Image";
 
 interface UserProps {
   name: string;
@@ -103,7 +104,7 @@ const ItemText = styled.div`
   line-height: 16px;
   margin-left: 16px;
 `;
-const UserAvatar = styled.img`
+const UserAvatar = styled(OssImage)`
   width: 80px;
   min-width: 80px;
   max-width: 80px;
@@ -136,7 +137,7 @@ const Personal: NextPage<UserProps> = () => {
           {/* <HeaderBg src={BgImg} /> */}
           <HeaderContent>
             <PersonalContent>
-              <UserAvatar src={user.avatar} />
+              <UserAvatar width={80} height={80} blur fit="cover" src={user.avatar} />
               <UserInfo>
                 <UserName>{user.name}</UserName>
                 <RegisterTime>{getRegistTime(user.created_at)} day in ziel home</RegisterTime>
