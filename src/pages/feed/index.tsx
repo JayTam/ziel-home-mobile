@@ -329,7 +329,7 @@ const Feed: NextPage<FeedProps> = (props) => {
     setPapers((prev) =>
       produce(prev, (draft) => {
         draft.forEach((item) => {
-          if (item.authorId === paper.authorId) item.isFollow = isFollow;
+          if (item.id === paper.id) item.isFollow = isFollow;
         });
         return draft;
       })
@@ -346,9 +346,11 @@ const Feed: NextPage<FeedProps> = (props) => {
     setPapers((prev) =>
       produce(prev, (draft) => {
         draft.forEach((item) => {
-          if (item.authorId === paper.authorId) item.isLike = isLike;
-          if (isLike) item.likeNum = paper.likeNum + 1;
-          else item.likeNum = paper.likeNum - 1;
+          if (item.id === paper.id) {
+            item.isLike = isLike;
+            if (isLike) item.likeNum = paper.likeNum + 1;
+            else item.likeNum = paper.likeNum - 1;
+          }
         });
         return draft;
       })
