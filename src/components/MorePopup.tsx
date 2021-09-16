@@ -57,7 +57,7 @@ const ItemStyle = styled.div`
   margin-bottom: 30px;
 `;
 const BottomContainer = styled.div`
-  padding: 14px 4px 0 4px;
+  padding: 14px 4px 0 0;
   width: 100%;
   display: flex;
   flex-flow: row wrap;
