@@ -18,8 +18,7 @@ const Container = styled.div`
 
 const MagazineCover = styled(Image)<{ active?: boolean }>`
   width: 100%;
-  height: 226px;
-  object-fit: cover;
+  padding-top: 132%;
   border-radius: 8px;
   margin-bottom: 10px;
   border: ${(props) => `2px solid ${props.active ? props.theme.palette.primary : "transparent"}`};
@@ -75,13 +74,13 @@ const MagazinePreview: React.FC<MagazinePreviewProps> = (props) => {
   return (
     <Container className={props.className} onClick={props.onClick}>
       <MagazineCover
-        height={226}
-        width="100%"
         src={props.cover}
         alt="cover"
         active={props.active}
         fit="cover"
         loading
+        resizeOptions={{ w: 170, h: 226 }}
+        zoomOptions={{ w: 100, h: 130 }}
       />
       <MagazineTitle>{props.title}</MagazineTitle>
       <Row>

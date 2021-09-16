@@ -4,11 +4,18 @@ import { resizeImage, TResizeOptions } from "./oss";
 import Loading from "../Loading";
 import _ from "lodash-es";
 import { Property } from "csstype";
+import { addPercentUnit } from "@/utils";
 
 interface Props {
   blur?: boolean;
   loading?: boolean;
   fit?: Property.ObjectFit;
+  // 等比缩放比例
+  zoomOptions?: {
+    w: string | number;
+    h: string | number;
+  };
+  // oss图片剪切大小
   resizeOptions?: TResizeOptions;
 }
 
@@ -16,13 +23,25 @@ type NativeAttrs = Omit<React.ImgHTMLAttributes<any>, keyof Props>;
 
 export type ImageProps = Props & NativeAttrs;
 
-const Container = styled.div`
+const Container = styled.div<Pick<Props, "zoomOptions">>`
   position: relative;
+  width: ${(props) => addPercentUnit(props.zoomOptions?.w)};
+  padding-top: ${(props) => addPercentUnit(props.zoomOptions?.h)};
   font-size: 0;
   overflow: hidden;
 `;
 
-const StyledImage = styled.img<NativeAttrs & Pick<Props, "fit">>`
+const StyledImage = styled.img<NativeAttrs & Pick<Props, "fit" | "zoomOptions">>`
+  ${(props) =>
+    props.zoomOptions
+      ? `
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    `
+      : null}
   object-fit: ${(props) => props.fit};
 `;
 

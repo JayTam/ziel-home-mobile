@@ -5,3 +5,4 @@ export * from "./login";
 export * from "./common";
 export * from "./encrypt";
 export * from "./toast";
+export * from "./style";
