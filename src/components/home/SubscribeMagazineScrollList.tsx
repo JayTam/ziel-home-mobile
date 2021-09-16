@@ -13,7 +13,8 @@ const SubscribeContainer = styled.div`
 `;
 
 const StyledEmpty = styled(Empty)`
-  padding: 20px 0;
+  position: relative;
+  padding-bottom: 20px;
   border-bottom: 1px solid #f5f5f5;
   width: calc(100% - 28px);
   margin: 0 14px 14px 14px;

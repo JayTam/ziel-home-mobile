@@ -31,6 +31,7 @@ const MagazineCoverBackground = styled.div`
 `;
 const MagazineCover = styled(Image)`
   border-radius: 8px;
+  box-shadow: 0 2px 10px 0 #00000033;
   ${VerticalHorizontalCenterMixin}
 `;
 const MagazineInfoContainer = styled.div`
@@ -63,7 +64,7 @@ const PaperItem = styled.div`
   position: relative;
   display: inline-block;
   margin-right: 6px;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
 `;
 

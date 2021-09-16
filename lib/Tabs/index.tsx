@@ -42,7 +42,7 @@ const TabItem = styled.div<TabItemProps>`
   color: ${(props) =>
     props.active ? props.theme.palette.text?.primary : props.theme.palette.text?.secondary};
   text-align: center;
-  margin-right: 30px;
+  margin-right: ${(props) => (props.space ? props.space + "px" : "30px")};
   white-space: nowrap;
   padding: 12px 0;
   ${(props) => {
@@ -86,10 +86,12 @@ const TabLinkBar = styled.span<{
   left: ${(props) => props.left + "px"};
   width: ${(props) => props.width + "px"};
   height: 4px;
-  background-color: ${(props) => props.color ?? props.theme.palette.primary};
+  background-color: ${(props) =>
+    props.color ?? props.tabStyle === "dot"
+      ? props.theme.palette.text?.primary
+      : props.theme.palette.primary};
   border-radius: 12px;
-  transition: ${(props) =>
-    props.left === 0 ? "none" : "left 0.3s cubic-bezier(0.645, 0.045, 0.355, 1)"};
+  transition: left 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
   ${(props) =>
     props.tabStyle === "dot"
       ? `width: ${props.width}px;height: ${props.width}px;border-radius: 999px;`
@@ -148,6 +150,7 @@ const Tabs: React.FC<TabsProps> = (props) => {
                 ref={tabRefs.current[i]}
                 key={tab.indexKey}
                 tabStyle={props.tabStyle}
+                space={props.space}
                 onClick={() => handleChange(tab.indexKey)}
               >
                 {tab.tab}

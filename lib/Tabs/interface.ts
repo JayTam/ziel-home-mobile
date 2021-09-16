@@ -9,6 +9,7 @@ export interface TabsProps {
   center?: boolean;
   sticky?: boolean;
   fixed?: boolean;
+  space?: number;
   // tab list 样式风格
   tabStyle?: "contain" | "default" | "dot" | "line";
   onChange?: (activeKey: string) => void;

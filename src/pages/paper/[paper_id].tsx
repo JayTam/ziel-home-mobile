@@ -74,11 +74,12 @@ const Divider = styled.div`
 `;
 
 const StyledUploadFile = styled(UploadFile)`
-  margin-bottom: 14px;
+  margin-bottom: 30px;
 `;
 
 const SubmitButton = styled(Button)`
-  margin-top: 100px;
+  height: 60px;
+  margin-top: 40px;
 `;
 
 export type Options = {

@@ -3,6 +3,9 @@ import styled from "styled-components";
 import { MagazineType } from "@/apis";
 import SubscribeIcon from "@/assets/icons/popular-subscribed.svg";
 import SubscribedIcon from "@/assets/icons/popular-subscribe.svg";
+import { digitalScale } from "@/utils";
+import Image from "#/lib/Image";
+import Link from "next/link";
 
 const Container = styled.div`
   display: flex;
@@ -25,13 +28,12 @@ const MagazineCoverBg = styled.div`
   background: #eeeeee;
   border-radius: 8px;
 `;
-const MagazineCover = styled.img`
+const MagazineCover = styled(Image)`
   position: absolute;
+  box-shadow: 0 2px 10px 0 #00000033;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 90px;
-  height: 120px;
   object-fit: cover;
   border-radius: 8px;
 `;
@@ -75,14 +77,20 @@ interface PopularMagazinePreview extends MagazineType {
 const PopularMagazinePreview: React.FC<PopularMagazinePreview> = (props) => {
   return (
     <Container>
-      <MagazineCoverContainer>
-        <MagazineCoverBg />
-        <MagazineCover src={props.cover} />
-      </MagazineCoverContainer>
+      <Link href={`/feed?magazine_id=${props.id}`}>
+        <MagazineCoverContainer>
+          <MagazineCoverBg />
+          <MagazineCover src={props.cover} width={90} height={120} />
+        </MagazineCoverContainer>
+      </Link>
       <MagazineInfoContainer>
-        <Title>{props.title}</Title>
-        <MagazineNum>{props.showNum} stories</MagazineNum>
-        <SubscribeNum>{props.subscribeNum} subscribers</SubscribeNum>
+        <Link href={`/magazine/${props.id}`}>
+          <div>
+            <Title>{props.title}</Title>
+            <MagazineNum>{digitalScale(props.showNum)} stories</MagazineNum>
+            <SubscribeNum>{digitalScale(props.subscribeNum)} subscribers</SubscribeNum>
+          </div>
+        </Link>
         {props.isSubscribe ? (
           <SubscribeButton onClick={props.onSubscribe} />
         ) : (

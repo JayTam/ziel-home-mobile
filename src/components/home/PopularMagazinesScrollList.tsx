@@ -9,7 +9,7 @@ import PopularMagazinePreview from "./PopularMagazinePreview";
 import produce from "immer";
 
 const StyledTabs = styled(Tabs)`
-  margin: 0 14px;
+  margin: 0 14px 10px;
   font-size: 16px;
   line-height: 24px;
 `;

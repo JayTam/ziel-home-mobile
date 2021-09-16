@@ -20,7 +20,13 @@ import {
   topPaper,
 } from "@/apis/paper";
 import { TextEllipsisMixin } from "#/lib/mixins";
-import { composeAuthHeaders, replaceToImgBaseUrl, toastSNSAxiosError, useLogin } from "@/utils";
+import {
+  composeAuthHeaders,
+  digitalScale,
+  replaceToImgBaseUrl,
+  toastSNSAxiosError,
+  useLogin,
+} from "@/utils";
 import { useAppSelector } from "@/app/hook";
 import SubscribedIcon from "@/assets/icons/subscribed.svg";
 import { followUser } from "@/apis/profile";
@@ -97,7 +103,7 @@ const MagazineTitle = styled.h1`
   font-weight: bold;
   font-size: 20px;
   line-height: 23px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-family: "DidotBold", serif;
   ${TextEllipsisMixin}
 `;
@@ -108,8 +114,8 @@ const StyledSubscribedIcon = styled(SubscribedIcon)`
 
 const MagazineNumber = styled.p`
   color: ${(props) => props.theme.palette.text?.hint};
-  font-size: 12px;
-  line-height: 14px;
+  font-size: 14px;
+  line-height: 16px;
   ${TextEllipsisMixin}
 `;
 
@@ -488,7 +494,9 @@ const Feed: NextPage<FeedProps> = (props) => {
                           <StyledSubscribedIcon />
                         ) : null}
                       </MagazineTitle>
-                      <MagazineNumber>{paper.magazine?.subscribeNum} subscribers</MagazineNumber>
+                      <MagazineNumber>
+                        {digitalScale(paper.magazine?.subscribeNum)} subscribers
+                      </MagazineNumber>
                     </MagazineInfo>
                   </Link>
                   {user.uid !== paper.magazine?.authorId && !paper.magazine?.isSubscribe ? (

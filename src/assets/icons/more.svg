@@ -1,6 +1,6 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle opacity="0.01" cx="12" cy="12" r="12" fill="#F5F5F5"/>
-<circle cx="6.01465" cy="12" r="1.5" fill="white"/>
-<circle cx="12.0146" cy="12" r="1.5" fill="white"/>
-<circle cx="18.0146" cy="12" r="1.5" fill="white"/>
+<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle opacity="0.01" cx="15" cy="15" r="15" fill="#F5F5F5"/>
+<ellipse cx="7.51831" cy="15" rx="1.875" ry="1.875" fill="white"/>
+<ellipse cx="15.0183" cy="15" rx="1.875" ry="1.875" fill="white"/>
+<circle cx="22.5183" cy="15" r="1.875" fill="white"/>
 </svg>

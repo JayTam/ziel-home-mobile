@@ -1,13 +1,14 @@
 import React, { MouseEventHandler, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { MagazineType } from "@/apis";
-import { TextEllipsisMixin, VerticalHorizontalCenterMixin } from "#/lib/mixins";
+import { TextEllipsisMixin } from "#/lib/mixins";
 import SubscribeSvgIcon from "@/assets/icons/explore-subscribe.svg";
 // import SubscribedSvgIcon from "@/assets/icons/explore-subscribed.svg";
 
-import { randomInt } from "@/utils";
+import { digitalScale, randomInt } from "@/utils";
 import { useAppSelector } from "@/app/hook";
 import Image from "#/lib/Image";
+import { useRouter } from "next/router";
 
 const Container = styled.div<{ color: string }>`
   width: 315px;
@@ -80,7 +81,10 @@ const SubscribeButtonBg = styled.div<{ isSubscribe: boolean }>`
 const SubscribeButtonText = styled.p<{ isSubscribe: boolean }>`
   transition: all 0.3s ease 0.2s;
   opacity: ${(props) => (props.isSubscribe ? "0" : "1")};
-  ${VerticalHorizontalCenterMixin}
+  position: absolute;
+  top: 50%;
+  left: calc(50% - 10px);
+  transform: translate(-50%, -50%);
 `;
 
 const SubscribeIcon = styled(SubscribeSvgIcon)<{ subscribed: boolean }>`
@@ -134,6 +138,7 @@ interface MagazineCardProps extends MagazineType {
 }
 
 const MagazineCard: React.FC<MagazineCardProps> = (props) => {
+  const router = useRouter();
   const backgroundColor = useRef(randomColor());
   const user = useAppSelector((state) => state.user);
   const isMyMagazine = useMemo(() => user.uid === props.authorId, [props.authorId, user.uid]);
@@ -142,16 +147,26 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
     props.onSubscribe?.();
   };
 
+  const toProfileRoute: MouseEventHandler = (event) => {
+    event.stopPropagation();
+    router.push(`/profile/${props.authorId}`);
+  };
+
+  const toMagazineRoute: MouseEventHandler = (event) => {
+    event.stopPropagation();
+    router.push(`/magazine/${props.id}`);
+  };
+
   return (
     <Container color={backgroundColor.current} onClick={props.onClick}>
-      <AuthorContainer>
+      <AuthorContainer onClick={toProfileRoute}>
         <Avatar src={props.avatar} width={24} height={24} />
         <AuthorName> {props.author} </AuthorName>
       </AuthorContainer>
       <MagazineCover src={props.cover} height={280} width={210} blur fit="cover" />
-      <MagazineTitle>{props.title}</MagazineTitle>
-      <MagazineNunContainer>
-        {props.subscribeNum} subscribers · {props.paperNum} stories
+      <MagazineTitle onClick={toMagazineRoute}>{props.title}</MagazineTitle>
+      <MagazineNunContainer onClick={toMagazineRoute}>
+        {digitalScale(props.subscribeNum)} subscribers · {digitalScale(props.paperNum)} stories
       </MagazineNunContainer>
       {isMyMagazine ? null : (
         <SubscribeButton isSubscribe={props.isSubscribe}>

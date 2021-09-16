@@ -13,8 +13,9 @@ const fixedFloat = (num: string, type?: string) => {
 /**
  * 数字换算
  */
-export const digitalScale = (num: number | string, type?: string) => {
-  let newNum: number | string = "" || 0;
+export const digitalScale = (num?: number | string, type?: string) => {
+  if (!num) return 0;
+  let newNum: number | string;
   if (num > 1e3 && num < 1e6) {
     newNum = `${fixedFloat((Number(num) / 1e3).toString(), type)}K`;
   } else if (num >= 1e6) {

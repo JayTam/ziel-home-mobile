@@ -9,13 +9,13 @@ import LikedIcon from "@/assets/icons/liked.svg";
 import UnStarIcon from "@/assets/icons/unstar.svg";
 import StaredIcon from "@/assets/icons/stared.svg";
 import TopIcon from "@/assets/icons/top.svg";
-import FollowedIcon from "@/assets/icons/followed.svg";
 import CommentIcon from "@/assets/icons/comment.svg";
 import MoreIcon from "@/assets/icons/more.svg";
 import { useAppSelector } from "@/app/hook";
 import Link from "next/link";
 import { TextEllipsisMixin } from "#/lib/mixins";
 import Image from "#/lib/Image";
+import { digitalScale } from "@/utils";
 
 const Container = styled.div`
   position: relative;
@@ -28,7 +28,7 @@ const BottomContainer = styled.div`
   position: absolute;
   left: 0;
   bottom: 0;
-  padding: 16px 14px 10px 14px;
+  padding: 16px 14px 14px 14px;
   width: 100%;
   background: linear-gradient(360deg, #222 -7.14%, rgba(34, 34, 34, 0) 100%);
 `;
@@ -41,33 +41,30 @@ const AuthorInfo = styled.div`
 `;
 
 const Avatar = styled(Image)`
-  width: 30px;
-  min-width: 30px;
-  max-width: 30px;
-  height: 30px;
+  width: 34px;
+  min-width: 34px;
+  max-width: 34px;
+  height: 34px;
   border-radius: 999px;
 `;
 
 const AuthorName = styled.p`
   font-weight: 500;
-  font-size: 14px;
-  line-height: 16px;
+  font-size: 16px;
+  line-height: 19px;
   padding: 0 20px 0 10px;
   color: ${(props) => props.theme.palette.common?.white};
   ${TextEllipsisMixin}
 `;
 
-const StyledFollowedIcon = styled(FollowedIcon)`
-  width: 20px;
-`;
 const StyledUnFollowIcon = styled(UnFollowIcon)`
-  width: 18px;
-  max-width: 18px;
-  min-width: 18px;
+  width: 24px;
+  max-width: 24px;
+  min-width: 24px;
 `;
 
 const PaperInfo = styled.div`
-  font-size: 12px;
+  font-size: 14px;
   line-height: 16px;
   margin-bottom: 10px;
 `;
@@ -79,9 +76,11 @@ const PaperTag = styled.span`
   font-size: 12px;
   line-height: 16px;
   background: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(4px);
   border-radius: 20px;
   margin-right: 5px;
+  margin-bottom: 5px;
 `;
 
 const PaperTopIcon = styled(TopIcon)`
@@ -90,6 +89,7 @@ const PaperTopIcon = styled(TopIcon)`
 
 const PaperTitle = styled.div`
   display: inline-block;
+  line-height: 20px;
   margin-right: 10px;
   color: ${(props) => props.theme.palette.common?.white};
 `;
@@ -153,28 +153,29 @@ const FeedPaper: React.FC<PaperInterface> = (props) => {
         <BottomContainer>
           <AuthorInfo>
             <Link href={`/profile/${props.authorId}`}>
-              <Avatar src={props.avatar} width={30} height={30} alt="avatar" />
+              <Avatar src={props.avatar} width={34} height={34} alt="avatar" />
             </Link>
-            <AuthorName>{props.author}</AuthorName>
+            <Link href={`/profile/${props.authorId}`}>
+              <AuthorName>{props.author}</AuthorName>
+            </Link>
             {showFollowIcon ? (
-              props.isFollow ? (
-                <StyledFollowedIcon onClick={props.onFollow} />
-              ) : (
+              props.isFollow ? null : (
                 <StyledUnFollowIcon onClick={props.onFollow} />
               )
             ) : null}
           </AuthorInfo>
 
+          {props.space || props.style || props.size ? (
+            <PaperTag>
+              <span>{props.space}</span>
+              <span hidden={!props.style}> | {props.style}</span>
+              <span hidden={!props.size}> | {props.size}</span>
+            </PaperTag>
+          ) : null}
+
           <PaperInfo>
             <PaperTitle>
               {props.isTop ? <PaperTopIcon /> : null}
-              {props.space || props.style || props.size ? (
-                <PaperTag>
-                  <span>{props.space}</span>
-                  <span hidden={!props.style}> | {props.style}</span>
-                  <span hidden={!props.size}> | {props.size}</span>
-                </PaperTag>
-              ) : null}
               {props.title}
             </PaperTitle>
 
@@ -182,9 +183,9 @@ const FeedPaper: React.FC<PaperInterface> = (props) => {
               <ShowMoreText
                 className="react-more-text"
                 anchorClass="anchor"
-                lines={1}
-                more="More"
-                less="Collect"
+                lines={2}
+                more="more"
+                less="collect"
               >
                 {props.description}
               </ShowMoreText>
@@ -195,17 +196,17 @@ const FeedPaper: React.FC<PaperInterface> = (props) => {
             <PaperActions>
               <PaperActionItem onClick={props.onLike}>
                 {props.isLike ? <LikedIcon /> : <UnLikeIcon />}
-                <PaperActionNum>{props.likeNum}</PaperActionNum>
+                <PaperActionNum>{digitalScale(props.likeNum)}</PaperActionNum>
               </PaperActionItem>
 
               <PaperActionItem onClick={props.onComment}>
                 <CommentIcon />
-                <PaperActionNum>{props.commentNum}</PaperActionNum>
+                <PaperActionNum>{digitalScale(props.commentNum)}</PaperActionNum>
               </PaperActionItem>
 
               <PaperActionItem onClick={props.onStar}>
                 {props.isStar ? <StaredIcon /> : <UnStarIcon />}
-                <PaperActionNum>{props.starNum}</PaperActionNum>
+                <PaperActionNum>{digitalScale(props.starNum)}</PaperActionNum>
               </PaperActionItem>
             </PaperActions>
 

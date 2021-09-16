@@ -65,4 +65,5 @@ p {
 }
 .react-more-text .anchor {
   text-decoration: underline;
+  color: rgba(255, 255, 255, 0.5);
 }

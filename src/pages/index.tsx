@@ -12,7 +12,7 @@ const HomeTabs = styled(Tabs)`
   height: 44px;
   font-size: 18px;
   line-height: 21px;
-  margin: 0;
+  margin: 0 0 10px;
 `;
 
 // 下个版本会用到
@@ -34,7 +34,13 @@ const Home = () => {
 
   return (
     <>
-      <HomeTabs activeKey={homeActiveTab} onChange={(val) => handleChangeHomeTab(val)} center fixed>
+      <HomeTabs
+        activeKey={homeActiveTab}
+        onChange={(val) => handleChangeHomeTab(val)}
+        center
+        fixed
+        tabStyle="dot"
+      >
         <TabPanel tab="Explore" indexKey="1" forceRender>
           <ExploreMagazineScrollList />
         </TabPanel>

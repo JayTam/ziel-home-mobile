@@ -46,7 +46,6 @@ const MagazineCover = styled(Image)`
 `;
 
 const MagazineTitle = styled.p`
-  font-family: "DidotBold", serif;
   margin-left: 10px;
   font-weight: 500;
   font-size: 14px;
@@ -81,8 +80,9 @@ const StyledMagazinePreview = styled(MagazinePreview)`
 `;
 
 const StyledTabs = styled(Tabs)`
-  margin-left: 14px;
-  margin-right: 14px;
+  font-size: 16px;
+  line-height: 20px;
+  margin: 0 40px 20px 40px;
 `;
 
 const StyledTabPanel = styled(TabPanel)`
@@ -169,9 +169,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
               <UploadIcon />
             )}
           </MagazineCoverWrapper>
-          <MagazineTitle>
-            {selectedMagazine ? selectedMagazine.title : "Publish In a Magazine"}
-          </MagazineTitle>
+          <MagazineTitle>{selectedMagazine ? selectedMagazine.title : "Zine"}</MagazineTitle>
         </MagazineContainer>
         <RightIcon />
       </Container>
@@ -184,7 +182,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
         </Header>
 
         <PageContainer>
-          <StyledTabs activeKey={type} onChange={handleChange} tabBar tabStyle="line">
+          <StyledTabs activeKey={type} onChange={handleChange} tabStyle="dot" space={56}>
             <StyledTabPanel indexKey="3" tab="Discover" forceRender>
               {magazines.map((magazine) => (
                 <StyledMagazinePreview
