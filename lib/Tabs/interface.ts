@@ -11,7 +11,7 @@ export interface TabsProps {
   fixed?: boolean;
   space?: number;
   // tab list 样式风格
-  tabStyle?: "contain" | "default" | "dot" | "line";
+  tabStyle?: "contain" | "default" | "dot" | "line" | "fullLine";
   onChange?: (activeKey: string) => void;
 }
 

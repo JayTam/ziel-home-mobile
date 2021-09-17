@@ -104,7 +104,7 @@ const ImageComponent = React.forwardRef<HTMLImageElement, ImageProps>((props, re
   }, [resizeImageSrc]);
 
   return (
-    <Container className={props.className}>
+    <Container className={props.className} zoomOptions={props.zoomOptions}>
       <StyledImage {...nativeProps} ref={ref} src={preview} />
       {!props.blur && props.loading && loading ? (
         <PlaceholderImage>

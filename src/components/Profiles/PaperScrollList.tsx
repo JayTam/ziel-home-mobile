@@ -4,6 +4,7 @@ import PaperPreview from "./PaperPreview";
 import React, { useEffect, useState } from "react";
 import { getStarPapers, getUserPapers, PaperType } from "@/apis/paper";
 import { TType } from "@/pages/feed";
+import Empty from "#/lib/Empty";
 
 interface PaperListProps {
   userId: string; // 用户Id
@@ -19,13 +20,17 @@ const PaperItem = styled.div`
 `;
 const PaperScrollList: React.FC<PaperListProps> = (props) => {
   const [papers, setPapers] = useState<PaperType[]>([]);
-  const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
-    hasMore: false,
-    initialPage: 1,
-  });
+  const { loaderRef, page, setLoading, setHasMore, hasMore, firstLoading, setFirstLoading } =
+    useInfiniteScroll<HTMLDivElement>({
+      hasMore: false,
+      initialPage: 1,
+    });
 
   useEffect(() => {
     (async () => {
+      if (page === 1) {
+        setFirstLoading(true);
+      }
       setLoading(true);
       try {
         const response =
@@ -38,16 +43,21 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
         setPapers((prev) => [...prev, ...list]);
       } finally {
         setLoading(false);
+        setFirstLoading(false);
       }
     })();
-  }, [page, props.dataSource, props.userId, setHasMore, setLoading]);
+  }, [page, props.dataSource, props.userId, setFirstLoading, setHasMore, setLoading]);
   return (
     <>
-      {papers.map((paper) => (
-        <PaperItem key={paper.id}>
-          <PaperPreview dataSource={props.dataSource} key={paper.id} {...paper} />
-        </PaperItem>
-      ))}
+      {papers.length === 0 && !firstLoading ? (
+        <Empty />
+      ) : (
+        papers.map((paper) => (
+          <PaperItem key={paper.id}>
+            <PaperPreview dataSource={props.dataSource} key={paper.id} {...paper} />
+          </PaperItem>
+        ))
+      )}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}
     </>
   );

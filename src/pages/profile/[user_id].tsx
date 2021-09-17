@@ -45,7 +45,7 @@ const Container = styled.div`
   height: 100%;
 `;
 const TopLayout = styled.div`
-  margin-top: px;
+  margin-top: 32px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -77,7 +77,7 @@ const UserName = styled.div`
   line-height: 16px;
   padding-right: 10px;
 `;
-const UserDecription = styled.div`
+const UserDescription = styled.div`
   margin-top: 20px;
   font-size: 14px;
   line-height: 16px;
@@ -131,13 +131,16 @@ const TabsStyle = styled(Tabs)`
   justify-content: space-between;
 `;
 const TabsStarStyle = styled(Tabs)`
-  padding-left: 14px;
   display: flex;
+  width: 100%;
 `;
 const TabPanelStyle = styled(TabPanel)`
-  padding: 0 14px 20px 7px;
+  padding: 14px 14px 20px 7px;
 `;
-const StarTabPanelStyle = styled(TabPanel)``;
+const SavePanelStyle = styled(TabPanel)`
+  padding: 0;
+`;
+
 const Profile: NextPage<ProfilePageProps> = (props) => {
   const router = useRouter();
   const [type, setType] = useState<"1" | "2" | "3">("1");
@@ -148,6 +151,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
   const { withLogin } = useLogin();
   const handleChange = (key: string) => {
     setType(key as "1" | "2" | "3");
+    if (key === "3") setStarType("1");
   };
   const handleStarChange = (key: string) => {
     setStarType(key as "1" | "2");
@@ -157,7 +161,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
     if (!profile) return;
     const isFollow = !profile.isFollow;
     if (!isFollow) {
-      const alertResult = confirm("Are you sure you want to unfollow?");
+      const alertResult = confirm("Are you sure you want to cancel the follow?");
       if (!alertResult) return;
     }
     await followUser(props.userId, isFollow);
@@ -213,9 +217,9 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
               )}
             </UserRight>
           </UserLayout>
-          <UserDecription>
+          <UserDescription>
             Difficult circumstances serve as a textbook of life for people.
-          </UserDecription>
+          </UserDescription>
           <StatisticsLayout>
             <Link href={`/followers/${props.userId}?tabIndex=1`}>
               <StatisticsItem>
@@ -235,37 +239,31 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
       </TopLayout>
       <BottomLayout>
         <TabsStyle tabStyle="dot" activeKey={type} onChange={handleChange}>
-          <TabPanelStyle
-            indexKey="1"
-            tab={`Paper ${digitalScale(props.usersPapers.count, "Int")}`}
-            forceRender
-          >
+          <TabPanelStyle indexKey="1" tab={`Paper ${digitalScale(props.usersPapers.count, "Int")}`}>
             <PaperScrollList userId={props.userId} dataSource="user_paper" />
           </TabPanelStyle>
           <TabPanelStyle
             indexKey="2"
             tab={`Magazine ${digitalScale(props.userMagazine.count, "Int")}`}
-            forceRender
           >
             <MagazineScrollList userId={props.userId} />
           </TabPanelStyle>
-          <StarTabPanelStyle
+          <SavePanelStyle
             indexKey="3"
             tab={`Saved ${digitalScale(
               props.favoriteMagazine.count + props.favoritePaper.count,
               "Int"
             )}`}
-            forceRender
           >
-            <TabsStarStyle activeKey={starType} onChange={handleStarChange} tabStyle="contain">
-              <TabPanelStyle indexKey="1" tab="Paper" forceRender>
+            <TabsStarStyle activeKey={starType} onChange={handleStarChange} tabStyle="fullLine">
+              <TabPanelStyle indexKey="1" tab="Paper">
                 <PaperScrollList userId={props.userId} dataSource="user_saved" />
               </TabPanelStyle>
-              <TabPanelStyle indexKey="2" tab="Magazine" forceRender>
+              <TabPanelStyle indexKey="2" tab="Magazine">
                 <MagazineScrollList isStarContent userId={props.userId} />
               </TabPanelStyle>
             </TabsStarStyle>
-          </StarTabPanelStyle>
+          </SavePanelStyle>
         </TabsStyle>
       </BottomLayout>
     </Container>
@@ -277,7 +275,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
   // 用户简介信息
   const profileInfoResponse = await getProfileInfo(userId, { headers });
-  console.log(profileInfoResponse);
   const papersResponse = await getUserPapers({ userId, page: 1 }, { headers });
   const magazineResponse = await getUserMagazines({ userId, limit: 1, page: 1 }, { headers });
   const userPaperResponse = await getStarPapers({ userId, limit: 1, page: 1 }, { headers });

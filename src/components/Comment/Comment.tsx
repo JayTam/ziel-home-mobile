@@ -144,7 +144,7 @@ const Comment: React.FC<CommentProps> = (props) => {
         setCommentList([]);
       }
     })();
-  }, [props.id, props.open, page, setFirstLoading, setHasMore, setLoading]);
+  }, [props.id, props.open, page, setFirstLoading, setHasMore, setLoading, setPage]);
 
   /**
    * 发送评论
@@ -214,7 +214,6 @@ const Comment: React.FC<CommentProps> = (props) => {
         parentUserId: data.parent_user_id,
       };
       setCommentList((commentList) => [comment, ...commentList]);
-      console.log(commentList);
       scrollTopRef.current?.scrollIntoView();
     }
     setCommentText("");

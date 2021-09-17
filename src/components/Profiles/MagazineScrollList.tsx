@@ -4,6 +4,7 @@ import { useInfiniteScroll } from "@/utils";
 import MagazinePreview from "./MagazinePreview";
 import styled from "styled-components";
 import Link from "next/link";
+import Empty from "#/lib/Empty";
 
 interface MagazineListType {
   userId: string;
@@ -11,20 +12,23 @@ interface MagazineListType {
 }
 const PaperItem = styled.div`
   display: inline-block;
-  width: 50%;
+  width: 100%;
   height: auto;
   box-sizing: border-box;
-  padding-left: 7px;
-  margin-top: 2px;
+  padding: 0px 17px 26px 24px;
 `;
 const MagazineScrollList: React.FC<MagazineListType> = (props) => {
   const [magazines, setMagazines] = useState<MagazineType[]>([]);
-  const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
-    hasMore: false,
-    initialPage: 0,
-  });
+  const { loaderRef, page, setLoading, setHasMore, hasMore, firstLoading, setFirstLoading } =
+    useInfiniteScroll<HTMLDivElement>({
+      hasMore: false,
+      initialPage: 1,
+    });
   useEffect(() => {
     (async () => {
+      if (page === 1) {
+        setFirstLoading(true);
+      }
       setLoading(true);
       try {
         const response = props.isStarContent
@@ -36,18 +40,23 @@ const MagazineScrollList: React.FC<MagazineListType> = (props) => {
         setMagazines((prev) => [...prev, ...list]);
       } finally {
         setLoading(false);
+        setFirstLoading(false);
       }
     })();
-  }, [page, props.userId, setHasMore, setLoading, props.isStarContent]);
+  }, [page, props.userId, setHasMore, setLoading, props.isStarContent, setFirstLoading]);
   return (
     <>
-      {magazines.map((magazine) => (
-        <Link key={magazine.id} href={`/magazine/${magazine.id}`}>
-          <PaperItem>
-            <MagazinePreview key={magazine.id} {...magazine} />
-          </PaperItem>
-        </Link>
-      ))}
+      {magazines.length === 0 && !firstLoading ? (
+        <Empty />
+      ) : (
+        magazines.map((magazine) => (
+          <Link key={magazine.id} href={`/magazine/${magazine.id}`}>
+            <PaperItem>
+              <MagazinePreview key={magazine.id} {...magazine} />
+            </PaperItem>
+          </Link>
+        ))
+      )}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}
     </>
   );

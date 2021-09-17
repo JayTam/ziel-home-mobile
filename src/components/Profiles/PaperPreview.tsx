@@ -87,11 +87,10 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
       <Container>
         {props.poster ? (
           <PosterImage
-            width="100%"
-            height={302}
             src={props.poster}
             blur
             resizeOptions={{ w: 170, h: 302 }}
+            zoomOptions={{ w: 100, h: 178 }}
           />
         ) : (
           <PlaceholderImage src={VideoPlaceholderImage} />
