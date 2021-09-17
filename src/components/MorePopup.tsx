@@ -5,6 +5,8 @@ import UnRecommendIcon from "@/assets/icons/unrecommend.svg";
 import DeleteIcon from "@/assets/icons/more-operate-delete.svg";
 import SmsIcon from "@/assets/icons/sms.svg";
 import PinterestIcon from "@/assets/icons/Pinterest.svg";
+import UnStarIcon from "@/assets/icons/unstar.svg";
+import StaredIcon from "@/assets/icons/stared.svg";
 // import CopyIcon from "@/assets/icons/copy.svg";
 import FacebookIcon from "@/assets/icons/facebook.svg";
 import HiddenIcon from "@/assets/icons/hidden.svg";
@@ -22,6 +24,7 @@ interface MoreOperateType {
   moreType: "paper" | "magazine";
   onDelete?: () => void;
   onTop?: () => void;
+  onStar?: () => void;
   onClose?: () => void;
   onHidden?: () => void;
 }
@@ -129,22 +132,23 @@ const MorePopup: React.FC<MoreOperateType> = (props) => {
     >
       <Container>
         <TopContainer>
-          {/*<ItemStyle>*/}
-          {/*  <ReportIcon />*/}
-          {/*  <span>Report</span>*/}
-          {/*</ItemStyle>*/}
-          {/* 内容创建者，才可以隐藏显示 */}
-          {isMyPaper ? (
-            <ItemStyle onClick={props.onHidden}>
-              {props.paper?.isHidden ? <ShowIcon /> : <HiddenIcon />}
-              <span> {props.paper?.isHidden ? "Public" : "Hidden"} </span>
-            </ItemStyle>
-          ) : null}
+          {/* 收藏内容，所有人均可收藏 */}
+          <ItemStyle onClick={props.onStar}>
+            {props.paper?.isStar ? <StaredIcon /> : <UnStarIcon />}
+            <span>{props.paper?.isStar ? "UnCollect" : "Collect"}</span>
+          </ItemStyle>
           {/* 只有杂志拥有者，才能推荐/置顶 */}
           {isMyMagazine ? (
             <ItemStyle onClick={props.onTop}>
               {props.paper?.isTop ? <UnRecommendIcon /> : <RecommendIcon />}
               <span>{props.paper?.isTop ? "Unrecommend" : "Recommend"}</span>
+            </ItemStyle>
+          ) : null}
+          {/* 内容创建者，才可以隐藏显示 */}
+          {isMyPaper ? (
+            <ItemStyle onClick={props.onHidden}>
+              {props.paper?.isHidden ? <ShowIcon /> : <HiddenIcon />}
+              <span> {props.paper?.isHidden ? "Public" : "Hidden"} </span>
             </ItemStyle>
           ) : null}
           {/* 杂志拥有者和内容创建者，可以删除 */}

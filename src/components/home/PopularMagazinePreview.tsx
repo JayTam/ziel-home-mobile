@@ -53,11 +53,13 @@ const Title = styled.div`
 const MagazineNum = styled.p`
   font-size: 14px;
   line-height: 16px;
+  font-weight: 300;
   margin-bottom: 2px;
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
 const SubscribeNum = styled.p`
   font-size: 14px;
+  font-weight: 300;
   line-height: 16px;
   margin-bottom: 12px;
   color: ${(props) => props.theme.palette.text?.secondary};

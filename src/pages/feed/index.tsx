@@ -115,6 +115,7 @@ const StyledSubscribedIcon = styled(SubscribedIcon)`
 const MagazineNumber = styled.p`
   color: ${(props) => props.theme.palette.text?.hint};
   font-size: 14px;
+  font-weight: 300;
   line-height: 16px;
   ${TextEllipsisMixin}
 `;
@@ -449,7 +450,6 @@ const Feed: NextPage<FeedProps> = (props) => {
   const closeCommentPopup = () => setCommentOpen(false);
   // 打开更多
   const openMorePopup = () => {
-    console.log(currentPaper);
     setOpenMore(true);
   };
   // 关闭更多
@@ -514,7 +514,7 @@ const Feed: NextPage<FeedProps> = (props) => {
                 onFirstPlay={() => handleFirstPlay(paper)}
                 onFollow={() => handleFollow(paper)}
                 onLike={() => handleLikePaper(paper)}
-                onStar={() => handleStarPaper(paper)}
+                onShare={openMorePopup}
                 onMore={openMorePopup}
                 onComment={openCommentPopup}
               />
@@ -539,6 +539,7 @@ const Feed: NextPage<FeedProps> = (props) => {
           onDelete={() => handleDeletePaper(currentPaper)}
           onTop={() => handleTopPaper(currentPaper)}
           onHidden={() => handleHiddenPaper(currentPaper)}
+          onStar={() => handleStarPaper(currentPaper)}
         />
       ) : null}
       {/* 评论组件 */}

@@ -6,11 +6,10 @@ import { PaperType } from "@/apis/paper";
 import UnFollowIcon from "@/assets/icons/unfollow.svg";
 import UnLikeIcon from "@/assets/icons/unlike.svg";
 import LikedIcon from "@/assets/icons/liked.svg";
-import UnStarIcon from "@/assets/icons/unstar.svg";
-import StaredIcon from "@/assets/icons/stared.svg";
 import TopIcon from "@/assets/icons/top.svg";
 import CommentIcon from "@/assets/icons/comment.svg";
 import MoreIcon from "@/assets/icons/more.svg";
+import ShareIcon from "@/assets/icons/share.svg";
 import { useAppSelector } from "@/app/hook";
 import Link from "next/link";
 import { TextEllipsisMixin } from "#/lib/mixins";
@@ -95,6 +94,7 @@ const PaperTitle = styled.div`
 `;
 
 const PaperDescription = styled.div`
+  font-weight: 300;
   color: ${(props) => props.theme.palette.text?.hint};
 `;
 
@@ -134,7 +134,7 @@ interface PaperInterface extends PaperType {
   onFollow?: () => void;
   // 喜欢
   onLike?: () => void;
-  onStar?: () => void;
+  onShare?: () => void;
   onComment?: () => void;
   onMore?: () => void;
 }
@@ -204,9 +204,9 @@ const FeedPaper: React.FC<PaperInterface> = (props) => {
                 <PaperActionNum>{digitalScale(props.commentNum)}</PaperActionNum>
               </PaperActionItem>
 
-              <PaperActionItem onClick={props.onStar}>
-                {props.isStar ? <StaredIcon /> : <UnStarIcon />}
-                <PaperActionNum>{digitalScale(props.starNum)}</PaperActionNum>
+              <PaperActionItem onClick={props.onShare}>
+                <ShareIcon />
+                <PaperActionNum>{digitalScale(props.shareNum)}</PaperActionNum>
               </PaperActionItem>
             </PaperActions>
 
