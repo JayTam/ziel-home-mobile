@@ -115,6 +115,7 @@ const StyledSubscribedIcon = styled(SubscribedIcon)`
 const MagazineNumber = styled.p`
   color: ${(props) => props.theme.palette.text?.hint};
   font-size: 14px;
+  font-weight: 300;
   line-height: 16px;
   ${TextEllipsisMixin}
 `;

@@ -58,10 +58,10 @@ const UserLayout = styled.div`
   display: flex;
 `;
 const UserIcon = styled(Image)`
-  width: 80px;
-  height: 80px;
-  min-width: 80px;
-  max-width: 80px;
+  width: 70px;
+  height: 70px;
+  min-width: 70px;
+  max-width: 70px;
   border-radius: 50%;
 `;
 const UserRight = styled.div`
@@ -77,9 +77,10 @@ const UserName = styled.div`
   line-height: 16px;
   padding-right: 10px;
 `;
-const UserDecription = styled.div`
+const UserDescription = styled.div`
   margin-top: 20px;
   font-size: 14px;
+  font-weight: 300;
   line-height: 16px;
   width: 100%;
   color: ${(props) => props.theme.palette.text?.secondary};
@@ -118,6 +119,7 @@ const StatisticsSplit = styled.div`
 const TypeText = styled.div`
   font-size: 14px;
   line-height: 16px;
+  font-weight: 300;
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
 const BottomLayout = styled.div`
@@ -193,7 +195,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
       <TopLayout>
         <TopContent>
           <UserLayout>
-            <UserIcon width={80} height={80} blur fit="cover" src={profile.avatar} />
+            <UserIcon width={70} height={70} blur fit="cover" src={profile.avatar} />
             <UserRight>
               <UserName>{profile.nickname}</UserName>
               {isMyProfile ? (
@@ -213,9 +215,9 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
               )}
             </UserRight>
           </UserLayout>
-          <UserDecription>
+          <UserDescription>
             Difficult circumstances serve as a textbook of life for people.
-          </UserDecription>
+          </UserDescription>
           <StatisticsLayout>
             <Link href={`/followers/${props.userId}?tabIndex=1`}>
               <StatisticsItem>

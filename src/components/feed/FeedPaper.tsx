@@ -95,6 +95,7 @@ const PaperTitle = styled.div`
 `;
 
 const PaperDescription = styled.div`
+  font-weight: 300;
   color: ${(props) => props.theme.palette.text?.hint};
 `;
 

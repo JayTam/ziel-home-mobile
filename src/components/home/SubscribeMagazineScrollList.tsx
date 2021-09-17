@@ -17,7 +17,7 @@ const StyledEmpty = styled(Empty)`
   padding-bottom: 20px;
   border-bottom: 1px solid #f5f5f5;
   width: calc(100% - 28px);
-  margin: 0 14px 14px 14px;
+  margin: 0 14px 0 14px;
 `;
 
 const StyledButton = styled(Button)`

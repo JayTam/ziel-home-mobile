@@ -35,6 +35,7 @@ const MagazineCover = styled(Image)`
   ${VerticalHorizontalCenterMixin}
 `;
 const MagazineInfoContainer = styled.div`
+  padding-bottom: 14px;
   margin-left: 8px;
 `;
 const MagazineTitle = styled.p`
@@ -45,6 +46,7 @@ const MagazineTitle = styled.p`
 `;
 const MagazineCreateTime = styled.p`
   font-size: 14px;
+  font-weight: 300;
   line-height: 16px;
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
@@ -87,7 +89,7 @@ const PaperTitle = styled(ShowMoreText)`
   left: 0;
   padding: 5px;
   font-size: 12px;
-  line-height: 20px;
+  line-height: 14px;
   color: ${(props) => props.theme.palette.common?.white};
 `;
 
@@ -100,7 +102,7 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
         <MagazineContainer>
           <MagazineCoverContainer>
             <MagazineCoverBackground />
-            <MagazineCover src={props.cover} width={60} height={80} />
+            <MagazineCover src={props.cover} width={60} height={80} loading />
           </MagazineCoverContainer>
           <MagazineInfoContainer>
             <MagazineTitle>{props.title}</MagazineTitle>

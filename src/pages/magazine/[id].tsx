@@ -65,6 +65,7 @@ const Statistics = styled.div`
   display: flex;
   font-size: 12px;
   line-height: 16px;
+  font-weight: 300;
   margin-top: 6px;
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
@@ -87,6 +88,7 @@ const Description = styled.div`
   width: 100%;
   font-size: 12px;
   line-height: 16px;
+  font-weight: 300;
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
 const BottomContent = styled.div`
@@ -109,6 +111,7 @@ const Avatar = styled.img`
 const AuthorName = styled.div`
   font-size: 14px;
   line-height: 16px;
+  font-weight: 300;
   padding: 0 6px;
 `;
 const MagazinePaperLayout = styled.div`

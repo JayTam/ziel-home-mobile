@@ -22,6 +22,12 @@ const Container = styled.div<{ color: string }>`
   border-radius: 20px;
   margin-bottom: 36px;
   box-shadow: 0 4px 20px 0 #00000033;
+  @media (max-width: 374px) {
+    width: 280px;
+  }
+  @media (max-width: 300px) {
+    width: 260px;
+  }
 `;
 
 const AuthorContainer = styled.div`
@@ -43,20 +49,22 @@ const AuthorName = styled.p`
 `;
 
 const MagazineCover = styled(Image)`
-  border-radius: 20px;
+  border-radius: 10px;
   margin-bottom: 10px;
 `;
 
 const MagazineTitle = styled.p`
   font-size: 18px;
   line-height: 23px;
-  font-weight: bold;
   margin-bottom: 2px;
   font-family: "DidotBold", serif;
   ${TextEllipsisMixin}
 `;
 
 const MagazineNunContainer = styled.p`
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 300;
   color: rgba(255, 255, 255, 0.5);
   margin-bottom: 10px;
 `;
