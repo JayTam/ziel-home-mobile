@@ -63,7 +63,24 @@ div,
 p {
   word-break: break-all;
 }
+
+/* react-more-text */
 .react-more-text .anchor {
   text-decoration: underline;
   color: rgba(255, 255, 255, 0.5);
+}
+
+/* nprogress */
+#nprogress .bar {
+  height: 3px;
+  background: #ffd932;
+  z-index: 9999;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px #ffd932, 0 0 5px #ffd932;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #ffd932;
+  border-left-color: #ffd932;
 }

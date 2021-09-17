@@ -1,11 +1,11 @@
 import type { AppContext, AppProps } from "next/app";
+import React, { useEffect } from "react";
 import Router, { useRouter } from "next/router";
 import { Provider } from "react-redux";
+import NProgress from "nprogress";
+import { KeepAliveProvider } from "react-next-keep-alive";
 import { ThemeProvider } from "styled-components";
 import { theme } from "#/lib/index";
-import "normalize.css";
-import "swiper/swiper.min.css";
-import React from "react";
 import {
   composeAuthHeaders,
   getAuth,
@@ -21,8 +21,11 @@ import { fetchUserInfo } from "@/apis";
 import { setUserInfo } from "@/app/features/user/userSlice";
 import App from "next/app";
 import { PASSPORT_DEVICE_ID_KEY, PASSPORT_TENANT_NAME_KEY, PASSPORT_TOKEN_KEY } from "@/constants";
+// 样式引入
+import "normalize.css";
+import "nprogress/nprogress.css";
+import "swiper/swiper.min.css";
 import "@/styles/globals.css";
-import { KeepAliveProvider } from "react-next-keep-alive";
 
 // 需要登陆的路由，未登陆态访问这些路由，重定向到首页
 const needLoginRoutes = [
@@ -32,6 +35,15 @@ const needLoginRoutes = [
   "/setting/user",
   "/personal",
 ];
+
+NProgress.configure({
+  minimum: 0.08,
+  easing: "linear",
+  speed: 350,
+  trickle: true,
+  showSpinner: false,
+  trickleSpeed: 20,
+});
 
 function MyApp(app: AppProps) {
   const { Component, pageProps } = app;
@@ -56,7 +68,23 @@ function MyApp(app: AppProps) {
     },
   };
 
-  // 登陆重定向
+  useEffect(() => {
+    // Next router events only can listen route event, can't control whether page render or redirect route as vue router guard
+    const handleStart = () => {
+      NProgress.start();
+    };
+    const handleStop = () => {
+      NProgress.done();
+    };
+    router.events.on("routeChangeStart", handleStart);
+    router.events.on("routeChangeComplete", handleStop);
+    router.events.on("routeChangeError", handleStop);
+    return () => {
+      router.events.off("routeChangeStart", handleStart);
+      router.events.off("routeChangeComplete", handleStop);
+      router.events.off("routeChangeError", handleStop);
+    };
+  }, []);
 
   return (
     <>
