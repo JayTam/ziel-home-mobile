@@ -4,7 +4,6 @@ import { getMagazineList, MagazineType, subscribeMagazine } from "@/apis";
 import MagazineCard from "./MagazineCard";
 import produce from "immer";
 import { useInfiniteScroll, useLogin } from "@/utils";
-import { useRouter } from "next/router";
 import Loading from "#/lib/Loading";
 
 const ExploreContainer = styled.div`
@@ -19,7 +18,6 @@ const StyledLoading = styled(Loading)`
 `;
 
 const ExploreMagazineScrollList: React.FC = () => {
-  const router = useRouter();
   const { withLogin } = useLogin();
   const [exploreMagazines, setExploreMagazines] = useState<MagazineType[]>([]);
   const { loaderRef, hasMore, page, setHasMore, setLoading } = useInfiniteScroll<HTMLDivElement>({
@@ -72,7 +70,6 @@ const ExploreMagazineScrollList: React.FC = () => {
           key={magazine.id}
           {...magazine}
           onSubscribe={() => handleSubscribe(magazine)}
-          onClick={() => router.push(`/feed?magazine_id=${magazine.id}`)}
         />
       ))}
       {hasMore ? <StyledLoading ref={loaderRef} /> : null}
