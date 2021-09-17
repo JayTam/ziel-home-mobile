@@ -47,7 +47,7 @@ const TabItem = styled.div<TabItemProps>`
   margin-right: ${(props) =>
     props.tabStyle === "fullLine" ? 0 : props.space ? props.space + "px" : "30px"};
   white-space: nowrap;
-  padding: ${(props) => (props.tabStyle === "line" ? "12px 0 6px 0" : "12px 0")};
+  padding: ${(props) => (props.tabStyle === "fullLine" ? "18px 0 6px 0" : "12px 0")};
   ${(props) => {
     switch (props.tabStyle) {
       case "contain":
