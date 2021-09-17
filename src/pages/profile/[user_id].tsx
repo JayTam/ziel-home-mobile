@@ -279,7 +279,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
   // 用户简介信息
   const profileInfoResponse = await getProfileInfo(userId, { headers });
-  console.log(profileInfoResponse);
   const papersResponse = await getUserPapers({ userId, page: 1 }, { headers });
   const magazineResponse = await getUserMagazines({ userId, limit: 1, page: 1 }, { headers });
   const userPaperResponse = await getStarPapers({ userId, limit: 1, page: 1 }, { headers });

@@ -214,7 +214,6 @@ const Comment: React.FC<CommentProps> = (props) => {
         parentUserId: data.parent_user_id,
       };
       setCommentList((commentList) => [comment, ...commentList]);
-      console.log(commentList);
       scrollTopRef.current?.scrollIntoView();
     }
     setCommentText("");
