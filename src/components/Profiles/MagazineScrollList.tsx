@@ -47,7 +47,7 @@ const MagazineScrollList: React.FC<MagazineListType> = (props) => {
   return (
     <>
       {magazines.length === 0 && !firstLoading ? (
-        <Empty />
+        <Empty type="magazine" />
       ) : (
         magazines.map((magazine) => (
           <Link key={magazine.id} href={`/magazine/${magazine.id}`}>
