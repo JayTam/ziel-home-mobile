@@ -142,7 +142,7 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
           <Avatar src={props.avatar} width={24} height={24} />
           <AuthorName> {props.author} </AuthorName>
         </AuthorContainer>
-        <MagazineCover src={props.cover} height={280} width={210} blur fit="cover" />
+        <MagazineCover src={props.cover} height={280} width={210} loadingType="blur" fit="cover" />
         <MagazineTitle onClick={toMagazineRoute}>{props.title}</MagazineTitle>
         <MagazineNunContainer onClick={toMagazineRoute}>
           {digitalScale(props.subscribeNum)} subscribers · {digitalScale(props.paperNum)} stories

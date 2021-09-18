@@ -59,7 +59,6 @@ const MagazinePreview: React.FC<MagazineType> = (props) => {
         <PosterMask />
         {props.cover ? (
           <PosterContent
-            blur
             resizeOptions={{ w: 300, h: 400 }}
             zoomOptions={{ w: 92, h: 122.6 }}
             src={props.cover}

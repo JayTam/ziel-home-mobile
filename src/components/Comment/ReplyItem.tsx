@@ -93,7 +93,7 @@ const ReplyItem = React.forwardRef<HTMLDivElement, ReplyItemType>((props, ref) =
     <MoreContents ref={ref}>
       <MoreContentItem>
         <CommentContentTop>
-          <AvatarLevel2 height={24} width={24} blur src={props.avatar} />
+          <AvatarLevel2 height={24} width={24} src={props.avatar} />
           <ContentContainer>
             <UserInfo>
               {props.author} {props.authorId === props.userId ? <span>·originator</span> : ""}

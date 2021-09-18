@@ -199,7 +199,7 @@ const Profile: NextPage<ProfilePageProps> = (props) => {
       <TopLayout>
         <TopContent>
           <UserLayout>
-            <UserIcon width={70} height={70} blur fit="cover" src={profile.avatar} />
+            <UserIcon width={70} height={70} fit="cover" src={profile.avatar} />
             <UserRight>
               <UserName>{profile.nickname}</UserName>
               {isMyProfile ? (

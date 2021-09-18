@@ -88,7 +88,6 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
         {props.poster ? (
           <PosterImage
             src={props.poster}
-            blur
             resizeOptions={{ w: 170, h: 302 }}
             zoomOptions={{ w: 100, h: 178 }}
           />

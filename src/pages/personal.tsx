@@ -137,7 +137,7 @@ const Personal: NextPage<UserProps> = () => {
           {/* <HeaderBg src={BgImg} /> */}
           <HeaderContent>
             <PersonalContent>
-              <UserAvatar width={80} height={80} blur fit="cover" src={user.avatar} />
+              <UserAvatar width={80} height={80} fit="cover" src={user.avatar} />
               <UserInfo>
                 <UserName>{user.name}</UserName>
                 <RegisterTime>{getRegistTime(user.created_at)} day in ziel home</RegisterTime>

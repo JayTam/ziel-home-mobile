@@ -102,7 +102,7 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
         <MagazineContainer>
           <MagazineCoverContainer>
             <MagazineCoverBackground />
-            <MagazineCover src={props.cover} width={60} height={80} loading />
+            <MagazineCover src={props.cover} width={60} height={80} />
           </MagazineCoverContainer>
           <MagazineInfoContainer>
             <MagazineTitle>{props.title}</MagazineTitle>
@@ -115,7 +115,7 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
         {props.papers?.map((paper) => (
           <Link href={`/feed?paper_id=${paper.id}&type=subscribe`} key={paper.id}>
             <PaperItem>
-              <Image src={paper.poster} width={120} height={214} loading />
+              <Image src={paper.poster} width={120} height={214} />
               <PaperTitle width={110} anchorClass="anchor" lines={2} more={null} less={null}>
                 {paper.title}
               </PaperTitle>

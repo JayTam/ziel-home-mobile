@@ -78,7 +78,6 @@ const MagazinePreview: React.FC<MagazinePreviewProps> = (props) => {
         alt="cover"
         active={props.active}
         fit="cover"
-        loading
         resizeOptions={{ w: 170, h: 226 }}
         zoomOptions={{ w: 100, h: 130 }}
       />
