@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useMemo, useRef } from "react";
+import React, { MouseEventHandler, useMemo } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import { MagazineType } from "@/apis";
@@ -6,7 +6,7 @@ import { TextEllipsisMixin } from "#/lib/mixins";
 import SubscribeSvgIcon from "@/assets/icons/explore-subscribe.svg";
 // import SubscribedSvgIcon from "@/assets/icons/explore-subscribed.svg";
 
-import { digitalScale, randomInt } from "@/utils";
+import { digitalScale } from "@/utils";
 import { useAppSelector } from "@/app/hook";
 import Image from "#/lib/Image";
 import { useRouter } from "next/router";
@@ -112,42 +112,12 @@ const SubscribeIcon = styled(SubscribeSvgIcon)<{ subscribed: boolean }>`
   border-radius: 999px;
 `;
 
-const MAGAZINE_CARD_COLOR_LIST = [
-  "#A4907A",
-  "#6D6D6D",
-  "#CC9268",
-  "#729AD6",
-  "#77CA93",
-  "#ABA59D",
-  "#D6BD7F",
-  "#C89A79",
-  "#5FDAA6",
-  "rgba(180, 169, 132, 0.988)",
-  "#91AF91",
-  "#898989",
-  "#D98377",
-  "#AEC787",
-  "#81B5D2",
-  "rgba(223, 126, 167, 0.967)",
-  "rgba(233, 136, 136, 0.94)",
-  "#A581D2",
-  "#7DD5CF",
-  "rgba(166, 168, 68, 0.94)",
-];
-
-function randomColor(): string {
-  const len = MAGAZINE_CARD_COLOR_LIST.length;
-  const index = randomInt(0, len - 1);
-  return MAGAZINE_CARD_COLOR_LIST[index];
-}
-
 interface MagazineCardProps extends MagazineType {
   onSubscribe?: () => void;
 }
 
 const MagazineCard: React.FC<MagazineCardProps> = (props) => {
   const router = useRouter();
-  const backgroundColor = useRef(randomColor());
   const user = useAppSelector((state) => state.user);
   const isMyMagazine = useMemo(() => user.uid === props.authorId, [props.authorId, user.uid]);
   const handleSubscribe: MouseEventHandler = (event) => {
@@ -167,7 +137,7 @@ const MagazineCard: React.FC<MagazineCardProps> = (props) => {
 
   return (
     <Link href={`/feed?magazine_id=${props.id}`}>
-      <Container color={backgroundColor.current}>
+      <Container color={props.magazineColor}>
         <AuthorContainer onClick={toProfileRoute}>
           <Avatar src={props.avatar} width={24} height={24} />
           <AuthorName> {props.author} </AuthorName>
