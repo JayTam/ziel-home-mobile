@@ -139,7 +139,7 @@ const Followers: NextPage<FollowersType> = ({ profileInfo }) => {
               followers.map((follower) => (
                 <ListItem key={follower.id}>
                   <UserInfo>
-                    <Avatar blur width={48} height={48} fit="cover" src={follower.avatar} />
+                    <Avatar width={48} height={48} fit="cover" src={follower.avatar} />
                     <Name>{follower.nickname}</Name>
                   </UserInfo>
                   {user.uid === follower.id ? (
@@ -169,7 +169,7 @@ const Followers: NextPage<FollowersType> = ({ profileInfo }) => {
               followers.map((follower) => (
                 <ListItem key={follower.id}>
                   <UserInfo>
-                    <Avatar blur width={48} height={48} fit="cover" src={follower.avatar} />
+                    <Avatar width={48} height={48} fit="cover" src={follower.avatar} />
                     <Name>{follower.nickname}</Name>
                   </UserInfo>
                   {user.uid === follower.id ? (

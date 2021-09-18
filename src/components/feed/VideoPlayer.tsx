@@ -283,6 +283,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
           width="100%"
           height="100%"
           src={replaceToImgBaseUrl(props.poster)}
+          loadingType="none"
           alt="poster"
           fit="contain"
           resizeOptions={{ w: 375 }}

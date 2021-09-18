@@ -5,10 +5,10 @@ import Loading from "../Loading";
 import _ from "lodash-es";
 import { Property } from "csstype";
 import { addPercentUnit } from "@/utils";
+import PlaceholderIcon from "@/assets/icons/image_placeholder.svg";
 
 interface Props {
-  blur?: boolean;
-  loading?: boolean;
+  loadingType?: "default" | "loading" | "blur" | "none";
   fit?: Property.ObjectFit;
   // 等比缩放比例
   zoomOptions?: {
@@ -52,6 +52,15 @@ const StyledLoading = styled(Loading)`
   transform: translate(-50%, -50%);
 `;
 
+const ImagePlaceholderIcon = styled(PlaceholderIcon)`
+  width: 80%;
+  height: 80%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`;
+
 const PlaceholderImage = styled.div`
   position: absolute;
   left: 0;
@@ -86,7 +95,9 @@ const ImageComponent = React.forwardRef<HTMLImageElement, ImageProps>((props, re
     [props.height, props.resizeOptions, props.src, props.width]
   );
   // 显示到界面的图片
-  const [preview, setPreview] = useState<string>(props.blur ? blurImageSrc : resizeImageSrc);
+  const [preview, setPreview] = useState<string>(
+    props.loadingType === "blur" ? blurImageSrc : resizeImageSrc
+  );
 
   useEffect(() => {
     const img = new Image();
@@ -106,9 +117,14 @@ const ImageComponent = React.forwardRef<HTMLImageElement, ImageProps>((props, re
   return (
     <Container className={props.className} zoomOptions={props.zoomOptions}>
       <StyledImage {...nativeProps} ref={ref} src={preview} />
-      {!props.blur && props.loading && loading ? (
+      {props.loadingType === "loading" && loading ? (
         <PlaceholderImage>
           <StyledLoading />
+        </PlaceholderImage>
+      ) : null}
+      {props.loadingType === "default" && loading ? (
+        <PlaceholderImage>
+          <ImagePlaceholderIcon />
         </PlaceholderImage>
       ) : null}
       {props.children}
@@ -117,5 +133,9 @@ const ImageComponent = React.forwardRef<HTMLImageElement, ImageProps>((props, re
 });
 
 ImageComponent.displayName = "Image";
+
+ImageComponent.defaultProps = {
+  loadingType: "default",
+};
 
 export default ImageComponent;

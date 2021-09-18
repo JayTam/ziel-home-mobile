@@ -216,7 +216,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
     <div ref={commentRef}>
       <CommentContent>
         <CommentContentTop>
-          <AvatarLevel1 width={34} height={34} blur src={props.avatar} />
+          <AvatarLevel1 width={34} height={34} src={props.avatar} />
           <ContentContainer>
             <UserInfo>
               {props.author} {props.authorId === props.userId ? <span>·originator</span> : ""}
