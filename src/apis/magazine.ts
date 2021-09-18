@@ -1,6 +1,7 @@
 import snsRequest from "./requests/snsRequest";
 import { AxiosRequestConfig } from "axios";
 import { mapPaperItem, PaperType } from "./paper";
+import { normalizeHexColor, randomColor } from "@/utils";
 
 export type MagazineType = {
   id: string;
@@ -36,6 +37,8 @@ export type MagazineType = {
   isActive: boolean;
   // 更新时间
   updatedAt: string;
+  // 杂志背景颜色
+  magazineColor: string;
   papers?: PaperType[];
 };
 
@@ -57,6 +60,7 @@ export const mapMagazineItem = (item: Record<string, any>) => ({
   isRecommend: item.is_recommend ?? false,
   isActive: false,
   updatedAt: item.updated_at ?? "",
+  magazineColor: normalizeHexColor(item.color) ?? randomColor(),
   papers: item.article?.map((item: any) => mapPaperItem(item)) ?? [],
 });
 
