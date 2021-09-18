@@ -90,7 +90,7 @@ const InputStyle = styled.input`
   color: ${(props) => props.theme.palette.common?.white};
 `;
 const SendButton = styled(Button)`
-  color: ${(props) => props.theme.palette.text?.hint};
+  color: ${(props) => props.theme.palette.common?.white};
   background: none;
 `;
 
@@ -103,6 +103,7 @@ const Comment: React.FC<CommentProps> = (props) => {
   const [currentComment, setCurrentComment] = useState<CommentType | null>(null);
   const [currentReply, setCurrentReply] = useState<CommentType | null>(null);
   const currentCommentRef = useRef<CommentItemHandle>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const { withLogin } = useLogin();
   const commentTextContent = useMemo(() => {
     return commentText.replace(/Reply @(.+?):/, "").trim();
@@ -222,6 +223,7 @@ const Comment: React.FC<CommentProps> = (props) => {
   });
 
   const handleClickReplyComment = async (comment: CommentType, reply: CommentType) => {
+    inputRef.current?.focus();
     setCommentText(`Reply @${reply.author}: `);
     if (comment.id === reply.id) {
       // 点击的是CommentItem的 reply
@@ -277,7 +279,7 @@ const Comment: React.FC<CommentProps> = (props) => {
                 <div ref={scrollTopRef}>
                   {commentList.map((comment) => (
                     <CommentItemStyle
-                      onClickreply={(reply) => handleClickReplyComment(comment, reply)}
+                      onClickReply={(reply) => handleClickReplyComment(comment, reply)}
                       onClickLike={handleLike}
                       open={props.open}
                       key={comment.id}
@@ -294,12 +296,15 @@ const Comment: React.FC<CommentProps> = (props) => {
           <CommentHandle>
             <InputContent>
               <InputStyle
+                ref={inputRef}
                 maxLength={255}
                 onChange={(e) => setCommentText(e.target.value)}
                 value={commentText}
                 placeholder="say something…"
               />
-              <SendButton onClick={handleSendCommentWithLogin}>Send</SendButton>
+              <SendButton disabled={commentText.length === 0} onClick={handleSendCommentWithLogin}>
+                Send
+              </SendButton>
             </InputContent>
           </CommentHandle>
         </CommentContainer>

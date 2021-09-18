@@ -41,9 +41,7 @@ const SettingItem = styled.div`
   ${ClickableMixin}
 `;
 const ItemTitle = styled.div`
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 16px;
+  font-size: 16px;
   color: ${(props) => props.theme.palette.text?.primary};
 `;
 const SplitDiv = styled.div`

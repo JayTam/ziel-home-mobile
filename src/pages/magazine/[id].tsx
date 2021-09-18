@@ -14,6 +14,8 @@ import UnSubscribeBtn from "@/assets/icons/unSubscribe.svg";
 import { TextEllipsisMixin } from "#/lib/mixins";
 import Head from "next/head";
 import MorePopup from "@/components/MorePopup";
+import ContributeIcon from "@/assets/icons/contribute.svg";
+import Link from "next/link";
 
 interface MagazineProps {
   magazine: MagazineType;
@@ -34,7 +36,29 @@ const Content = styled.div`
 const MagazineContent = styled.div`
   display: flex;
 `;
+const MagazineMask = styled.div`
+  background-color: #eeeeee;
+  height: 130px;
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+  position: absolute;
+  top: 0;
+  left: 5px;
+  border-radius: 8px;
+`;
+const MagazineImgStyle = styled.div`
+  position: relative;
+  width: 90px;
+  min-width: 90px;
+  max-width: 90px;
+  height: 120px;
+`;
 const MagazineImg = styled.img`
+  box-shadow: 0px 2px 10px 0px #00000033;
+  position: absolute;
+  top: 5px;
+  left: 0;
   border-radius: 14px;
   width: 90px;
   min-width: 90px;
@@ -55,18 +79,18 @@ const TopContent = styled.div`
 const Title = styled.div`
   width: 100%;
   font-weight: bold;
-  font-size: 16px;
-  line-height: 21px;
+  font-size: 18px;
+  line-height: 23px;
   color: ${(props) => props.theme.palette.text?.primary};
   font-family: "DidotBold", serif;
   ${TextEllipsisMixin}
 `;
 const Statistics = styled.div`
   display: flex;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 16px;
   font-weight: 300;
-  margin-top: 6px;
+  margin-top: 4px;
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
 const SplitDiv = styled.div`
@@ -75,9 +99,6 @@ const SplitDiv = styled.div`
   background-color: ${(props) => props.theme.palette.background?.paper};
   margin-top: 30px;
 `;
-const DescriptionStyle = styled.div`
-  padding-top: 4px;
-`;
 const DescriptionTitle = styled.div`
   margin-top: 14px;
   font-weight: 500;
@@ -85,8 +106,9 @@ const DescriptionTitle = styled.div`
   line-height: 24px;
 `;
 const Description = styled.div`
+  margin-top: 4px;
   width: 100%;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 16px;
   font-weight: 300;
   color: ${(props) => props.theme.palette.text?.secondary};
@@ -113,6 +135,8 @@ const AuthorName = styled.div`
   line-height: 16px;
   font-weight: 300;
   padding: 0 6px;
+  width: 100px;
+  ${TextEllipsisMixin}
 `;
 const MagazinePaperLayout = styled.div`
   margin-top: 12px;
@@ -131,6 +155,23 @@ const PaperItem = styled.div`
   height: calc((100vw - 35px) / 2 / 0.56);
   margin-left: 7px;
   margin-top: 7px;
+`;
+const Contribute = styled.div`
+  position: fixed;
+  height: 50px;
+  width: 225px;
+  bottom: 40px;
+  border-radius: 29px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${(props) => props.theme.palette.primary};
+  span {
+    margin-left: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+  }
 `;
 const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const [shareOpen, setShareOpen] = useState(false);
@@ -200,7 +241,10 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
-            <MagazineImg src={replaceToImgBaseUrl(currentMagazine.cover)} />
+            <MagazineImgStyle>
+              <MagazineMask />
+              <MagazineImg src={replaceToImgBaseUrl(currentMagazine.cover)} />
+            </MagazineImgStyle>
             <MagazineInfo>
               <TopContent>
                 <Title>{currentMagazine.title}</Title>
@@ -221,20 +265,18 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
             </MagazineInfo>
           </MagazineContent>
           <SplitDiv />
-          <DescriptionStyle>
-            <DescriptionTitle>Description</DescriptionTitle>
-            <Description>
-              <ShowMoreText
-                className="react-more-text"
-                anchorClass="anchor"
-                lines={2}
-                more="More"
-                less="Collect"
-              >
-                {currentMagazine.description}
-              </ShowMoreText>
-            </Description>
-          </DescriptionStyle>
+          <DescriptionTitle>Description</DescriptionTitle>
+          <Description>
+            <ShowMoreText
+              className="react-more-text"
+              anchorClass="anchor"
+              lines={2}
+              more="More"
+              less="Collect"
+            >
+              {currentMagazine.description}
+            </ShowMoreText>
+          </Description>
         </Content>
         <MagazinePaperLayout>
           <PaperContent>
@@ -246,6 +288,12 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
             {hasMore ? <div ref={loaderRef}>loading...</div> : null}
           </PaperContent>
         </MagazinePaperLayout>
+        <Link href={`/paper/create?magazine_id=${magazine.id}`}>
+          <Contribute>
+            <ContributeIcon />
+            <span>Contribute</span>{" "}
+          </Contribute>
+        </Link>
       </Container>
       <MorePopup open={shareOpen} moreType="magazine" magazine={magazine} onClose={closePopup} />
     </>

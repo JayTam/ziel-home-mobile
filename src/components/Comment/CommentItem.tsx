@@ -17,7 +17,7 @@ import Image from "#/lib/Image";
 interface CommentItemType extends CommentType {
   authorId: string;
   open: boolean;
-  onClickreply?: (comment: CommentType) => void;
+  onClickReply?: (comment: CommentType) => void;
   onClickLike?: (comment: CommentType) => void;
 }
 const CommentContent = styled.div`
@@ -61,6 +61,7 @@ const UserInfo = styled.div`
 const ContentText = styled.div`
   margin-top: 4px;
   color: ${(props) => props.theme.palette.common?.white};
+  font-size: 16px;
 `;
 const LikeStyle = styled.div`
   display: flex;
@@ -86,6 +87,8 @@ const CommentContentBottom = styled.div`
 const ReplyButton = styled(Button)`
   color: ${(props) => props.theme.palette.text?.hint};
   background: none;
+  font-size: 14px;
+  font-weight: normal;
   height: auto;
 `;
 const ViewMore = styled.div`
@@ -231,7 +234,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
         <CommentContentBottom>
           <span>{getCreateTime(props.createTime)}</span>
           {user.uid !== props.userId ? (
-            <ReplyButton onClick={() => props.onClickreply?.(props as CommentType)}>
+            <ReplyButton onClick={() => props.onClickReply?.(props as CommentType)}>
               Reply
             </ReplyButton>
           ) : (
@@ -244,7 +247,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
           <ReplyItem
             authorId={props.authorId}
             onClickLike={replyHandleLike}
-            onClickreply={props.onClickreply}
+            onClickReply={props.onClickReply}
             key={reply.id}
             {...reply}
             isShowAt={props.userId !== reply.parentUserId}

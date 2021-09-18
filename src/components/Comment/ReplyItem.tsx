@@ -8,7 +8,7 @@ import { useAppSelector } from "@/app/hook";
 import React from "react";
 import Image from "#/lib/Image";
 interface ReplyItemType extends CommentType {
-  onClickreply?: (comment: CommentType) => void;
+  onClickReply?: (comment: CommentType) => void;
   onClickLike?: (comment: CommentType) => void;
   authorId: string;
   isShowAt: boolean;
@@ -52,6 +52,7 @@ const UserInfo = styled.div`
 `;
 const ContentText = styled.div`
   margin-top: 4px;
+  font-size: 16px;
   color: ${(props) => props.theme.palette.common?.white};
   span {
     color: #ffa952;
@@ -81,6 +82,8 @@ const CommentContentBottom = styled.div`
 const ReplyButton = styled(Button)`
   color: ${(props) => props.theme.palette.text?.hint};
   background: none;
+  font-size: 14px;
+  font-weight: normal;
   height: auto;
 `;
 const ReplyItem = React.forwardRef<HTMLDivElement, ReplyItemType>((props, ref) => {
@@ -108,7 +111,7 @@ const ReplyItem = React.forwardRef<HTMLDivElement, ReplyItemType>((props, ref) =
         <CommentContentBottom>
           <span>{getCreateTime(props.createTime)}</span>
           {user.uid !== props.userId ? (
-            <ReplyButton onClick={() => props.onClickreply?.(props as CommentType)}>
+            <ReplyButton onClick={() => props.onClickReply?.(props as CommentType)}>
               Reply
             </ReplyButton>
           ) : (
