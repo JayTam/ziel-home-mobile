@@ -374,9 +374,11 @@ const Feed: NextPage<FeedProps> = (props) => {
     setPapers((prev) =>
       produce(prev, (draft) => {
         draft.forEach((item) => {
-          if (item.authorId === paper.authorId) item.isStar = isStar;
-          if (isStar) item.starNum = paper.starNum + 1;
-          else item.starNum = paper.starNum - 1;
+          if (item.id === paper.id) {
+            item.isStar = isStar;
+            if (isStar) item.starNum = paper.starNum + 1;
+            else item.starNum = paper.starNum - 1;
+          }
         });
         return draft;
       })

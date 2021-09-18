@@ -46,6 +46,7 @@ const TopContainer = styled.div`
   div:nth-of-type(n + 5) {
     margin-top: 20px;
   }
+
   span {
     margin-top: 6px;
     font-size: 14px;
@@ -64,9 +65,11 @@ const BottomContainer = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row wrap;
+
   div:nth-of-type(n + 5) {
     margin-top: 20px;
   }
+
   span {
     margin-top: 6px;
     font-size: 14px;
