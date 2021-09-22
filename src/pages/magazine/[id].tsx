@@ -30,7 +30,7 @@ const Container = styled.div`
   align-items: center;
 `;
 const Content = styled.div`
-  padding: 20px 14px 0 14px;
+  padding: 20px 20px 0 14px;
   width: 100%;
 `;
 const MagazineContent = styled.div`
@@ -69,7 +69,7 @@ const MagazineInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 4px 0 4px 14px;
+  padding: 4px 0 4px 10px;
   width: 100%;
 `;
 const TopContent = styled.div`
@@ -139,7 +139,7 @@ const AuthorName = styled.div`
   ${TextEllipsisMixin}
 `;
 const MagazinePaperLayout = styled.div`
-  margin-top: 12px;
+  margin-top: 6px;
   padding: 0 14px 0 7px;
   height: 100%;
   width: 100%;
@@ -148,13 +148,13 @@ const PaperContent = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-top: 7px;
+  margin-top: 9px;
 `;
 const PaperItem = styled.div`
   width: calc((100vw - 35px) / 2);
   height: calc((100vw - 35px) / 2 / 0.56);
   margin-left: 7px;
-  margin-top: 7px;
+  margin-top: 9px;
 `;
 const Contribute = styled.div`
   position: fixed;
@@ -282,7 +282,11 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
           <PaperContent>
             {papers.map((paper) => (
               <PaperItem key={paper.id}>
-                <PaperPreview {...paper} authorId={magazine.authorId} dataSource="default" />
+                <PaperPreview
+                  {...paper}
+                  authorId={magazine.authorId}
+                  dataSource="magazine_detail"
+                />
               </PaperItem>
             ))}
             {hasMore ? <div ref={loaderRef}>loading...</div> : null}

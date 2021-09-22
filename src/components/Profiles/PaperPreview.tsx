@@ -15,7 +15,9 @@ interface MagazinePagePropType extends PaperType {
   dataSource: TType;
 }
 
-const Container = styled.div`
+const Container = styled.div<{ dataSource: TType }>`
+  margin-top: ${(props) =>
+    props.dataSource === "user_paper" || props.dataSource === "user_saved" ? "4px" : 0};
   position: relative;
   height: 100%;
   width: 100%;
@@ -35,7 +37,10 @@ const BottomContent = styled.div`
   left: 0;
   width: 100%;
   display: flex;
+  flex-direction: column;
   padding: 0 10px 11px 7px;
+  background: linear-gradient(360deg, #222222 -7.14%, rgba(34, 34, 34, 0) 100%);
+  border-radius: 14px;
 `;
 const Title = styled.div`
   width: 100%;
@@ -73,6 +78,28 @@ const PaperTopIcon = styled(TopIcon)`
   display: inline-block;
   vertical-align: bottom;
 `;
+const AuthorLayout = styled.div<{ dataSource: TType }>`
+  display: flex;
+  align-items: center;
+  visibility: ${(props) => (props.dataSource === "magazine_detail" ? "visible" : "hidden")};
+`;
+
+const AuthorStyle = styled.div`
+  display: flex;
+`;
+const Avatar = styled(OssImage)`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+`;
+const Name = styled.div`
+  margin-left: 4px;
+  ${TextEllipsisMixin}
+  width: 100px;
+  font-size: 14px;
+  line-height: 16px;
+  color: ${(props) => props.theme.palette.text?.hint};
+`;
 
 const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
   let link;
@@ -84,7 +111,7 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
 
   return (
     <Link href={link}>
-      <Container>
+      <Container dataSource={props.dataSource}>
         {props.poster ? (
           <PosterImage
             src={props.poster}
@@ -102,10 +129,16 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
             {props.isTop ? <PaperTopIcon /> : null}
             {props.title} {props.title}
           </Title>
-          <PlayContent>
-            <PlayIcon />
-            <PlayCount>{digitalScale(props.playNum)}</PlayCount>
-          </PlayContent>
+          <AuthorStyle>
+            <AuthorLayout dataSource={props.dataSource}>
+              <Avatar resizeOptions={{ w: 24, h: 24 }} src={props.avatar} />
+              <Name>{props.author}</Name>
+            </AuthorLayout>
+            <PlayContent>
+              <PlayIcon />
+              <PlayCount>{digitalScale(props.playNum)}</PlayCount>
+            </PlayContent>
+          </AuthorStyle>
         </BottomContent>
       </Container>
     </Link>

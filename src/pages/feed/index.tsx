@@ -124,7 +124,7 @@ const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
   //margin-right: 14px;
 `;
 
-export type TType = "default" | "subscribe" | "user_paper" | "user_saved";
+export type TType = "default" | "subscribe" | "user_paper" | "user_saved" | "magazine_detail";
 
 interface FeedProps {
   initialPapers: PaperType[];

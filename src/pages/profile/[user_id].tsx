@@ -129,7 +129,7 @@ const BottomLayout = styled.div`
 const TabsStyle = styled(Tabs)`
   width: calc(100% - 60px);
   display: flex;
-  margin: 18px 50px 14px;
+  margin: 18px 50px 10px;
   justify-content: space-between;
 `;
 const TabsStarStyle = styled(Tabs)`
