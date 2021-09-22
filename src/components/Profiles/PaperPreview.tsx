@@ -38,13 +38,13 @@ const BottomContent = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0 10px 11px 7px;
+  padding: 0 10px 6px 7px;
   background: linear-gradient(360deg, #222222 -7.14%, rgba(34, 34, 34, 0) 100%);
   border-radius: 14px;
 `;
 const Title = styled.div`
   width: 100%;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 14px;
   margin-bottom: 4px;
   color: ${(props) => props.theme.palette.common?.white};
@@ -56,7 +56,7 @@ const PlayContent = styled.div`
   align-items: center;
 `;
 const PlayCount = styled.div`
-  font-size: 12px;
+  font-size: 14px;
   line-height: 16px;
   color: ${(props) => props.theme.palette.text?.secondary}; ;
 `;
@@ -86,6 +86,7 @@ const AuthorLayout = styled.div<{ dataSource: TType }>`
 
 const AuthorStyle = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
 const Avatar = styled(OssImage)`
   width: 24px;
@@ -95,7 +96,7 @@ const Avatar = styled(OssImage)`
 const Name = styled.div`
   margin-left: 4px;
   ${TextEllipsisMixin}
-  width: 100px;
+  width: 48px;
   font-size: 14px;
   line-height: 16px;
   color: ${(props) => props.theme.palette.text?.hint};
@@ -135,7 +136,7 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
               <Name>{props.author}</Name>
             </AuthorLayout>
             <PlayContent>
-              <PlayIcon />
+              <PlayIcon style={{ width: "24px", height: "24px" }} />
               <PlayCount>{digitalScale(props.playNum)}</PlayCount>
             </PlayContent>
           </AuthorStyle>

@@ -69,8 +69,9 @@ const MagazineInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 4px 0 4px 10px;
+  padding: 4px 0 0px 10px;
   width: 100%;
+  margin-top: 6px;
 `;
 const TopContent = styled.div`
   display: flex;
@@ -114,7 +115,7 @@ const Description = styled.div`
   color: ${(props) => props.theme.palette.text?.secondary};
 `;
 const BottomContent = styled.div`
-  margin-top: 20px;
+  margin-top: 33px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -140,7 +141,7 @@ const AuthorName = styled.div`
 `;
 const MagazinePaperLayout = styled.div`
   margin-top: 6px;
-  padding: 0 14px 0 7px;
+  padding: 0 14px 14px 7px;
   height: 100%;
   width: 100%;
 `;

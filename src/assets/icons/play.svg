@@ -1,10 +1,10 @@
-<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g opacity="0.5" filter="url(#filter0_d)">
-<rect opacity="0.01" x="0.5" y="0.5" width="13" height="13" fill="#D8D8D8" stroke="#979797"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M9.29452 6.10557C10.0316 6.4741 10.0316 7.5259 9.29452 7.89443L5.53059 9.77639C4.86569 10.1088 4.08337 9.62535 4.08337 8.88197L4.08337 5.11803C4.08337 4.37465 4.86569 3.89116 5.53059 4.22361L9.29452 6.10557Z" fill="white"/>
+<rect opacity="0.01" x="4.5" y="2.5" width="19" height="19" fill="#D8D8D8" stroke="#979797"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18.0444 11.1056C18.7814 11.4741 18.7814 12.5259 18.0444 12.8944L11.2805 16.2764C10.6156 16.6088 9.83325 16.1253 9.83325 15.382L9.83325 8.61803C9.83325 7.87465 10.6156 7.39116 11.2805 7.72361L18.0444 11.1056Z" fill="white"/>
 </g>
 <defs>
-<filter id="filter0_d" x="-4" y="-2" width="22" height="22" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_d" x="0" y="0" width="28" height="28" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
 <feOffset dy="2"/>
