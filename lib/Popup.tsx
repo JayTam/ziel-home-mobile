@@ -19,7 +19,7 @@ const PopupContainer = styled.div<Omit<PopupProps, "onClickOverlay" | "className
   display: ${(props) => (props.open ? undefined : "none")};
   background-color: ${(props) => props.theme.palette.background?.default};
   padding: ${(props) => (props.closeable ? "50px 20px 20px 20px" : "20px")};
-  border-radius: ${(props) => (props.round ? "14px 14px 0 0" : "none")};
+  border-radius: ${(props) => (props.round ? "14px 14px 0 0" : undefined)};
   z-index: 2000;
   ${(props) => {
     switch (props.position) {
