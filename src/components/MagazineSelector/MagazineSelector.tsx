@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
 import UploadIcon from "@/assets/icons/upload_1.svg";
 import RightIcon from "@/assets/icons/right.svg";
 import Popup from "#/lib/Popup";
-import Header from "../Header";
 import TabPanel from "#/lib/Tabs/TabPanel";
 import Tabs from "#/lib/Tabs";
 import { getMagazinesForChoose, MagazineType } from "@/apis";
@@ -54,15 +52,8 @@ const MagazineTitle = styled.p`
 `;
 
 const StyledPopup = styled(Popup)`
-  height: 100%;
+  height: 90%;
   padding: 0;
-`;
-
-const DoneButton = styled.div`
-  color: #0474fa;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 16px;
 `;
 
 const PageContainer = styled.div`
@@ -142,20 +133,17 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleDone = () => {
-    if (selectedMagazine) props.onChange?.(selectedMagazine.id);
-    setOpen(false);
-  };
-
-  const handleChange = (key: string) => {
+  const handleTabChange = (key: string) => {
     setType(key as "1" | "2" | "3");
     setPage(1);
     setTitle("");
     setMagazines([]);
+  };
+
+  const handleChange = (magazine: MagazineType) => {
+    setSelectedMagazine(magazine);
+    props.onChange?.(magazine.id);
+    setOpen(false);
   };
 
   return (
@@ -173,23 +161,16 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
         </MagazineContainer>
         <RightIcon />
       </Container>
-      <StyledPopup open={open} position="bottom">
-        <Header
-          rightComponent={<DoneButton onClick={handleDone}>Done</DoneButton>}
-          onBack={handleClose}
-        >
-          Publish In a Magazine
-        </Header>
-
+      <StyledPopup open={open} position="bottom" round onClickOverlay={() => setOpen(false)}>
         <PageContainer>
-          <StyledTabs activeKey={type} onChange={handleChange} tabStyle="dot" space={56}>
+          <StyledTabs activeKey={type} onChange={handleTabChange} tabStyle="dot" space={56}>
             <StyledTabPanel indexKey="3" tab="Discover" forceRender>
               {magazines.map((magazine) => (
                 <StyledMagazinePreview
                   key={magazine.id}
                   active={magazine.id === selectedMagazine?.id}
                   {...magazine}
-                  onClick={() => setSelectedMagazine(magazine)}
+                  onClick={() => handleChange(magazine)}
                 />
               ))}
               {magazines.length === 0 && !firstLoading ? (
@@ -203,7 +184,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                   key={magazine.id}
                   active={magazine.id === selectedMagazine?.id}
                   {...magazine}
-                  onClick={() => setSelectedMagazine(magazine)}
+                  onClick={() => handleChange(magazine)}
                 />
               ))}
               {magazines.length === 0 ? <Empty description="No magazines" /> : null}
