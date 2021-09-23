@@ -138,7 +138,7 @@ const FeedDialog: React.FC<FeedDialogProps> = (props) => {
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
   const [papers, setPapers] = useState<PaperType[]>([]);
   const [currentPaper, setCurrentPaper] = useState<PaperType | null>(null);
-  const [page, setPage] = useState(papers.length > 0 ? 1 : 0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [swiperHeight, setSwiperHeight] = useState(0);
   const { withLogin } = useLogin();
@@ -146,10 +146,13 @@ const FeedDialog: React.FC<FeedDialogProps> = (props) => {
   const [openMore, setOpenMore] = useState(false);
 
   useEffect(() => {
-    if (props.open) {
-      setCurrentPaper(papers[activeIndex]);
-    }
-  }, [activeIndex, papers, props.magazineId, props.open]);
+    setPage(1);
+    setCurrentPaper(null);
+    setPapers([]);
+    setActiveIndex(0);
+  }, [props.open]);
+
+  useEffect(() => setCurrentPaper(papers[activeIndex] ?? null), [activeIndex, papers]);
 
   useUpdateEffect(() => {
     (async () => {
