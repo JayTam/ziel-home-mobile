@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import Router, { useRouter } from "next/router";
 import { Provider } from "react-redux";
 import NProgress from "nprogress";
-import { KeepAliveProvider } from "react-next-keep-alive";
 import { ThemeProvider } from "styled-components";
 import { theme } from "#/lib/index";
 import {
@@ -91,9 +90,7 @@ function MyApp(app: AppProps) {
       <ThemeProvider theme={theme}>
         <Provider store={reduxStore}>
           <LoginContext.Provider value={loginState}>
-            <KeepAliveProvider router={router}>
-              <Component {...pageProps} />
-            </KeepAliveProvider>
+            <Component {...pageProps} />
           </LoginContext.Provider>
         </Provider>
       </ThemeProvider>
