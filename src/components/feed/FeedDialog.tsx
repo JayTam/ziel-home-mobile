@@ -30,7 +30,7 @@ import produce from "immer";
 import { useAppSelector } from "@/app/hook";
 import { MagazineType, subscribeMagazine } from "@/apis";
 import { followUser } from "@/apis/profile";
-import { TType } from "@/pages/feed";
+import { TFeedType } from "@/pages/feed";
 import MorePopup from "@/components/MorePopup";
 import Comments from "@/components/Comment/Comment";
 // install Virtual module
@@ -40,7 +40,8 @@ interface FeedDialogProps {
   open: boolean;
   magazineId?: string;
   userId?: string;
-  type?: TType;
+  paperId?: string;
+  type?: TFeedType;
   onClose?: (magazine: MagazineType) => void;
 }
 
@@ -132,16 +133,17 @@ const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
 
 const FeedDialog: React.FC<FeedDialogProps> = (props) => {
   const router = useRouter();
+  const { withLogin } = useLogin();
+  const videoPlayerRef = useRef<HTMLVideoElement>(null);
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const videoPlayerRef = useRef<HTMLVideoElement>(null);
   const [papers, setPapers] = useState<PaperType[]>([]);
   const [currentPaper, setCurrentPaper] = useState<PaperType | null>(null);
   const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [swiperHeight, setSwiperHeight] = useState(0);
-  const { withLogin } = useLogin();
   const [commentOpen, setCommentOpen] = useState(false);
   const [openMore, setOpenMore] = useState(false);
 
@@ -157,14 +159,14 @@ const FeedDialog: React.FC<FeedDialogProps> = (props) => {
   useUpdateEffect(() => {
     (async () => {
       if (!props.open) return;
-      setLoading(true);
       try {
-        const type: TType = (props.type as TType) ?? "default";
+        setLoading(true);
+        const type: TFeedType = (props.type as TFeedType) ?? "default";
         let response;
         switch (type) {
           case "subscribe":
             response = await getUserSubscribePapers({
-              paperId: router.query["paper_id"] as string,
+              paperId: props.paperId ?? "",
               page,
             });
             break;
@@ -189,13 +191,14 @@ const FeedDialog: React.FC<FeedDialogProps> = (props) => {
             });
             break;
         }
+        setHasMore(Boolean(response.data.result.hasmore));
         const list = response.data.result.data;
         setPapers((prev) => [...prev, ...list]);
       } finally {
         setLoading(false);
       }
     })();
-  }, [page, router.query, props.open]);
+  }, [page, router.query, props.open, props.magazineId, props.paperId]);
 
   /**
    * 切换内容
@@ -251,14 +254,18 @@ const FeedDialog: React.FC<FeedDialogProps> = (props) => {
   };
 
   /**
-   * 滑到最后一个paper，有两种情况
-   * 1. 当前 magazine 还有更多 paper, 获取更多的 paper 进行追加
-   * 2. 当前 magazine 没有更多 paper, 获取下一条 magazine，获取更多的 paper 进行追加，
-   * 当切换为下一条 paper 时候，更新当前 magazine为下一条的
+   * 滑到最后一个paper，切换到下一页
    */
-  const handleReachEnd: SwiperEvents["reachEnd"] = () => {
+  const handleReachEnd: SwiperEvents["reachEnd"] = (swiper) => {
     if (loading) return;
-    setPage((prev) => prev + 1);
+    // 由于是client render，刚打开时还没有数据，会触发 reachEnd 事件
+    if (swiper.slides.length === 0) return;
+    // 有更多才翻页
+    if (hasMore) {
+      setPage((prev) => prev + 1);
+    } else {
+      // TODO:需要一个toast, 提示没有更多内容了
+    }
   };
 
   /**

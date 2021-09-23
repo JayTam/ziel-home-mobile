@@ -124,7 +124,7 @@ const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
   //margin-right: 14px;
 `;
 
-export type TType = "default" | "subscribe" | "user_paper" | "user_saved";
+export type TFeedType = "default" | "subscribe" | "user_paper" | "user_saved";
 
 interface FeedProps {
   initialPapers: PaperType[];
@@ -155,7 +155,7 @@ const Feed: NextPage<FeedProps> = (props) => {
     (async () => {
       setLoading(true);
       try {
-        const type: TType = (router.query.type as TType) ?? "default";
+        const type: TFeedType = (router.query.type as TFeedType) ?? "default";
         let response;
         switch (type) {
           case "subscribe":
@@ -557,7 +557,7 @@ const Feed: NextPage<FeedProps> = (props) => {
   );
 };
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-  const type: TType = (query.type as TType) ?? "default";
+  const type: TFeedType = (query.type as TFeedType) ?? "default";
   const headers = composeAuthHeaders(req.headers.cookie);
   let list = [];
   if (!type || type === "default") {

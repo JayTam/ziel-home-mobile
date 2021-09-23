@@ -7,6 +7,8 @@ import Loading from "#/lib/Loading";
 import Empty from "#/lib/Empty";
 import Button from "#/lib/Button";
 import PopularMagazinesScrollList from "./PopularMagazinesScrollList";
+import FeedDialog from "@/components/feed/FeedDialog";
+import { TFeedType } from "@/pages/feed";
 
 const SubscribeContainer = styled.div`
   padding: 74px 0 50px 0;
@@ -34,6 +36,10 @@ interface SubscribeMagazineScrollListProps {
 
 const SubscribeMagazineScrollList: React.FC<SubscribeMagazineScrollListProps> = (props) => {
   const [magazines, setMagazines] = useState<MagazineType[]>([]);
+  const [open, setOpen] = useState(false);
+  const [paperId, setPaperId] = useState("");
+  const [magazineId, setMagazineId] = useState("");
+  const [feedType, setFeedType] = useState<TFeedType>("default");
   const { loaderRef, hasMore, page, setHasMore, setLoading, firstLoading, setFirstLoading } =
     useInfiniteScroll<HTMLDivElement>({
       hasMore: false,
@@ -55,33 +61,56 @@ const SubscribeMagazineScrollList: React.FC<SubscribeMagazineScrollListProps> = 
     })();
   }, [page, setFirstLoading, setHasMore, setLoading]);
 
+  const handleOpenFeed = (type: TFeedType, magazineId: string, paperId?: string) => {
+    setMagazineId(magazineId);
+    if (paperId) setPaperId(paperId);
+    setFeedType(type);
+    setOpen(true);
+  };
+
+  const handleCloseFeed = () => {
+    setOpen(false);
+  };
+
   return (
-    <SubscribeContainer>
-      {firstLoading ? null : (
-        <>
-          {magazines.length === 0 ? (
-            <>
-              <StyledEmpty
-                title="New stories right to you"
-                description="Subscribe to get latest stories from zines you love."
-                type="magazine"
-              >
-                <StyledButton size={"medium"} onClick={props.onExploreMoreZines}>
-                  Explore more zines
-                </StyledButton>
-              </StyledEmpty>
-              <PopularMagazinesScrollList />
-            </>
-          ) : null}
-          {magazines.length > 0
-            ? magazines?.map((magazine) => (
-                <SubscribeMagazinePreview key={magazine.id} {...magazine} />
-              ))
-            : null}
-          {hasMore ? <Loading ref={loaderRef} /> : null}
-        </>
-      )}
-    </SubscribeContainer>
+    <>
+      <SubscribeContainer>
+        {firstLoading ? null : (
+          <>
+            {magazines.length === 0 ? (
+              <>
+                <StyledEmpty
+                  title="New stories right to you"
+                  description="Subscribe to get latest stories from zines you love."
+                  type="magazine"
+                >
+                  <StyledButton size={"medium"} onClick={props.onExploreMoreZines}>
+                    Explore more zines
+                  </StyledButton>
+                </StyledEmpty>
+                <PopularMagazinesScrollList />
+              </>
+            ) : null}
+            {magazines.length > 0 &&
+              magazines?.map((magazine) => (
+                <SubscribeMagazinePreview
+                  key={magazine.id}
+                  {...magazine}
+                  onOpenFeed={handleOpenFeed}
+                />
+              ))}
+            {hasMore ? <Loading ref={loaderRef} /> : null}
+          </>
+        )}
+      </SubscribeContainer>
+      <FeedDialog
+        open={open}
+        paperId={paperId}
+        magazineId={magazineId}
+        type={feedType}
+        onClose={handleCloseFeed}
+      />
+    </>
   );
 };
 

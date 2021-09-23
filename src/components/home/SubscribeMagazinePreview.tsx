@@ -6,6 +6,7 @@ import MorePaperIcon from "@/assets/icons/more-paper.svg";
 import Link from "next/link";
 import ShowMoreText from "react-show-more-text";
 import Image from "#/lib/Image";
+import { TFeedType } from "@/pages/feed";
 
 const Container = styled.div`
   border-bottom: 1px solid #f5f5f5;
@@ -93,7 +94,9 @@ const PaperTitle = styled(ShowMoreText)`
   color: ${(props) => props.theme.palette.common?.white};
 `;
 
-type SubscribeMagazinePreviewProps = MagazineType;
+type SubscribeMagazinePreviewProps = MagazineType & {
+  onOpenFeed?: (type: TFeedType, magazineId: string, paperId?: string) => void;
+};
 
 const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props) => {
   return (
@@ -113,20 +116,19 @@ const SubscribeMagazinePreview: React.FC<SubscribeMagazinePreviewProps> = (props
 
       <PapersContainer>
         {props.papers?.map((paper) => (
-          <Link href={`/feed?paper_id=${paper.id}&type=subscribe`} key={paper.id}>
-            <PaperItem>
-              <Image src={paper.poster} width={120} height={214} />
-              <PaperTitle width={110} anchorClass="anchor" lines={2} more={null} less={null}>
-                {paper.title}
-              </PaperTitle>
-            </PaperItem>
-          </Link>
+          <PaperItem
+            key={paper.id}
+            onClick={() => props.onOpenFeed?.("subscribe", paper.magazineId, paper.id)}
+          >
+            <Image src={paper.poster} width={120} height={214} fit="cover" />
+            <PaperTitle width={110} anchorClass="anchor" lines={2} more={null} less={null}>
+              {paper.title}
+            </PaperTitle>
+          </PaperItem>
         ))}
-        <Link href={`/feed?magazine_id=${props.id}`}>
-          <PaperMore>
-            <PaperMoreIcon />
-          </PaperMore>
-        </Link>
+        <PaperMore onClick={() => props.onOpenFeed?.("default", props.id)}>
+          <PaperMoreIcon />
+        </PaperMore>
       </PapersContainer>
     </Container>
   );

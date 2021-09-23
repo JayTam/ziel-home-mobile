@@ -8,11 +8,11 @@ import { TextEllipsisMixin } from "#/lib/mixins";
 import TopIcon from "@/assets/icons/top.svg";
 import React from "react";
 import Link from "next/link";
-import { TType } from "@/pages/feed";
+import { TFeedType } from "@/pages/feed";
 import OssImage from "#/lib/Image";
 
 interface MagazinePagePropType extends PaperType {
-  dataSource: TType;
+  dataSource: TFeedType;
 }
 
 const Container = styled.div`

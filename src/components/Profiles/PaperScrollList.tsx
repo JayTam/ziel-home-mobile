@@ -3,12 +3,12 @@ import styled from "styled-components";
 import PaperPreview from "./PaperPreview";
 import React, { useEffect, useState } from "react";
 import { getStarPapers, getUserPapers, PaperType } from "@/apis/paper";
-import { TType } from "@/pages/feed";
+import { TFeedType } from "@/pages/feed";
 import Empty from "#/lib/Empty";
 
 interface PaperListProps {
   userId: string; // 用户Id
-  dataSource: TType;
+  dataSource: TFeedType;
 }
 
 const PaperItem = styled.div`
