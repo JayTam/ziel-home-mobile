@@ -1,22 +1,30 @@
 import React, { MouseEventHandler } from "react";
 import styled from "styled-components";
+import { CSSTransition } from "react-transition-group";
 import Overlay from "./Overlay";
 import CloseIcon from "../src/assets/icons/close.svg";
-import { useLockBodyScroll } from "../src/utils";
+import { useLockBodyScroll } from "@/utils";
+import { SlideAnimationMixin } from "#/lib/animation";
 
 interface PopupProps {
   open: boolean;
   className?: string;
   round?: boolean;
+  forceRender?: boolean;
+  lazyRender?: boolean;
   position?: "top" | "left" | "right" | "bottom";
   closeable?: boolean;
   onClickOverlay?: MouseEventHandler<HTMLDivElement>;
   onClose?: () => void;
 }
 
-const PopupContainer = styled.div<Omit<PopupProps, "onClickOverlay" | "className">>`
+type PopupContainerProps = Omit<PopupProps, "onClickOverlay" | "className" | "open">;
+
+const PopupContainer = styled.div<PopupContainerProps>`
   position: fixed;
-  display: ${(props) => (props.open ? undefined : "none")};
+  transition-property: left, right, top, bottom;
+  transition-timing-function: ease;
+  transition-duration: 300ms;
   background-color: ${(props) => props.theme.palette.background?.default};
   padding: ${(props) => (props.closeable ? "50px 20px 20px 20px" : "20px")};
   border-radius: ${(props) => (props.round ? "14px 14px 0 0" : undefined)};
@@ -24,26 +32,14 @@ const PopupContainer = styled.div<Omit<PopupProps, "onClickOverlay" | "className
   ${(props) => {
     switch (props.position) {
       case "top":
-        return {
-          top: 0,
-          left: 0,
-          right: 0,
-        };
       case "bottom":
         return {
-          bottom: 0,
           left: 0,
           right: 0,
         };
       case "left":
-        return {
-          left: 0,
-          top: 0,
-          bottom: 0,
-        };
       case "right":
         return {
-          right: 0,
           top: 0,
           bottom: 0,
         };
@@ -55,6 +51,7 @@ const PopupContainer = styled.div<Omit<PopupProps, "onClickOverlay" | "className
         };
     }
   }};
+  ${(props) => props.position && SlideAnimationMixin(props.position, 300)}
 `;
 
 const StyledCloseIcon = styled(CloseIcon)`
@@ -70,19 +67,30 @@ const Popup: React.FC<PopupProps> = (props) => {
     <>
       <Overlay open={props.open} onClick={props.onClickOverlay} />
 
-      <PopupContainer
-        className={props.className}
-        style={{ display: props.open ? undefined : "none" }}
-        open={props.open}
-        position={props.position}
-        round={props.round}
-        closeable={props.closeable}
+      <CSSTransition
+        classNames="slide"
+        in={props.open}
+        timeout={300}
+        mountOnEnter={props.lazyRender}
+        unmountOnExit={props.forceRender}
       >
-        {props.closeable ? <StyledCloseIcon onClick={props.onClose} /> : null}
-        {props.children}
-      </PopupContainer>
+        <PopupContainer
+          className={props.className}
+          position={props.position}
+          round={props.round}
+          closeable={props.closeable}
+        >
+          {props.closeable ? <StyledCloseIcon onClick={props.onClose} /> : null}
+          {props.children}
+        </PopupContainer>
+      </CSSTransition>
     </>
   );
+};
+
+Popup.defaultProps = {
+  lazyRender: true,
+  forceRender: false,
 };
 
 export default Popup;

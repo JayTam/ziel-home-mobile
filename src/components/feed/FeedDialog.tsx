@@ -46,15 +46,10 @@ interface FeedDialogProps {
 
 const StyledPopup = styled(Popup)`
   padding: 0;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  transform: none;
 `;
 
 const Container = styled.div`
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   width: 100vw;
@@ -87,6 +82,7 @@ const RouteBack = styled.div`
 `;
 
 const RouteBackIcon = styled(FeedBackIcon)`
+  transform: rotate(-90deg);
   margin: 0 14px;
 `;
 
@@ -150,11 +146,14 @@ const FeedDialog: React.FC<FeedDialogProps> = (props) => {
   const [openMore, setOpenMore] = useState(false);
 
   useEffect(() => {
-    setCurrentPaper(papers[activeIndex]);
-  }, [activeIndex, papers]);
+    if (props.open) {
+      setCurrentPaper(papers[activeIndex]);
+    }
+  }, [activeIndex, papers, props.magazineId, props.open]);
 
   useUpdateEffect(() => {
     (async () => {
+      if (!props.open) return;
       setLoading(true);
       try {
         const type: TType = (props.type as TType) ?? "default";
@@ -193,7 +192,7 @@ const FeedDialog: React.FC<FeedDialogProps> = (props) => {
         setLoading(false);
       }
     })();
-  }, [page, router.query]);
+  }, [page, router.query, props.open]);
 
   /**
    * 切换内容
@@ -458,8 +457,9 @@ const FeedDialog: React.FC<FeedDialogProps> = (props) => {
   };
   // 关闭更多
   const closeMorePopup = () => setOpenMore(false);
+
   return (
-    <StyledPopup open={props.open}>
+    <StyledPopup open={props.open} position="bottom" forceRender>
       <Container style={{ height: swiperHeight }}>
         <StyledSwiper
           direction="vertical"

@@ -97,9 +97,7 @@ const ExploreMagazineScrollList: React.FC = () => {
 
   return (
     <ExploreContainer>
-      {currentMagazine ? (
-        <FeedDialog open={open} magazineId={currentMagazine?.id} onClose={handleCLoseFeed} />
-      ) : null}
+      <FeedDialog open={open} magazineId={currentMagazine?.id} onClose={handleCLoseFeed} />
       {exploreMagazines.map((magazine) => (
         <MagazineCard
           key={magazine.id}
