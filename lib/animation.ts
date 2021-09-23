@@ -24,3 +24,22 @@ export const SlideAnimationMixin = (
     transition: bottom ${duration}ms;
   }
 `;
+
+export const FeedAnimationMix = (duration = 300) => css`
+  &.feed-enter,
+  &.feed-exit-done {
+    opacity: 0;
+  }
+  &.feed-enter-active {
+    opacity: 1;
+    transition: opacity ${duration}ms;
+  }
+  &.feed-enter-done,
+  &.feed-exit {
+    opacity: 1;
+  }
+  &.feed-exit-active {
+    opacity: 0;
+    transition: opacity ${duration}ms;
+  }
+`;

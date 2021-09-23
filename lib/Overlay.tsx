@@ -1,5 +1,7 @@
 import React, { MouseEventHandler } from "react";
 import styled from "styled-components";
+import { FeedAnimationMix } from "#/lib/animation";
+import { CSSTransition } from "react-transition-group";
 
 const OverlayContainer = styled.div`
   position: fixed;
@@ -9,6 +11,7 @@ const OverlayContainer = styled.div`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 1000;
+  ${FeedAnimationMix(300)}
 `;
 
 interface OverlayProps {
@@ -19,9 +22,9 @@ interface OverlayProps {
 
 const Overlay: React.FC<OverlayProps> = (props) => {
   return (
-    <OverlayContainer style={{ display: props.open ? undefined : "none" }} onClick={props.onClick}>
-      {props.children}
-    </OverlayContainer>
+    <CSSTransition in={props.open} classNames="feed" timeout={300} mountOnEnter unmountOnExit>
+      <OverlayContainer onClick={props.onClick}>{props.children}</OverlayContainer>
+    </CSSTransition>
   );
 };
 

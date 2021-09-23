@@ -22,9 +22,6 @@ type PopupContainerProps = Omit<PopupProps, "onClickOverlay" | "className" | "op
 
 const PopupContainer = styled.div<PopupContainerProps>`
   position: fixed;
-  transition-property: left, right, top, bottom;
-  transition-timing-function: ease;
-  transition-duration: 300ms;
   background-color: ${(props) => props.theme.palette.background?.default};
   padding: ${(props) => (props.closeable ? "50px 20px 20px 20px" : "20px")};
   border-radius: ${(props) => (props.round ? "14px 14px 0 0" : undefined)};
