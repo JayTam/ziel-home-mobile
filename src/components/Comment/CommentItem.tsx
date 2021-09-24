@@ -107,7 +107,7 @@ interface CommentItemRef {
 
 const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, ref) => {
   const user = useAppSelector((state) => state.user);
-  const [replys, setReplys] = useState<CommentType[]>([]);
+  const [replies, setReplies] = useState<CommentType[]>([]);
   const [moreStatus, setMoreStatus] = useState<"close" | "more" | "hide">("close");
   const { withLogin } = useLogin();
   const commentRef = useRef<HTMLDivElement | null>(null);
@@ -136,9 +136,9 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
           setCount(response.data.result.count);
           setHasMore(Boolean(response.data.result.hasmore));
           if (!response.data.result.hasmore) setMoreStatus("hide");
-          setReplys((prev) => [...prev, ...list]);
+          setReplies((prev) => [...prev, ...list]);
         } else {
-          setReplys([]);
+          setReplies([]);
         }
       } catch {
         console.log("error");
@@ -175,7 +175,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
    * @param reply
    */
   const addNewReply = (reply: CommentType) => {
-    setReplys((replys) => [reply, ...replys]);
+    setReplies((replies) => [reply, ...replies]);
     commentRef.current?.scrollIntoView();
   };
   /**
@@ -185,7 +185,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
     if (replay) {
       const isLike = !replay.isLike;
       await likeComment(replay.id, isLike);
-      setReplys((prev) =>
+      setReplies((prev) =>
         produce(prev, (draft) => {
           draft.forEach((item) => {
             if (item.id === replay.id) {
@@ -243,7 +243,7 @@ const CommentItem = React.forwardRef<CommentItemRef, CommentItemType>((props, re
         </CommentContentBottom>
       </CommentContent>
       <div>
-        {replys.map((reply) => (
+        {replies.map((reply) => (
           <ReplyItem
             authorId={props.authorId}
             onClickLike={replyHandleLike}
