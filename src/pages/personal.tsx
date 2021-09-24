@@ -129,6 +129,16 @@ const Personal: NextPage<UserProps> = () => {
   const handleFreeTrial = () => {
     console.log("click free trial");
   };
+  const getRegisterText = () => {
+    const registerDays = getRegistTime(user.created_at);
+    let resultText = "";
+    if (Number(registerDays) <= 1) {
+      resultText = "Your first day in Ziel Home";
+    } else {
+      resultText = `Your ${registerDays} days in Ziel home`;
+    }
+    return resultText;
+  };
 
   return (
     <>
@@ -140,7 +150,7 @@ const Personal: NextPage<UserProps> = () => {
               <UserAvatar width={80} height={80} fit="cover" src={user.avatar} />
               <UserInfo>
                 <UserName>{user.name}</UserName>
-                <RegisterTime>{getRegistTime(user.created_at)} day in ziel home</RegisterTime>
+                <RegisterTime>{getRegisterText()}</RegisterTime>
               </UserInfo>
               <ProfileEntry>
                 <Link href={PAPER_PROFILE_ROUTE}>

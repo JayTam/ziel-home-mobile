@@ -123,7 +123,7 @@ const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
           <PlaceholderImage src={VideoPlaceholderImage} />
         )}
         {props.dataSource === "user_paper" && props.status === 1 ? (
-          <IsReviewing>Is reviewing</IsReviewing>
+          <IsReviewing>under review</IsReviewing>
         ) : null}
         <BottomContent>
           <Title>

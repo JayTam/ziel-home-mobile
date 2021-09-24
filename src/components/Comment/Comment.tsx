@@ -52,7 +52,7 @@ const EmptyComment = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${(props) => props.theme.palette.common?.white};
+  color: ${(props) => props.theme.palette.text?.secondary};
 `;
 const CommentAreaStyle = styled.div`
   height: 100%;
@@ -270,7 +270,7 @@ const Comment: React.FC<CommentProps> = (props) => {
 
             {commentList.length === 0 && !firstLoading ? (
               <EmptyComment>
-                <span>No comments yet. Grab the couch</span>
+                <span>Be the first to comment! :)</span>
               </EmptyComment>
             ) : null}
 
