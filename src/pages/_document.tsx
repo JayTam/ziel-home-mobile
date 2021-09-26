@@ -8,9 +8,6 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <title>ZielHome Community</title>
-          <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-          <meta name="description" content="share home lifestyle in video mags." />
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary} />
           <link

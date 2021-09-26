@@ -85,7 +85,6 @@ const RouteBack = styled.div<Pick<FeedProps, "position">>`
   justify-content: center;
   align-items: center;
   transform: ${(props) => {
-    console.log(props.position);
     switch (props.position) {
       case "top":
         return "rotate(90deg)";
