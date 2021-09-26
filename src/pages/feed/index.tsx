@@ -446,6 +446,17 @@ const Feed: NextPage<FeedProps> = (props) => {
     }
   });
 
+  /**
+   * 当用户直接返回这个页面，返回按钮回到首页
+   */
+  const handleRouteBack = () => {
+    if (router.query.from) {
+      router.push("/");
+    } else {
+      router.back();
+    }
+  };
+
   // 打开评论
   const openCommentPopup = () => setCommentOpen(true);
   // 关闭评论
@@ -484,7 +495,7 @@ const Feed: NextPage<FeedProps> = (props) => {
           {papers.map((paper, index) => (
             <SwiperSlide key={paper.id} virtualIndex={index}>
               <HeaderContainer>
-                <RouteBack onClick={() => router.back()}>
+                <RouteBack onClick={handleRouteBack}>
                   <RouteBackIcon />
                 </RouteBack>
                 <MagazineContainer>

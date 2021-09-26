@@ -16,6 +16,7 @@ import { MagazineType } from "@/apis";
 import { PaperType } from "@/apis/paper";
 import Popup from "#/lib/Popup";
 import { useAppSelector } from "@/app/hook";
+import { useRouter } from "next/router";
 
 interface MoreOperateType {
   open: boolean;
@@ -86,6 +87,7 @@ const ShareTitle = styled.div`
 `;
 
 const MorePopup: React.FC<MoreOperateType> = (props) => {
+  const router = useRouter();
   const user = useAppSelector((state) => state.user);
   const isMyPaper = useMemo(
     () => user.uid === props.paper?.authorId,
@@ -101,23 +103,23 @@ const MorePopup: React.FC<MoreOperateType> = (props) => {
    * @param type
    */
   const handleShare = (type: string) => {
-    let baseUrl: string;
+    let shareUrl: string;
     let url = "";
     if (props.moreType === "magazine") {
-      baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.magazine?.id}`;
+      shareUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.magazine?.id}?from=${router.asPath}`;
     } else {
-      baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${props.paper?.magazineId}&paper_id=${props.paper?.id}`;
+      shareUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${props.paper?.magazineId}&paper_id=${props.paper?.id}&from=${router.asPath}`;
     }
-    baseUrl = encodeURIComponent(baseUrl);
+    shareUrl = encodeURIComponent(shareUrl);
     switch (type) {
       case "SMS":
-        url = `sms:'';?&body=${baseUrl}`;
+        url = `sms:'';?&body=${shareUrl}`;
         break;
       case "facebook":
-        url = `https://www.facebook.com/sharer.php?u=${baseUrl}`;
+        url = `https://www.facebook.com/sharer.php?u=${shareUrl}`;
         break;
       case "pinterest":
-        url = `https://www.pinterest.com/pin/create/button/?url=${baseUrl}`;
+        url = `https://www.pinterest.com/pin/create/button/?url=${shareUrl}`;
         break;
       default:
         break;
