@@ -14,6 +14,8 @@ import UnSubscribeBtn from "@/assets/icons/unSubscribe.svg";
 import { TextEllipsisMixin } from "#/lib/mixins";
 import Head from "next/head";
 import MorePopup from "@/components/MorePopup";
+import FeedDialog from "@/components/feed/FeedDialog";
+import { TFeedDialogContext, FeedDialogContext } from "@/components/feed/Feed";
 
 interface MagazineProps {
   magazine: MagazineType;
@@ -134,12 +136,21 @@ const PaperItem = styled.div`
 `;
 const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
   const [shareOpen, setShareOpen] = useState(false);
-  const [currentMagazine, setCurrentMagazine] = useState(magazine);
+  const [openFeed, setOpenFeed] = useState(false);
+  const [currentMagazine, setCurrentMagazine] = useState<MagazineType | null>(magazine);
+  const [currentPaper, setCurrentPaper] = useState<PaperType | null>(null);
   const [papers, setPapers] = useState<PaperType[]>([]);
   const { loaderRef, page, setLoading, setHasMore, hasMore } = useInfiniteScroll<HTMLDivElement>({
     hasMore: false,
     initialPage: 1,
   });
+
+  const context: TFeedDialogContext = {
+    papers,
+    setPapers,
+    currentPaper,
+    setCurrentPaper,
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -166,44 +177,56 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
    *  订阅杂志
    * @
    */
-  const handleSubscribe = async (magazine: MagazineType) => {
+  const handleSubscribe = async (magazine: MagazineType | null) => {
     if (!magazine) return;
     const isSubscribe = !magazine.isSubscribe;
     await subscribeMagazine(magazine.id, isSubscribe);
     setCurrentMagazine((prev) =>
       produce(prev, (draft) => {
-        draft.isSubscribe = isSubscribe;
-        if (isSubscribe) {
-          draft.subscribeNum = magazine.subscribeNum + 1;
-        } else {
-          draft.subscribeNum = magazine.subscribeNum - 1;
+        if (draft) {
+          draft.isSubscribe = isSubscribe;
+          if (isSubscribe) {
+            draft.subscribeNum = magazine.subscribeNum + 1;
+          } else {
+            draft.subscribeNum = magazine.subscribeNum - 1;
+          }
         }
         return draft;
       })
     );
   };
 
+  const handleOpenFeed = (paper: PaperType | null) => {
+    setCurrentPaper(paper);
+    setOpenFeed(true);
+  };
+
+  const handleCloseFeed = () => {
+    setCurrentPaper(null);
+    setOpenFeed(false);
+  };
+
   return (
     <>
       <Head>
-        <title>{currentMagazine.title}</title>
-        <meta name="description" content={currentMagazine.description} />
-        <meta property="og:title" content={currentMagazine.title} />
-        <meta property="og:description" content={currentMagazine.description} />
-        {/* <meta property="og:image" content={currentMagazine.cover} /> */}
+        <title>{currentMagazine?.title}</title>
+        <meta name="description" content={currentMagazine?.description} />
+        <meta property="og:title" content={currentMagazine?.title} />
+        <meta property="og:description" content={currentMagazine?.description} />
+        {/* <meta property="og:image" content={currentMagazine?.cover} /> */}
         <meta
           property="og:url"
-          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${currentMagazine.id}`}
+          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${currentMagazine?.id}`}
         />
       </Head>
       <Container>
         <Header rightComponent={<BtnShare onClick={handleShare} />}>Magazine</Header>
         <Content>
           <MagazineContent>
-            <MagazineImg src={replaceToImgBaseUrl(currentMagazine.cover)} />
+            <MagazineImg src={replaceToImgBaseUrl(currentMagazine?.cover)} />
             <MagazineInfo>
               <TopContent>
-                <Title>{currentMagazine.title}</Title>
+                <Title>{currentMagazine?.title}</Title>
                 <Statistics>
                   {digitalScale(magazine.paperNum)} stories &nbsp;&nbsp;&nbsp;
                   {digitalScale(magazine.subscribeNum)} subscribers
@@ -211,11 +234,11 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
               </TopContent>
               <BottomContent>
                 <AuthorContent>
-                  <Avatar src={currentMagazine.avatar} />
-                  <AuthorName>{currentMagazine.author}</AuthorName>
+                  <Avatar src={currentMagazine?.avatar} />
+                  <AuthorName>{currentMagazine?.author}</AuthorName>
                 </AuthorContent>
                 <div onClick={() => handleSubscribe(currentMagazine)}>
-                  {currentMagazine.isSubscribe ? <SubscribeBtn /> : <UnSubscribeBtn />}
+                  {currentMagazine?.isSubscribe ? <SubscribeBtn /> : <UnSubscribeBtn />}
                 </div>
               </BottomContent>
             </MagazineInfo>
@@ -231,7 +254,7 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
                 more="More"
                 less="Collect"
               >
-                {currentMagazine.description}
+                {currentMagazine?.description}
               </ShowMoreText>
             </Description>
           </DescriptionStyle>
@@ -240,13 +263,21 @@ const Magazine: NextPage<MagazineProps> = ({ magazine }) => {
           <PaperContent>
             {papers.map((paper) => (
               <PaperItem key={paper.id}>
-                <PaperPreview {...paper} authorId={magazine.authorId} dataSource="default" />
+                <PaperPreview
+                  {...paper}
+                  authorId={magazine.authorId}
+                  dataSource="default"
+                  onOpenFeed={() => handleOpenFeed(paper)}
+                />
               </PaperItem>
             ))}
             {hasMore ? <div ref={loaderRef}>loading...</div> : null}
           </PaperContent>
         </MagazinePaperLayout>
       </Container>
+      <FeedDialogContext.Provider value={context}>
+        <FeedDialog open={openFeed} type="default" onClose={handleCloseFeed} />
+      </FeedDialogContext.Provider>
       <MorePopup open={shareOpen} moreType="magazine" magazine={magazine} onClose={closePopup} />
     </>
   );

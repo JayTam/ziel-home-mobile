@@ -5,7 +5,7 @@ import { replaceToImgBaseUrl, useCombinedRefs } from "@/utils";
 import Loading from "#/lib/Loading";
 import Image from "#/lib/Image";
 import { VideoReadyState } from "@/constants";
-import { addPaperVideoPlayTimes, PaperType } from "@/apis/paper";
+import { PaperType } from "@/apis/paper";
 
 export type VideoPlayerProps = PaperType & {
   className?: string;
@@ -38,6 +38,8 @@ export type VideoPlayerProps = PaperType & {
   onChangeLoading?: (loading: boolean) => void;
   // 第一次播放，兼容iOS video play 必需在 eventHandler 中
   onFirstPlay?: () => void;
+  // 添加一次播放记录
+  onAddPlayTimes?: () => void;
 };
 
 const Container = styled.div`
@@ -129,7 +131,7 @@ const VideoPlayer = React.forwardRef<HTMLVideoElement, VideoPlayerProps>((props,
     if (currentTime / duration > PLAY_PROGRESS_FOR_ADD_PLAY_TIMES) {
       if (!hasNotifyAddPlayTimes.current) {
         hasNotifyAddPlayTimes.current = true;
-        addPaperVideoPlayTimes(props.id);
+        props.onAddPlayTimes?.();
       }
     }
   }, [currentTime, duration, props.id]);

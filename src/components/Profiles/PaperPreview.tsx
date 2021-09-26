@@ -7,12 +7,12 @@ import Image from "next/image";
 import { TextEllipsisMixin } from "#/lib/mixins";
 import TopIcon from "@/assets/icons/top.svg";
 import React from "react";
-import Link from "next/link";
 import { TFeedType } from "@/pages/feed";
 import OssImage from "#/lib/Image";
 
 interface MagazinePagePropType extends PaperType {
   dataSource: TFeedType;
+  onOpenFeed?: (type: TFeedType) => void;
 }
 
 const Container = styled.div`
@@ -75,40 +75,31 @@ const PaperTopIcon = styled(TopIcon)`
 `;
 
 const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
-  let link;
-  if (props.dataSource === "default") {
-    link = `/feed?magazine_id=${props.magazine?.id}&paper_id=${props.id}`;
-  } else {
-    link = `/feed?user=${props.authorId}&type=${props.dataSource}`;
-  }
-
   return (
-    <Link href={link}>
-      <Container>
-        {props.poster ? (
-          <PosterImage
-            src={props.poster}
-            resizeOptions={{ w: 170, h: 302 }}
-            zoomOptions={{ w: 100, h: 178 }}
-          />
-        ) : (
-          <PlaceholderImage src={VideoPlaceholderImage} />
-        )}
-        {props.dataSource === "user_paper" && props.status === 1 ? (
-          <IsReviewing>Is reviewing</IsReviewing>
-        ) : null}
-        <BottomContent>
-          <Title>
-            {props.isTop ? <PaperTopIcon /> : null}
-            {props.title} {props.title}
-          </Title>
-          <PlayContent>
-            <PlayIcon />
-            <PlayCount>{digitalScale(props.playNum)}</PlayCount>
-          </PlayContent>
-        </BottomContent>
-      </Container>
-    </Link>
+    <Container onClick={() => props.onOpenFeed?.(props.dataSource)}>
+      {props.poster ? (
+        <PosterImage
+          src={props.poster}
+          resizeOptions={{ w: 170, h: 302 }}
+          zoomOptions={{ w: 100, h: 178 }}
+        />
+      ) : (
+        <PlaceholderImage src={VideoPlaceholderImage} />
+      )}
+      {props.dataSource === "user_paper" && props.status === 1 ? (
+        <IsReviewing>Is reviewing</IsReviewing>
+      ) : null}
+      <BottomContent>
+        <Title>
+          {props.isTop ? <PaperTopIcon /> : null}
+          {props.title} {props.title}
+        </Title>
+        <PlayContent>
+          <PlayIcon />
+          <PlayCount>{digitalScale(props.playNum)}</PlayCount>
+        </PlayContent>
+      </BottomContent>
+    </Container>
   );
 };
 export default PaperPreview;
