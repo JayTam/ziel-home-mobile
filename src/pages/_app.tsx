@@ -1,9 +1,9 @@
 import type { AppContext, AppProps } from "next/app";
 import React, { useEffect } from "react";
+import Head from "next/head";
 import Router, { useRouter } from "next/router";
 import { Provider } from "react-redux";
 import NProgress from "nprogress";
-import { KeepAliveProvider } from "react-next-keep-alive";
 import { ThemeProvider } from "styled-components";
 import { theme } from "#/lib/index";
 import {
@@ -88,12 +88,16 @@ function MyApp(app: AppProps) {
 
   return (
     <>
+      <Head>
+        <title>ZielHome Community</title>
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <meta name="description" content="share home lifestyle in video mags." />
+      </Head>
+
       <ThemeProvider theme={theme}>
         <Provider store={reduxStore}>
           <LoginContext.Provider value={loginState}>
-            <KeepAliveProvider router={router}>
-              <Component {...pageProps} />
-            </KeepAliveProvider>
+            <Component {...pageProps} />
           </LoginContext.Provider>
         </Provider>
       </ThemeProvider>
@@ -148,7 +152,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       reduxStore.dispatch(setUserInfo(response.data));
     } catch (e) {
       // 获取用户信息失败，代表登陆失效，移除auth相关cookie
-      console.error(`[login error]:`, e.response);
+      console.error(`[login error]:`, e);
       res
         ?.writeHead(302, {
           Location: redirectUri,

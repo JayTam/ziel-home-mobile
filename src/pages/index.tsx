@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { withKeepAlive } from "react-next-keep-alive";
 import Tabs from "#/lib/Tabs";
 import TabPanel from "#/lib/Tabs/TabPanel";
 import { useLogin } from "@/utils";
@@ -53,4 +52,4 @@ const Home = () => {
   );
 };
 
-export default withKeepAlive(Home, "index");
+export default Home;

@@ -3,12 +3,14 @@ import styled from "styled-components";
 import PaperPreview from "./PaperPreview";
 import React, { useEffect, useState } from "react";
 import { getStarPapers, getUserPapers, PaperType } from "@/apis/paper";
-import { TType } from "@/pages/feed";
+import { TFeedType } from "@/pages/feed";
 import Empty from "#/lib/Empty";
+import FeedDialog from "@/components/feed/FeedDialog";
+import { FeedDialogContext, TFeedDialogContext } from "@/components/feed/Feed";
 
 interface PaperListProps {
   userId: string; // 用户Id
-  dataSource: TType;
+  dataSource: TFeedType;
 }
 
 const PaperItem = styled.div`
@@ -20,11 +22,29 @@ const PaperItem = styled.div`
 `;
 const PaperScrollList: React.FC<PaperListProps> = (props) => {
   const [papers, setPapers] = useState<PaperType[]>([]);
+  const [currentPaper, setCurrentPaper] = useState<PaperType | null>(null);
   const { loaderRef, page, setLoading, setHasMore, hasMore, firstLoading, setFirstLoading } =
     useInfiniteScroll<HTMLDivElement>({
       hasMore: false,
       initialPage: 1,
     });
+  const [open, setOpen] = useState(false);
+
+  const context: TFeedDialogContext = {
+    papers,
+    setPapers,
+    currentPaper,
+    setCurrentPaper,
+  };
+
+  const handleOpenFeedDialog = (paper: PaperType) => {
+    setCurrentPaper(paper);
+    setOpen(true);
+  };
+
+  const handleCloseFeedDialog = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     (async () => {
@@ -54,11 +74,19 @@ const PaperScrollList: React.FC<PaperListProps> = (props) => {
       ) : (
         papers.map((paper) => (
           <PaperItem key={paper.id}>
-            <PaperPreview dataSource={props.dataSource} key={paper.id} {...paper} />
+            <PaperPreview
+              dataSource={props.dataSource}
+              key={paper.id}
+              {...paper}
+              onOpenFeed={() => handleOpenFeedDialog(paper)}
+            />
           </PaperItem>
         ))
       )}
       {hasMore ? <div ref={loaderRef}>loading...</div> : null}
+      <FeedDialogContext.Provider value={context}>
+        <FeedDialog open={open} onClose={handleCloseFeedDialog} type={props.dataSource} />
+      </FeedDialogContext.Provider>
     </>
   );
 };

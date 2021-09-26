@@ -5,6 +5,7 @@ import MagazineCard from "./MagazineCard";
 import produce from "immer";
 import { useInfiniteScroll, useLogin } from "@/utils";
 import Loading from "#/lib/Loading";
+import FeedDialog from "@/components/feed/FeedDialog";
 
 const ExploreContainer = styled.div`
   display: flex;
@@ -20,6 +21,8 @@ const StyledLoading = styled(Loading)`
 const ExploreMagazineScrollList: React.FC = () => {
   const { withLogin } = useLogin();
   const [exploreMagazines, setExploreMagazines] = useState<MagazineType[]>([]);
+  const [currentMagazine, setCurrentMagazine] = useState<MagazineType | null>(null);
+  const [open, setOpen] = useState(false);
   const { loaderRef, hasMore, page, setHasMore, setLoading } = useInfiniteScroll<HTMLDivElement>({
     hasMore: false,
   });
@@ -63,13 +66,49 @@ const ExploreMagazineScrollList: React.FC = () => {
     );
   });
 
+  /**
+   * 打开Feed流弹窗
+   * @param magazine
+   */
+  const handleOpenFeed = (magazine: MagazineType) => {
+    setOpen(true);
+    setCurrentMagazine(magazine);
+  };
+
+  /**
+   * 关闭Feed流弹窗
+   */
+  const handleCLoseFeed = (magazine: MagazineType) => {
+    setExploreMagazines((prev) =>
+      prev.map((item) => {
+        if (item.id === magazine.id) {
+          return {
+            ...item,
+            isSubscribe: magazine.isSubscribe,
+            subscribeNum: magazine.subscribeNum,
+          };
+        }
+        return item;
+      })
+    );
+    setCurrentMagazine(null);
+    setOpen(false);
+  };
+
   return (
     <ExploreContainer>
+      <FeedDialog
+        open={open}
+        magazineId={currentMagazine?.id}
+        onClose={handleCLoseFeed}
+        position="bottom"
+      />
       {exploreMagazines.map((magazine) => (
         <MagazineCard
           key={magazine.id}
           {...magazine}
           onSubscribe={() => handleSubscribe(magazine)}
+          onOpenFeed={() => handleOpenFeed(magazine)}
         />
       ))}
       {hasMore ? <StyledLoading ref={loaderRef} /> : null}

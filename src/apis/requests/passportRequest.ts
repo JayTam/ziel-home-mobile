@@ -34,7 +34,7 @@ request.interceptors.response.use(
     return response;
   },
   async (error) => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       // 跳过注销时异常, status = 401
       if (error.response.config.url === "/logout") return;
       await store?.dispatch(logoutAsync(true));

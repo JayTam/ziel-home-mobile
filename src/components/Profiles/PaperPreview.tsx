@@ -7,15 +7,15 @@ import Image from "next/image";
 import { TextEllipsisMixin } from "#/lib/mixins";
 import TopIcon from "@/assets/icons/top.svg";
 import React from "react";
-import Link from "next/link";
-import { TType } from "@/pages/feed";
+import { TFeedType } from "@/pages/feed";
 import OssImage from "#/lib/Image";
 
 interface MagazinePagePropType extends PaperType {
-  dataSource: TType;
+  dataSource: TFeedType;
+  onOpenFeed?: (type: TFeedType) => void;
 }
 
-const Container = styled.div<{ dataSource: TType }>`
+const Container = styled.div<{ dataSource: TFeedType }>`
   margin-top: ${(props) =>
     props.dataSource === "user_paper" || props.dataSource === "user_saved" ? "4px" : 0};
   position: relative;
@@ -78,10 +78,10 @@ const PaperTopIcon = styled(TopIcon)`
   display: inline-block;
   vertical-align: bottom;
 `;
-const AuthorLayout = styled.div<{ dataSource: TType }>`
+const AuthorLayout = styled.div<{ dataSource: TFeedType }>`
   display: flex;
   align-items: center;
-  visibility: ${(props) => (props.dataSource === "magazine_detail" ? "visible" : "hidden")};
+  visibility: ${(props) => (props.dataSource === "default" ? "visible" : "hidden")};
 `;
 
 const AuthorStyle = styled.div`
@@ -95,54 +95,45 @@ const Avatar = styled(OssImage)`
 `;
 const Name = styled.div`
   margin-left: 4px;
-  ${TextEllipsisMixin}
   width: 48px;
   font-size: 14px;
   line-height: 16px;
   color: ${(props) => props.theme.palette.text?.hint};
+  ${TextEllipsisMixin}
 `;
 
 const PaperPreview: React.FC<MagazinePagePropType> = (props) => {
-  let link;
-  if (props.dataSource === "default") {
-    link = `/feed?magazine_id=${props.magazine?.id}&paper_id=${props.id}`;
-  } else {
-    link = `/feed?user=${props.authorId}&type=${props.dataSource}`;
-  }
-
   return (
-    <Link href={link}>
-      <Container dataSource={props.dataSource}>
-        {props.poster ? (
-          <PosterImage
-            src={props.poster}
-            resizeOptions={{ w: 170, h: 302 }}
-            zoomOptions={{ w: 100, h: 178 }}
-          />
-        ) : (
-          <PlaceholderImage src={VideoPlaceholderImage} />
-        )}
-        {props.dataSource === "user_paper" && props.status === 1 ? (
-          <IsReviewing>under review</IsReviewing>
-        ) : null}
-        <BottomContent>
-          <Title>
-            {props.isTop ? <PaperTopIcon /> : null}
-            {props.title} {props.title}
-          </Title>
-          <AuthorStyle>
-            <AuthorLayout dataSource={props.dataSource}>
-              <Avatar resizeOptions={{ w: 24, h: 24 }} src={props.avatar} />
-              <Name>{props.author}</Name>
-            </AuthorLayout>
-            <PlayContent>
-              <PlayIcon style={{ width: "24px", height: "24px" }} />
-              <PlayCount>{digitalScale(props.playNum)}</PlayCount>
-            </PlayContent>
-          </AuthorStyle>
-        </BottomContent>
-      </Container>
-    </Link>
+    <Container dataSource={props.dataSource} onClick={() => props.onOpenFeed?.(props.dataSource)}>
+      {props.poster ? (
+        <PosterImage
+          src={props.poster}
+          resizeOptions={{ w: 170, h: 302 }}
+          zoomOptions={{ w: 100, h: 178 }}
+        />
+      ) : (
+        <PlaceholderImage src={VideoPlaceholderImage} />
+      )}
+      {props.dataSource === "user_paper" && props.status === 1 ? (
+        <IsReviewing>under review</IsReviewing>
+      ) : null}
+      <BottomContent>
+        <Title>
+          {props.isTop ? <PaperTopIcon /> : null}
+          {props.title} {props.title}
+        </Title>
+        <AuthorStyle>
+          <AuthorLayout dataSource={props.dataSource}>
+            <Avatar resizeOptions={{ w: 24, h: 24 }} src={props.avatar} />
+            <Name>{props.author}</Name>
+          </AuthorLayout>
+          <PlayContent>
+            <PlayIcon style={{ width: "24px", height: "24px" }} />
+            <PlayCount>{digitalScale(props.playNum)}</PlayCount>
+          </PlayContent>
+        </AuthorStyle>
+      </BottomContent>
+    </Container>
   );
 };
 export default PaperPreview;

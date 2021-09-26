@@ -1,13 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import SwiperCore, { Virtual } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { digitalScale, toastSNSAxiosError, useLogin } from "@/utils";
 import FeedPaper from "@/components/feed/FeedPaper";
-import { SwiperEvents } from "swiper/types";
-import produce from "immer";
 import VideoPlayer from "@/components/feed/VideoPlayer";
-import { subscribeMagazine } from "@/apis";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
+  addPaperVideoPlayTimes,
   deletePaper,
   getPaperList,
   getStarPapers,
@@ -19,32 +17,44 @@ import {
   starPaper,
   topPaper,
 } from "@/apis/paper";
-import { TextEllipsisMixin } from "#/lib/mixins";
-import {
-  composeAuthHeaders,
-  digitalScale,
-  replaceToImgBaseUrl,
-  toastSNSAxiosError,
-  useLogin,
-} from "@/utils";
+import { TFeedType } from "@/pages/feed";
+import { SwiperEvents } from "swiper/types";
+import produce from "immer";
 import { useAppSelector } from "@/app/hook";
-import SubscribedIcon from "@/assets/icons/subscribed.svg";
+import { MagazineType, subscribeMagazine } from "@/apis";
 import { followUser } from "@/apis/profile";
-import Comments from "@/components/Comment/Comment";
-import SubscribeButtonIcon from "@/assets/icons/subscribe-button.svg";
-import FeedBackIcon from "@/assets/icons/feed-back.svg";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import MorePopup from "@/components/MorePopup";
-import Head from "next/head";
-import { GetServerSideProps, NextPage } from "next";
-import { useUpdateEffect } from "ahooks";
-
+import Comments from "@/components/Comment/Comment";
+import styled from "styled-components";
+import FeedBackIcon from "@/assets/icons/feed-back.svg";
+import { TextEllipsisMixin } from "#/lib/mixins";
+import SubscribedIcon from "@/assets/icons/subscribed.svg";
+import SubscribeButtonIcon from "@/assets/icons/subscribe-button.svg";
+import SwiperCore, { Virtual } from "swiper";
+import { FeedDialogProps } from "@/components/feed/FeedDialog";
 // install Virtual module
 SwiperCore.use([Virtual]);
 
+export type TFeedDialogContext = {
+  papers: PaperType[];
+  setPapers: React.Dispatch<React.SetStateAction<PaperType[]>>;
+  currentPaper: PaperType | null;
+  setCurrentPaper: React.Dispatch<React.SetStateAction<PaperType | null>>;
+};
+
+export const FeedDialogContext = React.createContext<TFeedDialogContext>({} as TFeedDialogContext);
+
+interface FeedProps {
+  magazineId?: string;
+  userId?: string;
+  paperId?: string;
+  type?: TFeedType;
+  position?: FeedDialogProps["position"];
+  onClickBack?: (magazine: MagazineType) => void;
+}
+
 const Container = styled.div`
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   width: 100vw;
@@ -70,10 +80,23 @@ const HeaderContainer = styled.div`
   display: flex;
 `;
 
-const RouteBack = styled.div`
+const RouteBack = styled.div<Pick<FeedProps, "position">>`
   display: flex;
   justify-content: center;
   align-items: center;
+  transform: ${(props) => {
+    switch (props.position) {
+      case "top":
+        return "rotate(90deg)";
+      case "left":
+        return "rotate(0)";
+      case "right":
+        return "rotate(180deg)";
+      case "bottom":
+      default:
+        return "rotate(-90deg)";
+    }
+  }};
 `;
 
 const RouteBackIcon = styled(FeedBackIcon)`
@@ -124,74 +147,96 @@ const MagazineSubscribeButton = styled(SubscribeButtonIcon)`
   //margin-right: 14px;
 `;
 
-export type TFeedType = "default" | "subscribe" | "user_paper" | "user_saved";
-
-interface FeedProps {
-  initialPapers: PaperType[];
-}
-
-const Feed: NextPage<FeedProps> = (props) => {
-  const router = useRouter();
+const Feed: React.FC<FeedProps> = (props) => {
+  const { withLogin } = useLogin();
+  const videoPlayerRef = useRef<HTMLVideoElement>(null);
   const [hiddenVideoPlayer, setHiddenVideoPlayer] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-  const videoPlayerRef = useRef<HTMLVideoElement>(null);
-  const [papers, setPapers] = useState<PaperType[]>(props.initialPapers);
-  const [currentPaper, setCurrentPaper] = useState<PaperType | null>(
-    props.initialPapers[0] ?? null
-  );
-  const [page, setPage] = useState(papers.length > 0 ? 1 : 0);
   const [loading, setLoading] = useState(false);
   const [swiperHeight, setSwiperHeight] = useState(0);
-  const { withLogin } = useLogin();
-  const [commentOpen, setCommentOpen] = useState(false);
+  const [openComment, setOpenComment] = useState(false);
   const [openMore, setOpenMore] = useState(false);
+  /**
+   * 数据是否和父组件联动
+   * 不联动：使用组件内状态，每次开启/关闭清空
+   * 联动：使用父组件通过context传递下来的状态，每次开启/关闭不清空
+   */
+  const context = useContext<TFeedDialogContext>(FeedDialogContext);
+  // 是否联动模式
+  const isLinkedMode = Boolean(context.papers?.length >= 0);
+  const [innerCurrentPaper, setInnerCurrentPaper] = useState<PaperType | null>(null);
+  const [innerPapers, setInnerPapers] = useState<PaperType[]>([]);
+  const currentPaper = context.currentPaper ?? innerCurrentPaper;
+  const setCurrentPaper = context.setCurrentPaper ?? setInnerCurrentPaper;
+  const papers = context.papers ?? innerPapers;
+  const setPapers = context.setPapers ?? setInnerPapers;
+  const index = papers.findIndex(({ id }) => id === currentPaper?.id);
+  const [activeIndex, setActiveIndex] = useState<number>(index > -1 ? index : 0);
+  const [page, setPage] = useState(Math.ceil(papers.length / 8));
+  const [hasMore, setHasMore] = useState(isLinkedMode);
+
+  // 杂志id
+  const magazineId = props.magazineId ?? currentPaper?.magazineId ?? "";
+  // 内容id
+  const paperId = props.paperId ?? currentPaper?.id ?? "";
+  // 别人的用户id
+  const otherUserId = currentPaper?.authorId ?? "";
+  // 我的用户id
+  const user = useAppSelector((state) => state.user);
+  const myUserId = user.uid;
+  // 是否挂载
+  const mounted = useRef(false);
+
+  useEffect(
+    () => setCurrentPaper(papers[activeIndex] ?? null),
+    [activeIndex, papers, setCurrentPaper]
+  );
 
   useEffect(() => {
-    setCurrentPaper(papers[activeIndex]);
-  }, [activeIndex, papers]);
-
-  useUpdateEffect(() => {
+    if (!mounted.current && isLinkedMode) {
+      mounted.current = true;
+      return;
+    }
     (async () => {
-      setLoading(true);
       try {
-        const type: TFeedType = (router.query.type as TFeedType) ?? "default";
+        setLoading(true);
+        const type: TFeedType = (props.type as TFeedType) ?? "default";
         let response;
         switch (type) {
           case "subscribe":
             response = await getUserSubscribePapers({
-              paperId: router.query["paper_id"] as string,
+              paperId,
               page,
             });
             break;
           case "user_paper":
             response = await getUserPapers({
-              userId: router.query["user"] as string,
+              userId: otherUserId,
               page,
             });
             break;
           case "user_saved":
             response = await getStarPapers({
-              userId: router.query["user"] as string,
+              userId: myUserId,
               page,
             });
             break;
           case "default":
           default:
             response = await getPaperList({
-              magazineId: router.query["magazine_id"] as string,
-              paperId: router.query["paper_id"] as string,
+              magazineId,
               page,
             });
             break;
         }
+        setHasMore(Boolean(response.data.result.hasmore));
         const list = response.data.result.data;
         setPapers((prev) => [...prev, ...list]);
       } finally {
         setLoading(false);
       }
     })();
-  }, [page, router.query]);
+  }, [page]);
 
   /**
    * 切换内容
@@ -200,27 +245,20 @@ const Feed: NextPage<FeedProps> = (props) => {
    * @param swiper
    */
   const handleSwitchPaper: SwiperEvents["slideChangeTransitionEnd"] = (swiper) => {
+    if (papers.length === 0) return;
     const prevActiveIndex = activeIndex;
-    const currentActiveIndex = swiper.activeIndex;
-
-    if (prevActiveIndex !== currentActiveIndex) {
-      setActiveIndex(currentActiveIndex);
-      setPapers((prev) =>
-        produce(prev, (draft) => {
-          if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = false;
-          draft[currentActiveIndex].isPlay = draft[prevActiveIndex]?.isPlay;
+    const nextActiveIndex = swiper.activeIndex;
+    setPapers((prev) =>
+      produce(prev, (draft) => {
+        if (draft[nextActiveIndex]) draft[nextActiveIndex].touching = false;
+        if (prevActiveIndex !== nextActiveIndex) {
+          draft[nextActiveIndex].isPlay = draft[prevActiveIndex]?.isPlay;
           draft[prevActiveIndex].isPlay = false;
-          return draft;
-        })
-      );
-    } else {
-      setPapers((prev) =>
-        produce(prev, (draft) => {
-          if (draft[swiper.activeIndex]) draft[swiper.activeIndex].touching = false;
-          return draft;
-        })
-      );
-    }
+        }
+        return draft;
+      })
+    );
+    setActiveIndex(nextActiveIndex);
     setHiddenVideoPlayer(false);
   };
 
@@ -247,14 +285,18 @@ const Feed: NextPage<FeedProps> = (props) => {
   };
 
   /**
-   * 滑到最后一个paper，有两种情况
-   * 1. 当前 magazine 还有更多 paper, 获取更多的 paper 进行追加
-   * 2. 当前 magazine 没有更多 paper, 获取下一条 magazine，获取更多的 paper 进行追加，
-   * 当切换为下一条 paper 时候，更新当前 magazine为下一条的
+   * 滑到最后一个paper，切换到下一页
    */
-  const handleReachEnd: SwiperEvents["reachEnd"] = () => {
+  const handleReachEnd: SwiperEvents["reachEnd"] = (swiper) => {
     if (loading) return;
-    setPage((prev) => prev + 1);
+    // 由于是client render，刚打开时还没有数据，会触发 reachEnd 事件
+    if (swiper.slides.length === 0) return;
+    // 有更多才翻页
+    if (hasMore) {
+      setPage((prev) => prev + 1);
+    } else {
+      // TODO:需要一个toast, 提示没有更多内容了
+    }
   };
 
   /**
@@ -298,8 +340,6 @@ const Feed: NextPage<FeedProps> = (props) => {
     setTimeout(() => setSwiperHeight(window.innerHeight), 30);
     setTimeout(() => setSwiperHeight(window.innerHeight), 100);
   }, []);
-
-  const user = useAppSelector((state) => state.user);
 
   /**
    * 订阅杂志
@@ -446,10 +486,21 @@ const Feed: NextPage<FeedProps> = (props) => {
     }
   });
 
+  const handleAddPlayTimes = async (paper: PaperType | null) => {
+    if (!paper) return;
+    await addPaperVideoPlayTimes(paper.id);
+    setPapers((prev) =>
+      produce(prev, (draft) => {
+        const index = draft.findIndex(({ id }) => paper.id === id);
+        draft[index].playNum += 1;
+      })
+    );
+  };
+
   // 打开评论
-  const openCommentPopup = () => setCommentOpen(true);
+  const openCommentPopup = () => setOpenComment(true);
   // 关闭评论
-  const closeCommentPopup = () => setCommentOpen(false);
+  const closeCommentPopup = () => setOpenComment(false);
   // 打开更多
   const openMorePopup = () => {
     setOpenMore(true);
@@ -458,79 +509,71 @@ const Feed: NextPage<FeedProps> = (props) => {
   const closeMorePopup = () => setOpenMore(false);
 
   return (
-    <>
-      <Head>
-        <title>{currentPaper?.title}</title>
-        <meta name="description" content={currentPaper?.description} />
-        <meta property="og:title" content={currentPaper?.title} />
-        <meta property="og:description" content={currentPaper?.description} />
-        <meta property="og:image" content={replaceToImgBaseUrl(currentPaper?.poster)} />
-        <meta
-          property="og:url"
-          content={`${process.env.NEXT_PUBLIC_WEB_BASE_URL}feed?magazine_id=${currentPaper?.magazineId}&paper_id=${currentPaper?.id}`}
-        />
-      </Head>
-      <Container style={{ height: swiperHeight }}>
-        <StyledSwiper
-          direction="vertical"
-          virtual
-          initialSlide={activeIndex}
-          height={swiperHeight}
-          onSliderFirstMove={handleTouchStart}
-          onSlideResetTransitionEnd={handleSwitchPaper}
-          onSlideChangeTransitionEnd={handleSwitchPaper}
-          onReachEnd={handleReachEnd}
-        >
-          {papers.map((paper, index) => (
-            <SwiperSlide key={paper.id} virtualIndex={index}>
-              <HeaderContainer>
-                <RouteBack onClick={() => router.back()}>
-                  <RouteBackIcon />
-                </RouteBack>
-                <MagazineContainer>
-                  <Link href={`/magazine/${paper.magazineId}`}>
-                    <MagazineInfo>
-                      <MagazineTitle>
-                        {paper.magazine?.title}
-                        {user.uid !== paper.magazine?.authorId && paper.magazine?.isSubscribe ? (
-                          <StyledSubscribedIcon />
-                        ) : null}
-                      </MagazineTitle>
-                      <MagazineNumber>
-                        {digitalScale(paper.magazine?.subscribeNum)} subscribers
-                      </MagazineNumber>
-                    </MagazineInfo>
-                  </Link>
-                  {user.uid !== paper.magazine?.authorId && !paper.magazine?.isSubscribe ? (
-                    <MagazineSubscribeButton
-                      onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
-                    />
-                  ) : null}
-                </MagazineContainer>
-              </HeaderContainer>
-              <FeedPaper
-                {...paper}
-                loading={videoLoading}
-                active={activeIndex === index}
-                onTogglePlay={() => handleTogglePlay(paper)}
-                onFirstPlay={() => handleFirstPlay(paper)}
-                onFollow={() => handleFollow(paper)}
-                onLike={() => handleLikePaper(paper)}
-                onShare={openMorePopup}
-                onMore={openMorePopup}
-                onComment={openCommentPopup}
-              />
-            </SwiperSlide>
-          ))}
-        </StyledSwiper>
-        <VideoPlayer
-          ref={videoPlayerRef}
-          {...papers[activeIndex]}
-          hidden={hiddenVideoPlayer}
-          loading={videoLoading}
-          onChangeLoading={(status) => setVideoLoading(status)}
-        />
-      </Container>
+    <Container style={{ height: swiperHeight }}>
+      <StyledSwiper
+        direction="vertical"
+        virtual
+        initialSlide={activeIndex}
+        height={swiperHeight}
+        onSliderFirstMove={handleTouchStart}
+        onSlideResetTransitionEnd={handleSwitchPaper}
+        onSlideChangeTransitionEnd={handleSwitchPaper}
+        onReachEnd={handleReachEnd}
+      >
+        {papers.map((paper, index) => (
+          <SwiperSlide key={paper.id} virtualIndex={index}>
+            <HeaderContainer>
+              <RouteBack
+                onClick={() => paper.magazine && props.onClickBack?.(paper.magazine)}
+                position={props.position}
+              >
+                <RouteBackIcon />
+              </RouteBack>
+              <MagazineContainer>
+                <Link href={`/magazine/${paper.magazineId}`}>
+                  <MagazineInfo>
+                    <MagazineTitle>
+                      {paper.magazine?.title}
+                      {user.uid !== paper.magazine?.authorId && paper.magazine?.isSubscribe ? (
+                        <StyledSubscribedIcon />
+                      ) : null}
+                    </MagazineTitle>
+                    <MagazineNumber>
+                      {digitalScale(paper.magazine?.subscribeNum)} subscribers
+                    </MagazineNumber>
+                  </MagazineInfo>
+                </Link>
+                {user.uid !== paper.magazine?.authorId && !paper.magazine?.isSubscribe ? (
+                  <MagazineSubscribeButton
+                    onClick={(event: MouseEvent) => handleSubscribe(event, paper)}
+                  />
+                ) : null}
+              </MagazineContainer>
+            </HeaderContainer>
+            <FeedPaper
+              {...paper}
+              loading={videoLoading}
+              active={activeIndex === index}
+              onTogglePlay={() => handleTogglePlay(paper)}
+              onFirstPlay={() => handleFirstPlay(paper)}
+              onFollow={() => handleFollow(paper)}
+              onLike={() => handleLikePaper(paper)}
+              onShare={openMorePopup}
+              onMore={openMorePopup}
+              onComment={openCommentPopup}
+            />
+          </SwiperSlide>
+        ))}
+      </StyledSwiper>
+      {/* 视频播放 */}
+      <VideoPlayer
+        ref={videoPlayerRef}
+        {...papers[activeIndex]}
+        hidden={hiddenVideoPlayer}
+        loading={videoLoading}
+        onChangeLoading={(status) => setVideoLoading(status)}
+        onAddPlayTimes={() => handleAddPlayTimes(currentPaper)}
+      />
       {/* 更多弹框 */}
       {currentPaper ? (
         <MorePopup
@@ -548,35 +591,13 @@ const Feed: NextPage<FeedProps> = (props) => {
       {currentPaper ? (
         <Comments
           {...currentPaper}
-          open={commentOpen}
+          open={openComment}
           onCommentClose={() => closeCommentPopup()}
           onClickOverlay={() => closeCommentPopup()}
         />
       ) : null}
-    </>
+    </Container>
   );
 };
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-  const type: TFeedType = (query.type as TFeedType) ?? "default";
-  const headers = composeAuthHeaders(req.headers.cookie);
-  let list = [];
-  if (!type || type === "default") {
-    const response = await getPaperList(
-      {
-        magazineId: query["magazine_id"] as string,
-        paperId: query["paper_id"] as string,
-        page: 1,
-      },
-      {
-        headers,
-      }
-    );
-    list = response.data?.result?.data ?? [];
-  }
-  return {
-    props: {
-      initialPapers: list,
-    },
-  };
-};
+
 export default Feed;

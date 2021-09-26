@@ -5,7 +5,7 @@ const StyledTabBar = styled.div<TabBarProps>`
   position: fixed;
   left: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: 100;
   display: flex;
   justify-content: space-evenly;
   width: 100%;
