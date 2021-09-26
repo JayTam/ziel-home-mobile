@@ -55,6 +55,7 @@ function MyApp(app: AppProps) {
   const loginState: LoginContextState = {
     isLogin,
     openLogin() {
+      NProgress.start();
       window.location.href = parsePassportRedirectURL();
     },
     withLogin(callback) {
@@ -62,6 +63,7 @@ function MyApp(app: AppProps) {
         if (isLogin) {
           callback(...args);
         } else {
+          NProgress.start();
           window.location.href = parsePassportRedirectURL();
         }
       };

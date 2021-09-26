@@ -18,6 +18,7 @@ interface CommentProps extends PaperType {
 const PopupContainer = styled(Popup)`
   padding: 0;
   border-radius: 20px 20px 0 0;
+  background-color: ${(props) => props.theme.palette.common?.black};
 `;
 const CommentContainer = styled.div`
   width: 100%;

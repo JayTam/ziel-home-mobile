@@ -173,10 +173,10 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                   onClick={() => handleChange(magazine)}
                 />
               ))}
-              {magazines.length === 0 && !firstLoading ? <Empty /> : null}
+              {magazines.length === 0 && !firstLoading ? <Empty description="No Zines" /> : null}
               {hasMore ? <Loading ref={loaderRef} /> : null}
             </StyledTabPanel>
-            <StyledTabPanel indexKey="1" tab="My Magazines" forceRender>
+            <StyledTabPanel indexKey="1" tab="My Zines" forceRender>
               {magazines.map((magazine) => (
                 <StyledMagazinePreview
                   key={magazine.id}
@@ -185,7 +185,7 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
                   onClick={() => handleChange(magazine)}
                 />
               ))}
-              {magazines.length === 0 ? <Empty /> : null}
+              {magazines.length === 0 ? <Empty description="No Zines" /> : null}
               {hasMore ? <Loading ref={loaderRef} /> : null}
             </StyledTabPanel>
           </StyledTabs>
