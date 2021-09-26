@@ -134,6 +134,8 @@ const EditPaper: NextPage<EditPaperProps> = (props) => {
   const headers = composeAuthHeaders();
   const router = useRouter();
 
+  const magazineId = router.query["magazine_id"] as string;
+
   const {
     register,
     handleSubmit,
@@ -203,6 +205,7 @@ const EditPaper: NextPage<EditPaperProps> = (props) => {
           />
           <Divider />
           <MagazineSelector
+            value={magazineId}
             {...register("magazineId", { required: true })}
             onChange={(value) =>
               setValue("magazineId", value, { shouldValidate: true, shouldDirty: true })

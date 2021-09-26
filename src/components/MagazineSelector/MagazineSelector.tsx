@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import UploadIcon from "@/assets/icons/upload_1.svg";
 import RightIcon from "@/assets/icons/right.svg";
 import Popup from "#/lib/Popup";
 import TabPanel from "#/lib/Tabs/TabPanel";
 import Tabs from "#/lib/Tabs";
-import { getMagazinesForChoose, MagazineType } from "@/apis";
+import { getMagazineById, getMagazinesForChoose, MagazineType } from "@/apis";
 import MagazinePreview from "./MagazinePreview";
 import { useUpdateEffect } from "ahooks";
 import { useInfiniteScroll } from "@/utils";
@@ -101,6 +101,13 @@ const MagazineSelector = React.forwardRef<HTMLDivElement, MagazineSelectorProps>
       hasMore: false,
       initialPage: 1,
     });
+
+  // 当初始化时，加载杂志信息
+  useEffect(() => {
+    if (!props.value) return;
+    if (selectedMagazine) return;
+    getMagazineById(props.value).then((response) => setSelectedMagazine(response.data.result.data));
+  }, [props.value, selectedMagazine]);
 
   useUpdateEffect(() => {
     // skip close magazine selector
