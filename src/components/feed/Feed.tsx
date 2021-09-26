@@ -31,6 +31,7 @@ import { TextEllipsisMixin } from "#/lib/mixins";
 import SubscribedIcon from "@/assets/icons/subscribed.svg";
 import SubscribeButtonIcon from "@/assets/icons/subscribe-button.svg";
 import SwiperCore, { Virtual } from "swiper";
+import { FeedDialogProps } from "@/components/feed/FeedDialog";
 // install Virtual module
 SwiperCore.use([Virtual]);
 
@@ -48,6 +49,7 @@ interface FeedProps {
   userId?: string;
   paperId?: string;
   type?: TFeedType;
+  position?: FeedDialogProps["position"];
   onClickBack?: (magazine: MagazineType) => void;
 }
 
@@ -78,14 +80,27 @@ const HeaderContainer = styled.div`
   display: flex;
 `;
 
-const RouteBack = styled.div`
+const RouteBack = styled.div<Pick<FeedProps, "position">>`
   display: flex;
   justify-content: center;
   align-items: center;
+  transform: ${(props) => {
+    console.log(props.position);
+    switch (props.position) {
+      case "top":
+        return "rotate(90deg)";
+      case "left":
+        return "rotate(0)";
+      case "right":
+        return "rotate(180deg)";
+      case "bottom":
+      default:
+        return "rotate(-90deg)";
+    }
+  }};
 `;
 
 const RouteBackIcon = styled(FeedBackIcon)`
-  transform: rotate(-90deg);
   margin: 0 14px;
 `;
 
@@ -509,7 +524,10 @@ const Feed: React.FC<FeedProps> = (props) => {
         {papers.map((paper, index) => (
           <SwiperSlide key={paper.id} virtualIndex={index}>
             <HeaderContainer>
-              <RouteBack onClick={() => paper.magazine && props.onClickBack?.(paper.magazine)}>
+              <RouteBack
+                onClick={() => paper.magazine && props.onClickBack?.(paper.magazine)}
+                position={props.position}
+              >
                 <RouteBackIcon />
               </RouteBack>
               <MagazineContainer>

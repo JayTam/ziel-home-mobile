@@ -6,7 +6,7 @@ import CloseIcon from "../src/assets/icons/close.svg";
 import { useLockBodyScroll } from "@/utils";
 import { SlideAnimationMixin } from "#/lib/animation";
 
-interface PopupProps {
+export interface PopupProps {
   open: boolean;
   className?: string;
   round?: boolean;
@@ -19,6 +19,8 @@ interface PopupProps {
 }
 
 type PopupContainerProps = Omit<PopupProps, "onClickOverlay" | "className" | "open">;
+
+const animationDuration = 300;
 
 const PopupContainer = styled.div<PopupContainerProps>`
   position: fixed;
@@ -48,7 +50,7 @@ const PopupContainer = styled.div<PopupContainerProps>`
         };
     }
   }};
-  ${(props) => props.position && SlideAnimationMixin(props.position, 300)}
+  ${(props) => props.position && SlideAnimationMixin(props.position, animationDuration)}
 `;
 
 const StyledCloseIcon = styled(CloseIcon)`
@@ -67,7 +69,7 @@ const Popup: React.FC<PopupProps> = (props) => {
       <CSSTransition
         classNames="slide"
         in={props.open}
-        timeout={300}
+        timeout={animationDuration}
         mountOnEnter={props.lazyRender}
         unmountOnExit={props.forceRender}
       >

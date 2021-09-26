@@ -11,7 +11,7 @@ export const SlideAnimationMixin = (
 
   &.slide-enter-active {
     ${direction}: 0;
-    transition: bottom ${duration}ms;
+    transition: ${direction} ${duration}ms;
   }
 
   &.slide-enter-done,
@@ -21,7 +21,7 @@ export const SlideAnimationMixin = (
 
   &.slide-exit-active {
     ${direction}: -100%;
-    transition: bottom ${duration}ms;
+    transition: ${direction} ${duration}ms;
   }
 `;
 
