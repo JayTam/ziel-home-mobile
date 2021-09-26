@@ -9,8 +9,8 @@ import UnStarIcon from "@/assets/icons/unstar.svg";
 import StaredIcon from "@/assets/icons/stared.svg";
 // import CopyIcon from "@/assets/icons/copy.svg";
 import FacebookIcon from "@/assets/icons/facebook.svg";
-import HiddenIcon from "@/assets/icons/hidden.svg";
-import ShowIcon from "@/assets/icons/show.svg";
+// import HiddenIcon from "@/assets/icons/hidden.svg";
+// import ShowIcon from "@/assets/icons/show.svg";
 // import InsIcon from "@/assets/icons/ins.svg";
 import { MagazineType } from "@/apis";
 import { PaperType } from "@/apis/paper";
@@ -101,7 +101,7 @@ const MorePopup: React.FC<MoreOperateType> = (props) => {
    * @param type
    */
   const handleShare = (type: string) => {
-    let baseUrl = "";
+    let baseUrl: string;
     let url = "";
     if (props.moreType === "magazine") {
       baseUrl = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}magazine/${props.magazine?.id}`;
@@ -134,34 +134,36 @@ const MorePopup: React.FC<MoreOperateType> = (props) => {
       onClickOverlay={props.onClose}
     >
       <Container>
-        <TopContainer>
-          {/* 收藏内容，所有人均可收藏 */}
-          <ItemStyle onClick={props.onStar}>
-            {props.paper?.isStar ? <StaredIcon /> : <UnStarIcon />}
-            <span>{props.paper?.isStar ? "UnCollect" : "Collect"}</span>
-          </ItemStyle>
-          {/* 只有杂志拥有者，才能推荐/置顶 */}
-          {isMyMagazine ? (
-            <ItemStyle onClick={props.onTop}>
-              {props.paper?.isTop ? <UnRecommendIcon /> : <RecommendIcon />}
-              <span>{props.paper?.isTop ? "Unrecommend" : "Recommend"}</span>
+        {props.moreType === "paper" ? (
+          <TopContainer>
+            {/* 收藏内容，所有人均可收藏 */}
+            <ItemStyle onClick={props.onStar}>
+              {props.paper?.isStar ? <StaredIcon /> : <UnStarIcon />}
+              <span>{props.paper?.isStar ? "UnCollect" : "Collect"}</span>
             </ItemStyle>
-          ) : null}
-          {/* 内容创建者，才可以隐藏显示 */}
-          {isMyPaper ? (
-            <ItemStyle onClick={props.onHidden}>
-              {props.paper?.isHidden ? <ShowIcon /> : <HiddenIcon />}
-              <span> {props.paper?.isHidden ? "Public" : "Hidden"} </span>
-            </ItemStyle>
-          ) : null}
-          {/* 杂志拥有者和内容创建者，可以删除 */}
-          {isMyMagazine || isMyPaper ? (
-            <ItemStyle onClick={props.onDelete}>
-              <DeleteIcon />
-              <span>Delete</span>
-            </ItemStyle>
-          ) : null}
-        </TopContainer>
+            {/* 只有杂志拥有者，才能推荐/置顶 */}
+            {isMyMagazine ? (
+              <ItemStyle onClick={props.onTop}>
+                {props.paper?.isTop ? <UnRecommendIcon /> : <RecommendIcon />}
+                <span>{props.paper?.isTop ? "Unrecommend" : "Recommend"}</span>
+              </ItemStyle>
+            ) : null}
+            {/* TODO:// 暂时不需要了，内容创建者，才可以隐藏显示 */}
+            {/*{isMyPaper ? (*/}
+            {/*  <ItemStyle onClick={props.onHidden}>*/}
+            {/*    {props.paper?.isHidden ? <ShowIcon /> : <HiddenIcon />}*/}
+            {/*    <span> {props.paper?.isHidden ? "Public" : "Hidden"} </span>*/}
+            {/*  </ItemStyle>*/}
+            {/*) : null}*/}
+            {/* 杂志拥有者和内容创建者，可以删除 */}
+            {isMyMagazine || isMyPaper ? (
+              <ItemStyle onClick={props.onDelete}>
+                <DeleteIcon />
+                <span>Delete</span>
+              </ItemStyle>
+            ) : null}
+          </TopContainer>
+        ) : null}
         <ShareTitle>Share to</ShareTitle>
         <BottomContainer>
           <ItemStyle onClick={() => handleShare("SMS")}>
